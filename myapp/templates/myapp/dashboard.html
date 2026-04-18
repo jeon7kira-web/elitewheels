@@ -1,0 +1,59 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/dashboard.css' %}" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="logo">
+        <h1>Elite<span>Wheels</span></h1>
+        <p>Luxury Car Rentals</p>
+      </div>
+      <ul>
+        <li>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+          >
+            Home
+          </a>
+        </li>
+        <li><a href="contact.asp">Services</a></li>
+        <li><a href="about.asp">About us</a></li>
+        <li><a href="about.asp">Contact</a></li>
+        <li><a href="about.asp">FAQs</a></li>
+      </ul>
+      <div class="profile">
+        {% if user.is_authenticated %}
+
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+        >
+          {{ user.first_name|default:user.username }}'s Dashboard v
+        </a>
+
+        <form method="POST" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="btn logout" type="submit">Logout</button>
+        </form>
+
+        {% else %}
+
+        <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+
+        {% endif %}
+      </div>
+    </nav>
+    {% if user.is_authenticated %}
+    <h2>This is your dashboard</h2>
+    {% else %}
+    <a href="{% url 'auth' %}">Login / Register</a>
+    <a href="{% url 'home' %}">Continue as guest</a>
+    {% endif %}
+  </body>
+</html>

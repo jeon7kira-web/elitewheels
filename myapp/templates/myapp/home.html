@@ -1,0 +1,242 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">
+        <h1>Elite<span>Wheels</span></h1>
+        <p>Luxury Car Rentals</p>
+      </div>
+      <ul>
+        <li>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+          >
+            Home
+          </a>
+        </li>
+        <li><a href="contact.asp">Services</a></li>
+        <li><a href="about.asp">About us</a></li>
+        <li><a href="about.asp">Contact</a></li>
+        <li><a href="about.asp">FAQs</a></li>
+      </ul>
+      <div class="profile">
+        {% if user.is_authenticated %}
+
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+        >
+          {{ user.first_name|default:user.username }}'s Dashboard v
+        </a>
+
+        <form method="POST" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button class="btn logout" type="submit">Logout</button>
+        </form>
+
+        {% else %}
+
+        <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+
+        {% endif %}
+      </div>
+    </nav>
+
+    <!-- 🔥 FINISHER HEADER (IMPORTANT PART) -->
+    <div class="header finisher-header">
+      <div class="main">
+        <div class="left-main">
+          <hr />
+          <h1>
+            WE PROVIDE <span>LUXURY <br />CARS</span> FOR RENT
+          </h1>
+          <p>
+            Book directly from our Suppliers, no Somission. <br />
+            No Mark-Ups
+          </p>
+        </div>
+        <div class="cars-container">
+          <div class="car active main-car">
+            <img src="{% static 'myapp/imgs/L_height.webp' %}" alt="" />
+          </div>
+          <div class="side-cars">
+            <div class="car secondary-car">
+              <span>FAMILY CARS</span>
+              <img
+                src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+              />
+            </div>
+            <div class="car tertiary-car">
+              <span>CARS FOR TWO PERSON</span>
+              <img
+                src="{% static 'myapp/imgs/Post-0525-motion-400x500.jpg' %}"
+              />
+            </div>
+          </div>
+        </div>
+        <button class="rent-now">RENT NOW</button>
+        <div class="book-now">
+          <div class="dates">
+            <div class="input-group">
+              <label>Pickup Date</label>
+              <input type="date" name="pickup-date" />
+            </div>
+
+            <div class="input-group">
+              <label>Drop off date</label>
+              <input type="date" />
+            </div>
+            <button>Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+      <div class="title">
+        <span><hr>BRANDS<hr></span>
+        <h1>DISCOVER BY <span>BRANDS</span></h1>
+      </div>
+    
+    <div class="brands">
+      <div class="brand-group">
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/rollsroys_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <!-- duplicate -->
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/rollsroys_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+        <div class="brand-card">
+          <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
+        </div>
+        <div class="brand-card">
+          <img
+            src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
+            alt="logo"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: {
+          min: 1,
+          max: 8,
+          pulse: 0.1,
+        },
+        speed: {
+          x: {
+            min: 0,
+            max: 0.4,
+          },
+          y: {
+            min: 0,
+            max: 0.6,
+          },
+        },
+        colors: {
+          background: "#e0e0e0",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: {
+          center: 1,
+          edge: 0.05,
+        },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
+    </script>
+    <script src="{% static 'myapp/js/home.js' %}"></script>
+  </body>
+</html>
