@@ -8,17 +8,16 @@
 body {
   height: 100vh;
   overflow-x: hidden;
+  background-color: #e0e0e0;
 }
 
-/* FINISHER HEADER AREA */
 .header {
   width: 100%;
   min-height: 90vh;
   position: relative;
-  margin-bottom: 300px;
+  margin-bottom: 100px;
 }
 
-/* BUTTONS */
 .btn {
   display: inline-block;
   margin: 10px;
@@ -62,13 +61,12 @@ ul {
 a {
   position: relative;
   text-decoration: none;
-  color: black; /* adjust */
+  color: black;
   text-align: center;
   display: block;
   padding: 14px 16px;
 }
 
-/* underline */
 a::after {
   content: "";
   position: absolute;
@@ -150,9 +148,6 @@ hr {
   align-items: center;
   width: 80%;
   height: 100vh;
-  /* background-color: #b9b9b957;
-  border: #a8872d solid 1px;
-  border-radius: 16px; */
 }
 .left-main {
   width: 40%;
@@ -389,6 +384,8 @@ hr {
 }
 
 .title {
+  display: grid;
+  margin: 120px 0 60px 0;
   align-self: center;
   justify-self: center;
 }
@@ -413,4 +410,196 @@ hr {
 }
 .title h1 span {
   color: #a8872d;
+}
+.car-style {
+  display: flex;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.5rem;
+  width: 95%;
+  margin: auto;
+}
+
+.style-card {
+  position: relative;
+  background: #ccc;
+  border: 1px solid #a8872d;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.style-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: contain;
+  transition:
+    transform 0.4s ease,
+    filter 0.4s ease;
+}
+
+.style-card h2 {
+  margin-top: 10px;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #929292;
+  transition: color 0.3s ease;
+}
+
+.style-card:hover {
+  transform: translateY(-8px) scale(1.03);
+  background: linear-gradient(145deg, #1a1a1a, #000);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  border: 1px solid #a8872d;
+}
+
+.style-card:hover img {
+  transform: scale(1.1);
+  filter: brightness(1.2);
+}
+
+.style-card:hover h2 {
+  color: #a8872d;
+}
+
+.style-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  border: 1px solid #a8872d;
+  transition: 0.3s;
+}
+
+.style-card:hover::before {
+  border: 1px solid #a8872d;
+}
+
+.car-style:hover .style-card {
+  opacity: 0.5;
+}
+
+.car-style .style-card:hover {
+  opacity: 1;
+}
+.see-all {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.see-all span {
+  color: #929292;
+  font-size: 14px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.see-all span:hover {
+  color: #a8872d;
+  letter-spacing: 4px;
+}
+
+.top-car {
+  transform: rotate(90deg);
+  display: flex;
+  align-items: center;
+  justify-self: center;
+  background-color: none;
+}
+.services {
+  position: relative;
+  width: 600px;
+  margin: auto;
+}
+
+.car {
+  width: 100%;
+}
+
+.service {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.3s;
+}
+.service-description {
+  display: grid;
+  justify-content: center;
+  text-align: center;
+  width: 50%;
+}
+.service span {
+  font-weight: 600;
+  color: #6e0000f3;
+}
+.service p {
+  text-align: center;
+  font-weight: 300;
+  font-size: 14px;
+  color: #333;
+}
+
+.service svg {
+  width: 120px;
+}
+
+.service path {
+  stroke: #b67a2d;
+  fill: none;
+  stroke-width: 2;
+}
+
+.service circle {
+  fill: #b67a2d;
+}
+
+.left.top {
+  left: -300px;
+  top: 20%;
+}
+
+.left.bottom {
+  left: -300px;
+  bottom: 20%;
+}
+.left.bottom svg {
+  transform: scaleY(-1);
+}
+
+.right.top {
+  right: -300px;
+  top: 20%;
+  flex-direction: row-reverse;
+}
+.right.top svg {
+  transform: scaleX(-1);
+}
+.right.bottom {
+  right: -300px;
+  bottom: 20%;
+  flex-direction: row-reverse;
+}
+.right.bottom svg {
+  transform: scaleY(-1) scaleX(-1);
+}
+
+.services-container:hover .service {
+  opacity: 0.3;
+}
+
+.service:hover {
+  opacity: 1;
+}
+.service:hover span {
+  color: #b67a2d;
+}
+.service:hover {
+  transform: scale(1.05);
 }
