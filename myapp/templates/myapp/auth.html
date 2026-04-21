@@ -7,12 +7,13 @@
     <title>Document</title>
     <link rel="stylesheet" href="{% static 'myapp/css/style.css' %}" />
   </head>
-  <body class="header finisher-header">
-    {% if messages %} {% for message in messages %}
+  <body class="finisher-header">
+    {% if messages %}{% for message in messages %}
     <div class="alert error">{{ message }}</div>
-    {% endfor %} {% endif %}
+    {% endfor %}{% endif %}
+
     <div class="container" id="container">
-      <!-- SIGN UP FORM -->
+      <!-- SIGN UP -->
       <div class="form-container sign-up">
         <form
           method="POST"
@@ -21,122 +22,112 @@
         >
           {% csrf_token %}
           <h1>Elite<span>Wheels</span></h1>
-          <input
-            type="text"
-            name="full_name"
-            placeholder="Full Name"
-            required
-          />
-          <input type="email" name="email" placeholder="Email" required />
-          <input type="tel" name="phone" placeholder="Phone" required />
-          <input
-            type="file"
-            name="license"
-            placeholder="Driver License"
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <input
-            type="password"
-            name="confirm_password"
-            placeholder="Confirm Password"
-            required
-          />
-          <button class="btn" type="submit">
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              <rect width="100" height="40"></rect>
-            </svg>
-            Sign up
-          </button>
+          <div class="input-wrap">
+            <input
+              type="text"
+              name="full_name"
+              placeholder="Full Name"
+              required
+            />
+          </div>
+          <div class="input-row">
+            <div class="input-wrap">
+              <input type="email" name="email" placeholder="Email" required />
+            </div>
+            <div class="input-wrap">
+              <input type="tel" name="phone" placeholder="Phone" required />
+            </div>
+          </div>
+          <div class="input-wrap">
+            <input type="file" name="license" required />
+          </div>
+          <div class="input-row">
+            <div class="input-wrap">
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+            <div class="input-wrap">
+              <input
+                type="password"
+                name="confirm_password"
+                placeholder="Confirm Password"
+                required
+              />
+            </div>
+          </div>
+          <button type="submit">Create Account</button>
         </form>
       </div>
 
-      <!-- LOGIN FORM -->{% if messages %} {% for message in messages %}
+      <!-- SIGN IN -->
+      {% if messages %}{% for message in messages %}
       <div class="alert">{{ message }}</div>
-      {% endfor %} {% endif %}
+      {% endfor %}{% endif %}
       <div class="form-container sign-in">
         <form method="POST" action="{% url 'login' %}">
-          <h1>Elite<span>Wheels</span></h1>
           {% csrf_token %}
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            required
-            autofocus
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
+          <h1>Elite<span>Wheels</span></h1>
+          <div class="input-wrap">
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              required
+              autofocus
+            />
+          </div>
+          <div class="input-wrap">
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
           <a href="{% url 'password_reset' %}">Forgot Password?</a>
-          <button type="submit" class="btn">
-            <svg viewBox="0 0 100 40" preserveAspectRatio="none">
-              <rect width="100" height="40"></rect>
-            </svg>
-            Log In
-          </button>
+          <button type="submit">Sign In</button>
         </form>
       </div>
 
-      <!-- TOGGLE PANEL -->
+      <!-- TOGGLE -->
       <div class="toggle-container">
         <div class="toggle">
           <div class="toggle-panel toggle-left">
-            <h1>Welcome Back!</h1>
-            <p>Enter your personal details to use all site features</p>
+            <h1>Welcome Back</h1>
+            <p>Sign in to access your account and manage your bookings.</p>
             <button id="login" type="button">Sign In</button>
           </div>
           <div class="toggle-panel toggle-right">
-            <h1>Hello, Friend!</h1>
-            <p>Register with your personal details to use all site features</p>
+            <h1>Join Us</h1>
+            <p>Create an account to unlock the full EliteWheels experience.</p>
             <button id="register" type="button">Sign Up</button>
           </div>
         </div>
       </div>
     </div>
-    <a href="{% url 'home' %}" class="guest-btn"> Continue without account </a>
-    <script src="{% static 'myapp/js/script.js' %}"></script>
-    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
 
+    <a href="{% url 'home' %}" class="guest-btn">Continue without account →</a>
+
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
     <script>
       new FinisherHeader({
-        count: 100,
-        size: {
-          min: 1,
-          max: 8,
-          pulse: 0.1,
-        },
-        speed: {
-          x: {
-            min: 0,
-            max: 0.4,
-          },
-          y: {
-            min: 0,
-            max: 0.6,
-          },
-        },
+        count: 80,
+        size: { min: 1, max: 7, pulse: 0.1 },
+        speed: { x: { min: 0, max: 0.3 }, y: { min: 0, max: 0.5 } },
         colors: {
-          background: "#e0e0e0",
-          particles: ["#a8872d", "#6366f1", "black"],
+          background: "#ccc",
+          particles: ["#a8872d", "#c9a84c", "#ffffff"],
         },
         blending: "overlay",
-        opacity: {
-          center: 1,
-          edge: 0.05,
-        },
+        opacity: { center: 0.8, edge: 0.02 },
         skew: 0,
-        shapes: ["c", "t", "s"],
+        shapes: ["c", "s"],
       });
     </script>
+    <script src="{% static 'myapp/js/script.js' %}"></script>
   </body>
 </html>

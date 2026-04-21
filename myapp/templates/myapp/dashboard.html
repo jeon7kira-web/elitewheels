@@ -4,15 +4,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Dashboard</title>
+
     <link rel="stylesheet" href="{% static 'myapp/css/dashboard.css' %}" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
+
   <body>
+    <!-- NAVBAR -->
     <nav class="navbar">
       <div class="logo">
         <h1>Elite<span>Wheels</span></h1>
         <p>Luxury Car Rentals</p>
       </div>
+
       <ul>
         <li>
           <a
@@ -22,38 +31,325 @@
             Home
           </a>
         </li>
-        <li><a href="contact.asp">Services</a></li>
-        <li><a href="about.asp">About us</a></li>
-        <li><a href="about.asp">Contact</a></li>
-        <li><a href="about.asp">FAQs</a></li>
+        <li><a href="ourfleet.html">Our Fleet</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">FAQs</a></li>
       </ul>
+
       <div class="profile">
         {% if user.is_authenticated %}
-
         <a
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
         >
-          {{ user.first_name|default:user.username }}'s Dashboard v
+          {{ user.first_name|default:user.username }}'s Dashboard ▼
         </a>
-
-        <form method="POST" action="{% url 'logout' %}">
-          {% csrf_token %}
-          <button class="btn logout" type="submit">Logout</button>
-        </form>
-
         {% else %}
-
         <a href="{% url 'auth' %}" class="btn">Login / Register</a>
-
         {% endif %}
       </div>
     </nav>
-    {% if user.is_authenticated %}
-    <h2>This is your dashboard</h2>
-    {% else %}
-    <a href="{% url 'auth' %}">Login / Register</a>
-    <a href="{% url 'home' %}">Continue as guest</a>
+
+    <!-- SUCCESS / ERROR MESSAGES -->
+    {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+      <p class="{{ message.tags }}">{{ message }}</p>
+      {% endfor %}
+    </div>
     {% endif %}
+
+    <!-- PERSONAL INFO -->
+    <div class="title">
+      <span
+        ><hr />
+        YOUR SPACE
+        <hr
+      /></span>
+      <h1>WELCOME TO YOUR <span>DASHBOARD</span></h1>
+    </div>
+    <section class="dash-section">
+      <h2 class="section-label">Personal Information</h2>
+
+      <form class="info-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input
+              type="text"
+              name="first_name"
+              value="{{ user.first_name }}"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" value="{{ user.last_name }}" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" name="email" value="{{ user.email }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="tel" name="phone" value="{{ profile.phone }}" />
+        </div>
+
+        <div class="form-group">
+          <label>Driver License</label>
+          <input type="file" name="license" />
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" name="cancel" class="btn-cancel">Cancel</button>
+          <button type="submit" name="update_profile" class="btn-confirm">
+            Save Changes
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <div class="title">
+      <span
+        ><hr />
+        BOOINGS
+        <hr
+      /></span>
+      <h1>MANAGE YOUR<span>BOOKINGS</span></h1>
+    </div>
+    <!-- BOOKINGS -->
+    <section class="dash-section">
+      <div class="bookings-grid">
+        <div class="booking-card">
+          <img
+            src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+            alt="Car"
+          />
+          <div class="booking-info">
+            <h3>MERCEDES GT-S</h3>
+            <p class="booking-dates">12/06/2025 — 15/06/2025</p>
+            <span class="badge active">Active</span>
+          </div>
+        </div>
+        <div class="booking-card">
+          <img
+            src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+            alt="Car"
+          />
+          <div class="booking-info">
+            <h3>MERCEDES GT-S</h3>
+            <p class="booking-dates">20/06/2025 — 25/06/2025</p>
+            <span class="badge pending">Pending</span>
+          </div>
+        </div>
+        <div class="booking-card">
+          <img
+            src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+            alt="Car"
+          />
+          <div class="booking-info">
+            <h3>MERCEDES GT-S</h3>
+            <p class="booking-dates">01/07/2025 — 05/07/2025</p>
+            <span class="badge cancelled">Cancelled</span>
+          </div>
+        </div>
+        <div class="booking-card">
+          <img
+            src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+            alt="Car"
+          />
+          <div class="booking-info">
+            <h3>MERCEDES GT-S</h3>
+            <p class="booking-dates">10/07/2025 — 12/07/2025</p>
+            <span class="badge active">Active</span>
+          </div>
+        </div>
+        <div class="booking-card">
+          <img
+            src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+            alt="Car"
+          />
+          <div class="booking-info">
+            <h3>MERCEDES GT-S</h3>
+            <p class="booking-dates">18/07/2025 — 22/07/2025</p>
+            <span class="badge pending">Pending</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="see-all"><span>See All &gt;&gt;&gt;</span></div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-value">3</span>
+          <span class="stat-label">Total Bookings</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">1</span>
+          <span class="stat-label">Active</span>
+        </div>
+        <div class="stat">
+          <span class="stat-value">2</span>
+          <span class="stat-label">Cancelled</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS (PASSWORD) -->
+    <div class="title">
+      <span
+        ><hr />
+        SETTINGS
+        <hr
+      /></span>
+    </div>
+    <section class="dash-section settings-section">
+      <form class="settings-form" method="POST">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Old Password</label>
+            <input type="password" name="old_password" />
+          </div>
+
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="new_password" />
+          </div>
+
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input type="password" name="confirm_password" />
+          </div>
+        </div>
+
+        <button type="submit" name="change_password" class="btn-confirm">
+          Change Password
+        </button>
+      </form>
+    </section>
+
+    <!-- LOGOUT -->
+    <div class="logout-wrap">
+      <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-logout">Log Out</button>
+      </form>
+    </div>
+    <footer class="footer">
+      <div class="footer__main">
+        <div class="footer__brand">
+          <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
+          <p>
+            Lorem Ipsum has been the industry's standard dummy text ever since
+            the 1500.
+          </p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="#" class="active">Home</a></li>
+            <li><a href="#">Our Fleet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">FAQS</a></li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Contact</h4>
+          <ul class="footer__contact">
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.18 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.52a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"
+                />
+              </svg>
+              +2126 123 467 89
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              carrental@gmail.com
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              123 Gueliz, Marrakech
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__social">
+        <a href="#" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.5"
+              cy="6.5"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© 2026 EliteWheels. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
 </html>

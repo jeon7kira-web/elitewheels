@@ -16,6 +16,7 @@
         <h1>Elite<span>Wheels</span></h1>
         <p>Luxury Car Rentals</p>
       </div>
+
       <ul>
         <li>
           <a
@@ -25,11 +26,13 @@
             Home
           </a>
         </li>
-        <li><a href="contact.asp">Services</a></li>
-        <li><a href="about.asp">About us</a></li>
-        <li><a href="about.asp">Contact</a></li>
-        <li><a href="about.asp">FAQs</a></li>
+        <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
+        <li><a href="#">Services</a></li>
+        <li><a href="#">About us</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">FAQs</a></li>
       </ul>
+
       <div class="profile">
         {% if user.is_authenticated %}
 
@@ -37,10 +40,11 @@
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
         >
-          {{ user.first_name|default:user.username }}'s Dashboard v
+          {{ user.first_name|default:user.username }}'s Dashboard ▼
         </a>
 
-        <form method="POST" action="{% url 'logout' %}">
+        <!-- LOGOUT BUTTON -->
+        <form method="POST" action="{% url 'logout' %}" style="display: inline">
           {% csrf_token %}
           <button class="btn logout" type="submit">Logout</button>
         </form>
@@ -52,7 +56,6 @@
         {% endif %}
       </div>
     </nav>
-
     <!-- 🔥 FINISHER HEADER (IMPORTANT PART) -->
     <div class="header finisher-header">
       <div class="main">

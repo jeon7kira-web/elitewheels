@@ -28,6 +28,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('dashboard/', views.dashboard_view, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
+    path('ourfleet/', views.ourfleet_view, name='fleet'),
 
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),

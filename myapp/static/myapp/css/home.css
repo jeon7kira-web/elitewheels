@@ -2,11 +2,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: Arial, sans-serif;
+  font-family: "Barlow", sans-serif;
 }
 
 body {
-  height: 100vh;
+  min-height: 80vh;
   overflow-x: hidden;
   background-color: #e0e0e0;
 }
@@ -15,7 +15,8 @@ body {
   width: 100%;
   min-height: 90vh;
   position: relative;
-  margin-bottom: 100px;
+  margin-bottom: 120px;
+  z-index: -1;
 }
 
 .btn {
@@ -98,20 +99,32 @@ ul {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: solid 2px rgba(0.4, 0.4, 0.4, 0.1);
+  border-bottom: solid 2px #a8872d70;
   height: 60px;
   position: sticky;
   top: 0;
-  z-index: 99999;
-  background-color: #fff;
+  z-index: 99999999;
+  background-color: #ffffff;
   transition: all 0.3s ease;
   padding: 20px 40px;
 }
+
 .navbar.scrolled {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
   padding: 10px 40px;
+}
+
+.brands,
+.car-style,
+.services,
+.featured-cars,
+.about,
+.reviews,
+.footer {
+  position: relative;
+  z-index: 1;
 }
 .profile {
   display: flex;
@@ -1075,7 +1088,6 @@ hr {
   font-weight: 600;
 }
 
-
 .footer__contact li {
   display: flex;
   align-items: center;
@@ -1122,7 +1134,6 @@ hr {
   width: 18px;
   height: 18px;
 } */
-
 
 .footer__bottom {
   border-top: 1px solid white;
