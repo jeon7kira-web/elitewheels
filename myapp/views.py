@@ -80,7 +80,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            return redirect('home')
         else:
             messages.error(request, "Invalid credentials")
             return redirect('auth')

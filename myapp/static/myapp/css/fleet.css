@@ -1,0 +1,344 @@
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8c96a;
+  --bg: #0a0a0a;
+  --card: #141414;
+  --border: rgba(201, 168, 76, 0.18);
+  --text: #e8e2d9;
+  --muted: #6b6460;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #0a0a0a;
+  color: var(--text);
+  font-family: "Barlow", sans-serif;
+}
+
+.page-wrapper {
+  position: relative;
+  z-index: 1;
+  padding: 60px 40px 80px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.section-tag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  letter-spacing: 0.3em;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+.section-tag::before,
+.section-tag::after {
+  content: "";
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.5;
+}
+
+.fleet-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(36px, 6vw, 72px);
+  text-align: center;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  color: var(--text);
+  margin-bottom: 48px;
+}
+.fleet-title span {
+  color: var(--gold);
+}
+
+.filter-bar {
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px 28px;
+  margin-bottom: 60px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+  width: 95%;
+  justify-self: center;
+}
+
+.filter-icon {
+  color: var(--gold);
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  align-self: flex-end;
+  padding-bottom: 2px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 140px;
+}
+
+.filter-label {
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.filter-group select {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.25);
+  border-radius: 2px;
+  color: var(--text);
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  padding: 10px 36px 10px 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c9a84c'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+.filter-group select:focus {
+  outline: none;
+  border-color: var(--gold);
+}
+.filter-group select option {
+  background: #1a1a1a;
+}
+
+.results-count {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+.results-count span {
+  color: var(--gold);
+}
+
+.cars-grid {
+  padding: 0 30px 0 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  overflow: hidden;
+}
+
+/* ── CAR CARD ── */
+.car-card {
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 0.68, 0, 1.2),
+    border-color 0.3s,
+    box-shadow 0.3s;
+  animation: fadeUp 0.5s ease both;
+}
+.car-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(201, 168, 76, 0.35);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(201, 168, 76, 0.1);
+}
+.car-card.hidden {
+  display: none;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.car-img-wrap {
+  position: relative;
+  height: 170px;
+  overflow: hidden;
+}
+.car-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+  filter: brightness(0.88);
+}
+.car-card:hover .car-img-wrap img {
+  transform: scale(1.06);
+  filter: brightness(1);
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: var(--gold);
+  color: #000;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 4px 9px;
+  text-transform: uppercase;
+}
+
+.price-tag {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(10, 10, 10, 0.82);
+  border: 1px solid var(--border);
+  color: var(--gold-light);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+  backdrop-filter: blur(6px);
+}
+
+.car-info {
+  padding: 14px 16px 16px;
+}
+
+.car-name {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 17px;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.car-brand-label {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+.car-specs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.spec {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.btn-book {
+  width: 100%;
+  background: var(--gold);
+  border: none;
+  color: #000;
+  font-family: "Barlow", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 10px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    letter-spacing 0.2s;
+}
+.btn-book:hover {
+  background: var(--gold-light);
+  letter-spacing: 0.35em;
+}
+
+#no-results {
+  display: none;
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+#no-results strong {
+  display: block;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 28px;
+  color: var(--gold);
+  margin-bottom: 8px;
+  letter-spacing: 0.15em;
+}
+
+@media (max-width: 600px) {
+  .page-wrapper {
+    padding: 40px 16px 60px;
+  }
+  .filter-bar {
+    padding: 18px;
+    gap: 14px;
+  }
+}
+.see-all {
+  position: relative;
+  bottom: 100px;
+}
+.title {
+  display: grid;
+  margin: 100px 0 60px 0;
+  align-self: center;
+  justify-self: center;
+  z-index: 22;
+}
+.title span hr {
+  width: 50px;
+  background-color: #a8872d79;
+  height: 5px;
+  border: none;
+}
+.title span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a8872db9;
+  gap: 5px;
+}
+.title h1 {
+  display: flex;
+  gap: 10px;
+  word-spacing: 1px;
+  justify-content: center;
+  align-items: center;
+}
+.title h1 span {
+  color: #a8872d;
+}

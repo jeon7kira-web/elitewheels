@@ -1,11 +1,727 @@
-<!DOCTYPE html>
+{% load static %}
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    THIS IS OUR FLEET
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'myapp/css/fleet.css' %}" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">
+        <h1>Elite<span>Wheels</span></h1>
+        <p>Luxury Car Rentals</p>
+      </div>
+
+      <ul>
+        <li>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'fleet' %}"
+            class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+            >Our Fleet</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#services"
+            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#about"
+            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+            >About us</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'contact' %}"
+            class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+            >Contact</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'faq' %}"
+            class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+            >FAQs</a
+          >
+        </li>
+      </ul>
+
+      <div class="profile">
+        {% if user.is_authenticated %}
+
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+        >
+          {{ user.first_name|default:user.username }}'s Dashboard ▼
+        </a>
+
+        <!-- LOGOUT BUTTON -->
+        <form method="POST" action="{% url 'logout' %}" style="display: inline">
+          {% csrf_token %}
+          <button class="btn logout" type="submit">Logout</button>
+        </form>
+
+        {% else %}
+
+        <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+
+        {% endif %}
+      </div>
+    </nav>
+
+    <div class="header finisher-header">
+        <div class="title">
+      <span
+        ><hr />
+        OUR FLEET
+        <hr
+      /></span>
+      <h1>CHOOSE THE <span>PERFECT CAR</span> FOR YOUR JOURNEY</h1>
+    </div>
+  <!-- ── FILTER BAR ── -->
+
+  <div class="filter-bar">
+    <div class="filter-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      Filter Car:
+    </div>
+
+
+<div class="filter-group">
+  <div class="filter-label">Brand</div>
+  <select id="filter-brand">
+    <option value="">All Brands</option>
+    <option>Audi</option>
+    <option>Bentley</option>
+    <option>BMW</option>
+    <option>Ferrari</option>
+    <option>Lamborghini</option>
+    <option>Mercedes</option>
+    <option>Porsche</option>
+    <option>Rolls-Royce</option>
+  </select>
+</div>
+
+<div class="filter-group">
+  <div class="filter-label">Type</div>
+  <select id="filter-type">
+    <option value="">All Types</option>
+    <option>Coupe</option>
+    <option>Convertible</option>
+    <option>Sedan</option>
+    <option>Sports</option>
+    <option>SUV</option>
+  </select>
+</div>
+
+<div class="filter-group">
+  <div class="filter-label">Transmission</div>
+  <select id="filter-trans">
+    <option value="">All Types</option>
+    <option>Automatic</option>
+    <option>Manual</option>
+  </select>
+</div>
+
+<div class="filter-group">
+  <div class="filter-label">Price Range</div>
+  <select id="filter-price">
+    <option value="">All Prices</option>
+    <option value="0-200">Under $200/day</option>
+    <option value="200-400">$200–$400/day</option>
+    <option value="400-700">$400–$700/day</option>
+    <option value="700-9999">$700+/day</option>
+  </select>
+</div>
+
+
+  </div>
+
+  <div class="results-count">Showing <span id="count">12</span> vehicles</div>
+
+  <!-- ── CAR GRID ── -->
+
+  <div class="cars-grid" id="cars-grid">
+
+
+<!-- Card 1 -->
+<div class="car-card"
+  data-brand="Mercedes"
+  data-type="Coupe"
+  data-trans="Automatic"
+  data-price="520">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1617788138017-80ad40651399?w=600&q=80" alt="Mercedes GT-600 S" loading="lazy"/>
+    <div class="badge">Coupe</div>
+    <div class="price-tag">$520/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Mercedes GT-600 S</div>
+    <div class="car-brand-label">Mercedes</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        620 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 2 -->
+<div class="car-card"
+  data-brand="BMW"
+  data-type="Sedan"
+  data-trans="Automatic"
+  data-price="480">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80" alt="BMW M8 Gran" loading="lazy"/>
+    <div class="badge">Sedan</div>
+    <div class="price-tag">$480/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">BMW M8 Gran</div>
+    <div class="car-brand-label">BMW</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        600 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 3 -->
+<div class="car-card"
+  data-brand="Audi"
+  data-type="Sports"
+  data-trans="Automatic"
+  data-price="390">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80" alt="Audi RS e-tron" loading="lazy"/>
+    <div class="badge">Sports</div>
+    <div class="price-tag">$390/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Audi RS e-tron</div>
+    <div class="car-brand-label">Audi</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        2 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        590 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 4 -->
+<div class="car-card"
+  data-brand="Porsche"
+  data-type="Sedan"
+  data-trans="Automatic"
+  data-price="650">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80" alt="Porsche Panamera" loading="lazy"/>
+    <div class="badge">Sedan</div>
+    <div class="price-tag">$650/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Porsche Panamera</div>
+    <div class="car-brand-label">Porsche</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        680 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 5 -->
+<div class="car-card"
+  data-brand="Ferrari"
+  data-type="Convertible"
+  data-trans="Automatic"
+  data-price="980">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1592198084033-aade902d1aae?w=600&q=80" alt="Ferrari F8 Spider" loading="lazy"/>
+    <div class="badge">Convertible</div>
+    <div class="price-tag">$980/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Ferrari F8 Spider</div>
+    <div class="car-brand-label">Ferrari</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        2 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        710 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 6 -->
+<div class="car-card"
+  data-brand="Lamborghini"
+  data-type="SUV"
+  data-trans="Automatic"
+  data-price="880">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80" alt="Lamborghini Urus S" loading="lazy"/>
+    <div class="badge">SUV</div>
+    <div class="price-tag">$880/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Lamborghini Urus S</div>
+    <div class="car-brand-label">Lamborghini</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        666 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 7 -->
+<div class="car-card"
+  data-brand="Rolls-Royce"
+  data-type="Coupe"
+  data-trans="Automatic"
+  data-price="1200">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80" alt="Rolls-Royce Wraith" loading="lazy"/>
+    <div class="badge">Coupe</div>
+    <div class="price-tag">$1200/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Rolls-Royce Wraith</div>
+    <div class="car-brand-label">Rolls-Royce</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        624 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 8 -->
+<div class="car-card"
+  data-brand="Mercedes"
+  data-type="SUV"
+  data-trans="Automatic"
+  data-price="420">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&q=80" alt="Mercedes GLE 63 S" loading="lazy"/>
+    <div class="badge">SUV</div>
+    <div class="price-tag">$420/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Mercedes GLE 63 S</div>
+    <div class="car-brand-label">Mercedes</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        5 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        630 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 9 -->
+<div class="car-card"
+  data-brand="Mercedes"
+  data-type="Sports"
+  data-trans="Manual"
+  data-price="560">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80" alt="Mercedes AMG GT R" loading="lazy"/>
+    <div class="badge">Sports</div>
+    <div class="price-tag">$560/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Mercedes AMG GT R</div>
+    <div class="car-brand-label">Mercedes</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        2 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        585 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Manual
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 10 -->
+<div class="car-card"
+  data-brand="BMW"
+  data-type="SUV"
+  data-trans="Automatic"
+  data-price="360">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=600&q=80" alt="BMW X5 M Comp" loading="lazy"/>
+    <div class="badge">SUV</div>
+    <div class="price-tag">$360/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">BMW X5 M Comp</div>
+    <div class="car-brand-label">BMW</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        5 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        617 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 11 -->
+<div class="car-card"
+  data-brand="Bentley"
+  data-type="Coupe"
+  data-trans="Automatic"
+  data-price="750">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1563720223185-11003d516935?w=600&q=80" alt="Bentley Continental" loading="lazy"/>
+    <div class="badge">Coupe</div>
+    <div class="price-tag">$750/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Bentley Continental</div>
+    <div class="car-brand-label">Bentley</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        4 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        650 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Card 12 -->
+<div class="car-card"
+  data-brand="Lamborghini"
+  data-type="Sports"
+  data-trans="Automatic"
+  data-price="920">
+  <div class="car-img-wrap">
+    <img src="https://images.unsplash.com/photo-1544636331-e26879cd4d9b?w=600&q=80" alt="Lamborghini Huracan EVO" loading="lazy"/>
+    <div class="badge">Sports</div>
+    <div class="price-tag">$920/day</div>
+  </div>
+  <div class="car-info">
+    <div class="car-name">Lamborghini Huracan EVO</div>
+    <div class="car-brand-label">Lamborghini</div>
+    <div class="car-specs">
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+        2 Seats
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        640 HP
+      </div>
+      <div class="spec">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/></svg>
+        Automatic
+      </div>
+    </div>
+    <button class="btn-book">Book Now</button>
+  </div>
+</div>
+
+<!-- Empty state (shown by JS when no results) -->
+<div id="no-results">
+  <strong>No Vehicles Found</strong>
+  Try adjusting your filters
+</div>
+
+
+</div>
+</div>
+<div class="see-all">
+    <span>Discover More >></span>
+</div>
+    </div>
+    <footer class="footer">
+      <div class="footer__main">
+        <div class="footer__brand">
+          <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
+          <p>
+            Lorem Ipsum has been the industry's standard dummy text ever since
+            the 1500.
+          </p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li>
+              <a
+                href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                >Home</a
+              >
+            </li>
+            <li><a href="#">Our Fleet</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">About Us</a></li>
+            <li>
+              <a
+                href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a
+                href="{% url 'faq' %}"
+                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+                >FAQS</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Contact</h4>
+          <ul class="footer__contact">
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.18 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.52a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"
+                />
+              </svg>
+              +2126 123 467 89
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              carrental@gmail.com
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              123 Gueliz, Marrakech
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__social">
+        <a href="#" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.5"
+              cy="6.5"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© 2026 EliteWheels. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: {
+          min: 1,
+          max: 8,
+          pulse: 0.1,
+        },
+        speed: {
+          x: {
+            min: 0,
+            max: 0.4,
+          },
+          y: {
+            min: 0,
+            max: 0.6,
+          },
+        },
+        colors: {
+          background: "#0a0a0a",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: {
+          center: 1,
+          edge: 0.05,
+        },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
+    </script>
+    <script src="{% static 'myapp/js/fleet.js' %}"></script>
+  </body>
 </html>
