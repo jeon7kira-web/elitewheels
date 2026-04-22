@@ -31,11 +31,41 @@
             Home
           </a>
         </li>
-        <li><a href="ourfleet.html">Our Fleet</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">About us</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">FAQs</a></li>
+        <li>
+          <a
+            href="{% url 'fleet' %}"
+            class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+            >Our Fleet</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#services"
+            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#about"
+            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+            >About us</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'contact' %}"
+            class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+            >Contact</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'faq' %}"
+            class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+            >FAQs</a
+          >
+        </li>
       </ul>
 
       <div class="profile">
@@ -258,11 +288,30 @@
         <div class="footer__col">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="#" class="active">Home</a></li>
+            <li>
+              <a
+                href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+                >Home</a
+              >
+            </li>
             <li><a href="#">Our Fleet</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">FAQS</a></li>
+            <li><a href="{% url 'home' %}#services">Services</a></li>
+            <li><a href="{% url 'home' %}#about">About Us</a></li>
+            <li>
+              <a
+                href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a
+                href="{% url 'faq' %}"
+                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+                >FAQS</a
+              >
+            </li>
           </ul>
         </div>
 

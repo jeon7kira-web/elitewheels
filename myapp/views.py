@@ -18,6 +18,15 @@ def auth_view(request):
 def ourfleet_view(request):
     return render(request, 'myapp/ourfleet.html')
 
+def faq_view(request):
+    return render(request,'myapp/faq.html')
+
+def contact_view(request):
+    return render(request,'myapp/contact.html')
+
+def about_view(request):
+    return render(request,'myapp/#about')
+
 
 
 

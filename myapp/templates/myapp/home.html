@@ -27,10 +27,20 @@
           </a>
         </li>
         <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">About us</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">FAQs</a></li>
+        <li><a href="/#services">Services</a></li>
+        <li>
+          <a href="/#about">About us</a>
+        </li>
+        <li>
+          <a href="{% url 'contact' %}">Contact</a>
+        </li>
+        <li>
+          <a
+            href="{% url 'faq' %}"
+            class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+            >FAQs</a
+          >
+        </li>
       </ul>
 
       <div class="profile">
@@ -103,6 +113,13 @@
             <button>Search</button>
           </div>
         </div>
+      </div>
+      <div class="quote">
+        <h1>
+          <span>E</span>xcellence <span>L</span>uxury <span>i</span>nnovation
+          <span>t</span>echnology <span>E</span>lite<span>WHEELS</span>
+        </h1>
+        <p>Where <span>engineering</span> meets <span>elegance</span>, and every journey defines <span>prestige</span>.</p>
       </div>
     </div>
     <div class="title">
@@ -253,7 +270,7 @@
       <span>See All >>></span>
     </div>
 
-    <div class="title">
+    <div class="title" id="services">
       <span
         ><hr />
         SERVICES
@@ -261,7 +278,7 @@
       /></span>
       <h1>BEST <span>QUALITY</span> BEST <span>SERVICE</span></h1>
     </div>
-    <div class="services">
+    <div class="services" id="services">
       <img
         class="top-car"
         src="{% static 'myapp/imgs/top-black.png' %}"
@@ -421,7 +438,7 @@
       /></span>
       <h1>KNOW MORE <span>ABOUT US</span></h1>
     </div>
-    <section class="about">
+    <section class="about" id="about">
       <div class="about__body">
         <div class="about__image-wrapper">
           <div class="about__image-frame">
@@ -545,11 +562,30 @@
         <div class="footer__col">
           <h4>Quick Links</h4>
           <ul>
-            <li><a href="#" class="active">Home</a></li>
+            <li>
+              <a
+                href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+                >Home</a
+              >
+            </li>
             <li><a href="#">Our Fleet</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">About Us</a></li>
-            <li><a href="#">FAQS</a></li>
+            <li>
+              <a
+                href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a
+                href="{% url 'faq' %}"
+                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+                >FAQS</a
+              >
+            </li>
           </ul>
         </div>
 

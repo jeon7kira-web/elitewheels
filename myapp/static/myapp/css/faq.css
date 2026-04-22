@@ -1,0 +1,401 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Barlow", sans-serif;
+}
+
+body {
+  min-height: 80vh;
+  overflow-x: hidden;
+  background-color: #e0e0e0;
+}
+
+.faq {
+  width: 75%;
+  margin: 0 auto 100px;
+  display: grid;
+  gap: 60px;
+  align-items: start;
+}
+
+.faq__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.faq__item {
+  border: 1px solid #a8872d50;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #d4d4d4;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  position: relative;
+}
+
+.faq__item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 3px;
+  background: #a8872d;
+  border-radius: 3px 0 0 3px;
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+  transform-origin: top;
+}
+
+.faq__item.open {
+  border-color: #a8872d;
+  box-shadow: 0 4px 20px rgba(168, 135, 45, 0.15);
+}
+
+.faq__item.open::before {
+  transform: scaleY(1);
+}
+
+.faq__question {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  gap: 12px;
+  text-align: left;
+}
+
+.faq__question span {
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  transition: color 0.3s;
+}
+
+.faq__item.open .faq__question span {
+  color: #a8872d;
+}
+
+.faq__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  color: #a8872d;
+  transition: transform 0.35s ease;
+}
+
+.faq__item.open .faq__icon {
+  transform: rotate(180deg);
+}
+
+.faq__answer {
+  max-height: 0;
+  overflow: hidden;
+  transition:
+    max-height 0.4s ease,
+    padding 0.3s ease;
+  padding: 0 20px;
+}
+
+.faq__item.open .faq__answer {
+  max-height: 200px;
+  padding: 0 20px 18px;
+}
+
+.faq__answer p {
+  font-family: "Barlow", sans-serif;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: #555;
+  font-weight: 400;
+}
+
+/* CTA */
+.faq__cta {
+  position: sticky;
+  top: 100px;
+  background: #1a1a1a;
+  border: 1px solid #a8872d;
+  border-radius: 20px;
+  padding: 48px 40px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.faq__cta h3 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 32px;
+  letter-spacing: 2px;
+  color: #fff;
+}
+
+.faq__cta p {
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 12px;
+}
+
+.faq__cta-btns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.faq__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 10px;
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.faq__btn--primary {
+  background: #a8872d;
+  color: #fff;
+}
+
+.faq__btn--primary:hover {
+  background: #fff3d3;
+  color: #a8872d;
+}
+
+.faq__btn--whatsapp {
+  background: transparent;
+  border: 1px solid #25d366;
+  color: #25d366;
+}
+
+.faq__btn--whatsapp:hover {
+  background: #25d366;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .faq {
+    grid-template-columns: 1fr;
+    width: 90%;
+  }
+  .faq__cta {
+    position: static;
+  }
+}
+.contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  width: 80%;
+  margin: 0 auto 100px;
+}
+
+.contact__card {
+  background: #d4d4d4;
+  border: 1px solid #a8872d50;
+  border-radius: 20px;
+  padding: 40px 36px;
+}
+
+.contact__card-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 28px;
+  letter-spacing: 2px;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.contact__card-sub {
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+/* FORM */
+.contact__form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contact__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact__field label {
+  font-family: "Barlow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #1a1a1a;
+}
+
+.contact__field input,
+.contact__field select,
+.contact__field textarea {
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid #c4c4c4;
+  background: #ebebeb;
+  color: #333;
+  outline: none;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+  width: 100%;
+}
+
+.contact__field input:focus,
+.contact__field select:focus,
+.contact__field textarea:focus {
+  border-color: #a8872d;
+  box-shadow: 0 0 0 3px rgba(168, 135, 45, 0.1);
+}
+
+.contact__field textarea {
+  height: 120px;
+  resize: none;
+}
+
+.contact__select-wrapper {
+  position: relative;
+}
+
+.contact__select-wrapper select {
+  appearance: none;
+  cursor: pointer;
+}
+
+.contact__select-wrapper svg {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #a8872d;
+  pointer-events: none;
+}
+
+.contact__submit {
+  margin-top: 8px;
+  padding: 14px;
+  background: #a8872d;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+.contact__submit:hover {
+  background: #fff3d3;
+  color: #a8872d;
+}
+
+/* INFO LIST */
+.contact__info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-bottom: 36px;
+}
+
+.contact__info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.contact__info-icon {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  background: #a8872d20;
+  border: 1px solid #a8872d50;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact__info-icon svg {
+  width: 18px;
+  height: 18px;
+  color: #a8872d;
+}
+
+.contact__info-item h4 {
+  font-family: "Barlow", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.contact__info-item p {
+  font-family: "Barlow", sans-serif;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.7;
+}
+
+.contact__quick-call {
+  border-top: 1px solid #a8872d50;
+  padding-top: 28px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.contact__quick-call h3 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+.Whatsapp {
+  background: #25d366;
+  border: 1px solid #fff;
+  color: #fff;
+}
+@media (max-width: 900px) {
+  .contact {
+    grid-template-columns: 1fr;
+    width: 90%;
+  }
+}

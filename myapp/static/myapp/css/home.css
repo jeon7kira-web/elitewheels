@@ -15,8 +15,8 @@ body {
   width: 100%;
   min-height: 90vh;
   position: relative;
-  margin-bottom: 120px;
-  z-index: -1;
+  margin-bottom: 180px;
+  z-index: 1;
 }
 
 .btn {
@@ -238,48 +238,102 @@ hr {
   top: 65px;
   display: flex;
   gap: 20px;
+  align-items: center;
+  z-index: 10;
 }
 
-.main-car {
-  width: 400px;
+/* ---------------- BASE CAR STYLE ---------------- */
+.car {
   height: 500px;
-  background: #ddd;
   border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.4s ease;
+  flex: 1;
+  z-index: 10;
+  position: relative;
+  opacity: 0.7;
+  transform: scale(0.95);
 }
-.main-car img {
-  object-fit: cover;
+
+/* image styling */
+.car img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   border-radius: 20px;
+  transition: transform 0.4s ease;
 }
+
+/* ---------------- ACTIVE CAR ---------------- */
+.car.active {
+  width: 400px;
+  opacity: 1;
+  transform: scale(1.05);
+  z-index: 10;
+  filter: brightness(1);
+  flex: 2;
+  height: 500px;
+}
+
+.car.active img {
+  transform: scale(1.05);
+}
+
+/* ---------------- MAIN CAR (default highlight) ---------------- */
+.main-car {
+  width: 400px;
+  background: #ddd;
+  z-index: 10;
+}
+
+/* ---------------- SIDE CONTAINER ---------------- */
 .side-cars {
   display: flex;
   gap: 20px;
+  z-index: 10;
 }
-.side-cars img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-  border-radius: 20px;
-}
+
+/* ---------------- SIDE CARS ---------------- */
 .secondary-car,
 .tertiary-car {
   width: 120px;
   height: 500px;
+  z-index: 10;
   background: #706969;
   border-radius: 20px;
   position: relative;
+  overflow: hidden;
 }
 
+/* ---------------- TEXT LABELS ---------------- */
 .side-cars span {
   position: absolute;
-  text-align: center;
   top: 50%;
-  transform: rotate(90deg) translateY(-50%);
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(90deg);
   font-size: 16px;
   color: #a8872d;
   font-weight: 600;
+  white-space: nowrap;
+  z-index: 2;
+  pointer-events: none;
 }
+
+/* ---------------- HOVER EFFECT ---------------- */
+.car:hover {
+  opacity: 1;
+  filter: brightness(0.9);
+  z-index: 10;
+}
+
+.car:not(.active) {
+  width: 120px;
+  height: 500px;
+  filter: brightness(0.6);
+  z-index: 10;
+  transform: scale(0.9);
+}
+
 .input-group {
   flex: 1;
   display: flex;
@@ -306,31 +360,6 @@ hr {
   width: 170px;
 }
 
-.cars-container {
-  display: flex;
-  gap: 20px;
-  align-items: center;
-}
-
-.car {
-  transition: all 0.4s ease;
-  flex: 1;
-  opacity: 0.7;
-  transform: scale(0.95);
-}
-
-.car.active {
-  flex: 2;
-  opacity: 1;
-  transform: scale(1.02);
-  z-index: 2;
-  height: 500px;
-  width: 400px;
-}
-.car:not(.active) {
-  width: 120px;
-  height: 500px;
-}
 .brands {
   width: 75%;
   margin: 60px auto;
@@ -398,9 +427,10 @@ hr {
 
 .title {
   display: grid;
-  margin: 120px 0 60px 0;
+  margin: 100px 0 60px 0;
   align-self: center;
   justify-self: center;
+  z-index: 22;
 }
 .title span hr {
   width: 50px;
@@ -521,16 +551,16 @@ hr {
   align-items: center;
   justify-self: center;
   background-color: none;
+  width: 100%; /* ← moved here, scoped to .top-car only */
 }
+
 .services {
   position: relative;
   width: 600px;
   margin: auto;
 }
 
-.car {
-  width: 100%;
-}
+/* REMOVED: .car { width: 100%; } — this was overriding the cars-container styles */
 
 .service {
   position: absolute;
@@ -1130,11 +1160,6 @@ hr {
   color: #a8872d;
 }
 
-/* .footer__social svg {
-  width: 18px;
-  height: 18px;
-} */
-
 .footer__bottom {
   border-top: 1px solid white;
   padding: 18px 0;
@@ -1155,4 +1180,32 @@ hr {
   .footer__social {
     justify-content: center;
   }
+}
+#services {
+  scroll-margin-top: 100px;
+}
+#about {
+  scroll-margin-top: 180px;
+}
+.quote {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 40px;
+  text-align: center;
+  gap: 10px;
+}
+.quote span {
+  font-style: italic;
+  text-transform: capitalize;
+  color: #a8872d;
+  font-weight: 600;
+}
+.quote h1 {
+  font-style: italic;
+  font-weight: 500;
+}
+.quote p {
+  font-style: italic;
 }

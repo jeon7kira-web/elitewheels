@@ -1,0 +1,410 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'myapp/css/faq.css' %}" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">
+        <h1>Elite<span>Wheels</span></h1>
+        <p>Luxury Car Rentals</p>
+      </div>
+
+      <ul>
+        <li>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'fleet' %}"
+            class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+            >Our Fleet</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#services"
+            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#about"
+            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+            >About us</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'contact' %}"
+            class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+            >Contact</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'faq' %}"
+            class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+            >FAQs</a
+          >
+        </li>
+      </ul>
+
+      <div class="profile">
+        {% if user.is_authenticated %}
+
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+        >
+          {{ user.first_name|default:user.username }}'s Dashboard ▼
+        </a>
+
+        <!-- LOGOUT BUTTON -->
+        <form method="POST" action="{% url 'logout' %}" style="display: inline">
+          {% csrf_token %}
+          <button class="btn logout" type="submit">Logout</button>
+        </form>
+
+        {% else %}
+
+        <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+
+        {% endif %}
+      </div>
+    </nav>
+    <div class="header finisher-header">
+      <div class="title">
+        <span
+          ><hr />
+          FAQS
+          <hr
+        /></span>
+        <h1>FREQUENTLY ASKED <span>QUESTIONS</span></h1>
+      </div>
+
+      <section class="faq">
+        <div class="faq__list">
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Is a deposit required?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>
+                A refundable deposit is required depending on the car type.<br />It
+                will be returned after the rental period if no damage occurs.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Can I cancel or modify my booking?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>
+                Yes, bookings can be modified or canceled before the start
+                date.<br />Cancellation policies may apply.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Is insurance included in the rental price?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>
+                Basic insurance is included.<br />Additional coverage options
+                may be available.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Can I rent a car with a driver?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>Yes, chauffeur services are available upon request.</p>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Is insurance included in the rental price?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>
+                Basic insurance is included.<br />Additional coverage options
+                may be available.
+              </p>
+            </div>
+          </div>
+
+          <div class="faq__item">
+            <button class="faq__question">
+              <span>Is insurance included in the rental price?</span>
+              <svg
+                class="faq__icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="faq__answer">
+              <p>
+                Basic insurance is included.<br />Additional coverage options
+                may be available.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq__cta">
+          <h3>Still have questions?</h3>
+          <p>Our team is here to help you anytime</p>
+          <div class="faq__cta-btns">
+            <a href="{% url 'contact' %}" class="faq__btn faq__btn--primary"
+              >Contact Us</a
+            >
+            <a href="#" class="faq__btn faq__btn--whatsapp">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="16"
+                height="16"
+              >
+                <path
+                  d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"
+                />
+              </svg>
+              WhatsApp Chat
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer class="footer">
+      <div class="footer__main">
+        <div class="footer__brand">
+          <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
+          <p>
+            Lorem Ipsum has been the industry's standard dummy text ever since
+            the 1500.
+          </p>
+        </div>
+
+        <div class="footer__col">
+          <h4>Quick Links</h4>
+          <ul>
+            <li>
+              <a
+                href="{% url 'home' %}"
+                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+                >Home</a
+              >
+            </li>
+            <li><a href="#">Our Fleet</a></li>
+            <li><a href="{% url 'home' %}#services">Services</a></li>
+            <li><a href="{% url 'home' %}#about">About Us</a></li>
+            <li>
+              <a
+                href="{% url 'contact' %}"
+                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+                >Contact</a
+              >
+            </li>
+            <li>
+              <a
+                href="{% url 'faq' %}"
+                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+                >FAQS</a
+              >
+            </li>
+          </ul>
+        </div>
+
+        <div class="footer__col">
+          <h4>Contact</h4>
+          <ul class="footer__contact">
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.18 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.52a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"
+                />
+              </svg>
+              +2126 123 467 89
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                />
+                <polyline points="22,6 12,13 2,6" />
+              </svg>
+              carrental@gmail.com
+            </li>
+            <li>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                <circle cx="12" cy="10" r="3" />
+              </svg>
+              123 Gueliz, Marrakech
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer__social">
+        <a href="#" aria-label="X">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Instagram">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="2" y="2" width="20" height="20" rx="5" />
+            <circle cx="12" cy="12" r="4" />
+            <circle
+              cx="17.5"
+              cy="6.5"
+              r="1"
+              fill="currentColor"
+              stroke="none"
+            />
+          </svg>
+        </a>
+        <a href="#" aria-label="Facebook">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
+            />
+          </svg>
+        </a>
+      </div>
+
+      <div class="footer__bottom">
+        <p>© 2026 EliteWheels. All rights reserved.</p>
+      </div>
+    </footer>
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: {
+          min: 1,
+          max: 8,
+          pulse: 0.1,
+        },
+        speed: {
+          x: {
+            min: 0,
+            max: 0.4,
+          },
+          y: {
+            min: 0,
+            max: 0.6,
+          },
+        },
+        colors: {
+          background: "#e0e0e0",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: {
+          center: 1,
+          edge: 0.05,
+        },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
+    </script>
+    <script src="{% static 'myapp/js/home.js' %}"></script>
+  </body>
+</html>
