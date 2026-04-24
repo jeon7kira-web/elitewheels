@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .models import Profile
+from .models import Profile, Car, Booking
+from django.db.models import Q
 
 
 
@@ -15,8 +16,7 @@ def home(request):
 def auth_view(request):
     return render(request, 'myapp/auth.html')
 
-def ourfleet_view(request):
-    return render(request, 'myapp/ourfleet.html')
+
 
 def faq_view(request):
     return render(request,'myapp/faq.html')
@@ -136,3 +136,44 @@ def logout_view(request):
     if request.method == 'POST':
         logout(request)
         return redirect('home')
+    
+    # views.py
+
+def fleet(request):
+    pickup = request.GET.get("pickup_date")
+    dropoff = request.GET.get("dropoff_date")
+
+    cars = Car.objects.all()
+
+    if pickup and dropoff:
+        booked_cars = Booking.objects.filter(
+            Q(pickup_date__lt=dropoff) & Q(dropoff_date__gt=pickup)
+        ).values_list("car_id", flat=True)
+
+        cars = cars.exclude(id__in=booked_cars)
+
+    brands = Car.objects.values_list('brand', flat=True).distinct()
+    types = Car.objects.values_list('car_type', flat=True).distinct()
+    transmissions = Car.objects.values_list('transmission', flat=True).distinct()
+
+    return render(request, "myapp/ourfleet.html", {
+        "cars": cars,
+        "brands": brands,
+        "types": types,
+        "transmissions": transmissions
+    })
+    
+
+    
+@login_required
+def book_car(request, car_id):
+    if request.method == "POST":
+        pickup = request.POST.get("pickup_date")
+        dropoff = request.POST.get("dropoff_date")
+
+        Booking.objects.create(
+            user=request.user,
+            car_id=car_id,
+            pickup_date=pickup,
+            dropoff_date=dropoff
+        )

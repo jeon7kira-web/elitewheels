@@ -98,21 +98,22 @@
             </div>
           </div>
         </div>
-        <button class="rent-now">RENT NOW</button>
-        <div class="book-now">
-          <div class="dates">
-            <div class="input-group">
-              <label>Pickup Date</label>
-              <input type="date" name="pickup-date" />
-            </div>
+        <form method="GET" action="{% url 'fleet' %}">
+          <div class="book-now">
+            <div class="dates">
+              <div class="input-group">
+                <label>Pickup Date</label>
+                <input type="date" name="pickup-date" />
+              </div>
 
-            <div class="input-group">
-              <label>Drop off date</label>
-              <input type="date" />
+              <div class="input-group">
+                <label>Drop off date</label>
+                <input type="date" />
+              </div>
+              <button>Search</button>
             </div>
-            <button>Search</button>
           </div>
-        </div>
+        </form>
       </div>
       <div class="quote">
         <h1>
@@ -572,9 +573,9 @@
                 >Home</a
               >
             </li>
-            <li><a href="#">Our Fleet</a></li>
-            <li><a href="#">Services</a></li>
-            <li><a href="#">About Us</a></li>
+            <li><a href="{% url 'fleet' %}#services"  class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}">Our Fleet</a></li>
+            <li><a href="{% url 'home' %}#services">Services</a></li>
+            <li><a href="{% url 'home' %}#about">About Us</a></li>
             <li>
               <a
                 href="{% url 'contact' %}"

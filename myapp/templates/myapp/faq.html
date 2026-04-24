@@ -263,11 +263,11 @@
             <li>
               <a
                 href="{% url 'home' %}"
-                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                 >Home</a
               >
             </li>
-            <li><a href="#">Our Fleet</a></li>
+            <li><a href="{% url 'fleet' %}#services"  class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}">Our Fleet</a></li>
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
             <li>
@@ -393,7 +393,7 @@
           },
         },
         colors: {
-          background: "#000",
+          background: "#e0e0e0",
           particles: ["#a8872d", "#6366f1", "black"],
         },
         blending: "overlay",
