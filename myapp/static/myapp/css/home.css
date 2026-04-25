@@ -3,14 +3,63 @@
   padding: 0;
   box-sizing: border-box;
   font-family: "Barlow", sans-serif;
+  scrollbar-width: thin;
+  scrollbar-color: #a8872d black;
 }
 
 body {
   min-height: 80vh;
   overflow-x: hidden;
-  background-color: #e0e0e0;
+  background-color: #0a0a0a;
+  color: #e8e2d9;
+}
+.whatsapp-icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #a8872dce, #a8872d, #b8962ebb);
+  box-shadow: 0 8px 25px rgba(201, 166, 70, 0.4);
+  cursor: pointer;
+  z-index: 9999;
+  transition: all 0.3s ease;
 }
 
+.whatsapp-icon img {
+  width: 32px;
+  height: 32px;
+  filter: brightness(0) invert(1);
+}
+
+.whatsapp-icon:hover {
+  transform: scale(1.12);
+  box-shadow: 0 12px 35px rgba(51, 42, 19, 0.7);
+}
+
+@keyframes goldPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(201, 166, 70, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(201, 166, 70, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(201, 166, 70, 0);
+  }
+}
+
+.whatsapp-icon {
+  animation: goldPulse 2.5s infinite;
+}
+.whatsapp-icon {
+  border: 2px solid rgb(51, 51, 51);
+  backdrop-filter: blur(6px);
+}
 .header {
   width: 100%;
   min-height: 90vh;
@@ -151,9 +200,9 @@ ul {
 
 /* MAIN */
 hr {
-  height: 8px;
+  height: 6px;
   width: 100px;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(255, 255, 255);
   z-index: 1000;
   border-radius: 20px;
 }
@@ -188,25 +237,12 @@ hr {
   top: 400px;
   width: 70%;
   height: 120px;
-  background-color: #ffffffc2;
+  background-color: #141414;
   border: #a8872d solid 1px;
   z-index: 9999;
   left: 13%;
-  border-radius: 0 6px 6px 6px;
+  border-radius: 16px;
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.rent-now {
-  position: absolute;
-  top: 345px;
-  left: 13%;
-  height: 55px;
-  width: 150px;
-  border-radius: 16px 16px 0 0;
-  color: #fff;
-  background-color: #a8872d;
-  border: none;
-  cursor: pointer;
 }
 .dates {
   display: flex;
@@ -215,7 +251,7 @@ hr {
   padding: 30px;
 }
 .date {
-  background-color: #a1a1a1;
+  background-color: #706969;
   width: 200px;
   height: 60px;
   border-radius: 12px;
@@ -244,7 +280,7 @@ hr {
 }
 
 .car {
-  height: 500px;
+  height: 490px;
   border-radius: 20px;
   overflow: hidden;
   transition: all 0.4s ease;
@@ -264,9 +300,9 @@ hr {
 }
 
 .car.active {
-  width: 400px;
+  width: 390px;
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1.03);
   z-index: 10;
   filter: brightness(1);
   flex: 2;
@@ -274,24 +310,19 @@ hr {
 }
 
 .car.active img {
-  transform: scale(1.05);
+  transform: scale(1.03);
 }
-
-/* ---------------- MAIN CAR (default highlight) ---------------- */
 .main-car {
   width: 400px;
   background: #ddd;
   z-index: 10;
 }
-
-/* ---------------- SIDE CONTAINER ---------------- */
 .side-cars {
   display: flex;
   gap: 20px;
   z-index: 10;
 }
 
-/* ---------------- SIDE CARS ---------------- */
 .secondary-car,
 .tertiary-car {
   width: 120px;
@@ -303,7 +334,6 @@ hr {
   overflow: hidden;
 }
 
-/* ---------------- TEXT LABELS ---------------- */
 .side-cars span {
   position: absolute;
   top: 50%;
@@ -311,13 +341,12 @@ hr {
   transform: translate(-50%, -50%) rotate(90deg);
   font-size: 16px;
   color: #a8872d;
+  z-index: 2;
   font-weight: 600;
   white-space: nowrap;
-  z-index: 2;
   pointer-events: none;
 }
 
-/* ---------------- HOVER EFFECT ---------------- */
 .car:hover {
   opacity: 1;
   filter: brightness(0.9);
@@ -342,24 +371,26 @@ hr {
 
 .input-group label {
   font-size: 12px;
-  color: #000000;
+  color: #e8e2d9;
   position: absolute;
-  top: 15px;
+  top: 14px;
   font-weight: 700;
 }
 
 .input-group input {
   padding: 12px;
   border-radius: 8px;
-  border: none;
-  background: #eee;
+  border: solid 0.5px #a8872d;
+  background: #92929296;
   height: 60px;
+  color: #e8e2d9;
   align-items: start;
   width: 170px;
 }
 
 .brands {
   width: 75%;
+  background-color: #61605f57;
   margin: 60px auto;
   overflow: hidden;
   border: 1px solid #a8872d;
@@ -432,14 +463,15 @@ hr {
 }
 .title span hr {
   width: 50px;
-  background-color: #7069699d;
+  background-color: #a8872d79;
   height: 5px;
+  border: none;
 }
 .title span {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #7069699d;
+  color: #a8872db9;
   gap: 5px;
 }
 .title h1 {
@@ -558,8 +590,6 @@ hr {
   margin: auto;
 }
 
-/* REMOVED: .car { width: 100%; } — this was overriding the cars-container styles */
-
 .service {
   position: absolute;
   display: flex;
@@ -577,14 +607,14 @@ hr {
   width: 50%;
 }
 .service span {
-  font-weight: 600;
+  font-weight: 700;
   color: #6e0000f3;
 }
 .service p {
   text-align: center;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 14px;
-  color: #333;
+  color: #929292;
 }
 
 .service svg {
@@ -592,13 +622,13 @@ hr {
 }
 
 .service path {
-  stroke: #b67a2d;
+  stroke: #6e0000f3;
   fill: none;
   stroke-width: 2;
 }
 
 .service circle {
-  fill: #b67a2d;
+  fill: #6e0000f3;
 }
 
 .left.top {
@@ -641,6 +671,9 @@ hr {
 .service:hover span {
   color: #b67a2d;
 }
+.service:hover path {
+  color: #b67a2d;
+}
 .service:hover {
   transform: scale(1.05);
 }
@@ -657,7 +690,7 @@ hr {
   justify-content: center;
   align-items: center;
   border-radius: 14px 14px 0 0;
-  background-color: #ccc;
+  background-color: #141414;
 }
 .ft-cars-card img {
   width: 100%;
@@ -730,7 +763,7 @@ hr {
   object-fit: cover;
   display: block;
   filter: brightness(0.88);
-  border: #a8872d 1px solid;
+  border: rgba(168, 135, 45, 0.9) 2px solid;
   border-radius: 50% 0;
 }
 
@@ -740,7 +773,7 @@ hr {
   right: 1%;
   width: 62px;
   height: 62px;
-  border: 3px solid #000;
+  border: 3px solid #a8872d;
   background: transparent;
   z-index: 2;
 }
@@ -751,7 +784,7 @@ hr {
   left: 1%;
   width: 62px;
   height: 62px;
-  background-color: black;
+  background-color: #a8872d;
   z-index: 2;
 }
 .about__content {
@@ -764,7 +797,7 @@ hr {
   font-family: "Barlow", sans-serif;
   font-size: 11px;
   letter-spacing: 5px;
-  color: #aaa;
+  color: #929292;
   text-transform: uppercase;
   margin-bottom: 12px;
 }
@@ -774,7 +807,7 @@ hr {
   font-size: 38px;
   letter-spacing: 2px;
   line-height: 1.1;
-  color: #1a1a1a;
+  color: #e8e2d9;
   margin-bottom: 16px;
 }
 
@@ -785,7 +818,7 @@ hr {
 .about__divider {
   width: 55px;
   height: 3px;
-  background: black;
+  background: #fff;
   border-radius: 2px;
   margin-bottom: 22px;
 }
@@ -794,7 +827,7 @@ hr {
   font-family: "Barlow", sans-serif;
   font-size: 14.5px;
   line-height: 1.85;
-  color: #666;
+  color: #929292;
   margin-bottom: 32px;
 }
 
@@ -814,9 +847,9 @@ hr {
   font-family: "Barlow", sans-serif;
   font-size: 14px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #929292;
   padding: 10px 16px;
-  background-color: #f7f7f7;
+  background-color: #333;
   border-radius: 8px;
   border-left: 3px solid #a8872d;
   transition:
@@ -825,8 +858,9 @@ hr {
 }
 
 .about__list li:hover {
-  background-color: #fff3e0;
+  background-color: #141414;
   transform: translateX(4px);
+  color: #b1afaf;
 }
 
 .about__bullet {
@@ -845,7 +879,7 @@ hr {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: white;
+  background: #333;
 }
 
 @media (max-width: 992px) {
@@ -943,8 +977,8 @@ hr {
 
 .reviews__arrow {
   background: transparent;
-  border: 1.5px solid #c2c2c2;
-  background-color: #c2c2c2;
+  border: 1.5px solid #141414;
+  background-color: #141414;
   border-radius: 50%;
   width: 52px;
   height: 52px;
@@ -980,7 +1014,7 @@ hr {
 
 .reviews__card {
   display: none;
-  background: #c2c2c2;
+  background: #141414;
   border-radius: 16px;
   padding: 36px 40px;
   text-align: left;
@@ -1015,7 +1049,7 @@ hr {
   font-family: "Bebas Neue", sans-serif;
   font-size: 22px;
   letter-spacing: 1.5px;
-  color: #000;
+  color: #e8e2d9;
 }
 
 .reviews__stars {
@@ -1027,7 +1061,7 @@ hr {
 .reviews__card p {
   font-size: 15px;
   line-height: 1.8;
-  color: #333;
+  color: #929292;
   font-weight: 600;
 }
 
@@ -1190,7 +1224,7 @@ hr {
   justify-content: center;
   align-items: center;
   position: relative;
-  top: 40px;
+  top: 30px;
   text-align: center;
   gap: 10px;
 }

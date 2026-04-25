@@ -87,7 +87,11 @@
         {% endif %}
       </div>
     </nav>
-
+    <div class="whatsapp-icon">
+      <img
+        src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}"
+      />
+    </div>
     <div class="header finisher-header">
         <div class="title">
       <span
@@ -103,7 +107,9 @@
   <div class="filter-bar">
 
     <div class="filter-icon">
-      🔍 Filter Cars
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg> Filter Cars
     </div>
 
     <!-- BRAND -->
@@ -162,30 +168,43 @@
     <!-- Cars Card -->
   <div class="cars-grid" id="cars-grid">
 
-    {% for car in cars %}
-    <div class="car-card"
-         data-brand="{{ car.brand }}"
-         data-type="{{ car.car_type }}"
-         data-trans="{{ car.transmission }}"
-         data-price="{{ car.price_per_day }}">
+  {% for car in cars %}
+  <div class="car-card"
+       data-brand="{{ car.brand }}"
+       data-type="{{ car.car_type }}"
+       data-trans="{{ car.transmission }}"
+       data-price="{{ car.price_per_day }}">
 
-      <div class="car-img-wrap">
-        <img src="{{ car.image.url }}" alt="{{ car.name }}">
-        <div class="badge">{{ car.type }}</div>
-        <div class="price-tag">${{ car.price_per_day }}/day</div>
-      </div>
-
-      <div class="car-info">
-        <div class="car-name">{{ car.name }}</div>
-        <div class="car-brand-label">{{ car.brand }}</div>
-
-        <button class="btn-book">Book Now</button>
-      </div>
-
+    <div class="car-img-wrap">
+      <img src="{{ car.image.url }}" alt="{{ car.name }}">
+      <div class="badge">{{ car.car_type }}</div>
+      <div class="price-tag">${{ car.price_per_day }}/day</div>
     </div>
-    {% endfor %}
+
+    <div class="car-info">
+      <div class="car-name">{{ car.name }}</div>
+      <div class="car-brand-label">{{ car.brand }}</div>
+
+      <!-- 🔥 NEW SPECS ROW -->
+      <div class="car-specs">
+        <span>{{ car.transmission }}</span>
+        <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" class="car-icon">
+<path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5m0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1m6-7h4c2.76 0 5 2.24 5 5H5c0-2.76 2.24-5 5-5"></path>
+</svg>{{ car.passengers }} </span>
+        <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
+fill="currentColor" viewBox="0 0 24 24" class="car-icon">
+<path d="m16.62 3.22-1.25 1.56 3.87 3.1c.48.38.75.95.75 1.56V18c0 .55-.45 1-1 1s-1-.45-1-1v-3c0-1.65-1.35-3-3-3h-1V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-5h1c.55 0 1 .45 1 1v3c0 1.65 1.35 3 3 3s3-1.35 3-3V9.44c0-1.22-.55-2.36-1.5-3.12l-3.87-3.1ZM12 5v4H4V5zM4 19v-8h8v8z"></path>
+</svg>{{ car.fuel_type }}</span>
+      </div>
+
+      <button class="btn-book">Book Now</button>
+    </div>
 
   </div>
+  {% endfor %}
+
+</div>  
 
   <!-- NO RESULTS -->
   <div id="no-results" style="display:none;">

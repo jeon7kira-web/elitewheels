@@ -66,6 +66,11 @@
         {% endif %}
       </div>
     </nav>
+    <div class="whatsapp-icon">
+      <img
+        src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}"
+      />
+    </div>
     <!-- 🔥 FINISHER HEADER (IMPORTANT PART) -->
     <div class="header finisher-header">
       <div class="main">
@@ -125,434 +130,460 @@
           journey defines <span>prestige</span>.
         </p>
       </div>
-    </div>
-    <div class="title">
-      <span
-        ><hr />
-        BRANDS
-        <hr
-      /></span>
-      <h1>DISCOVER BY <span>BRANDS</span></h1>
-    </div>
 
-    <div class="brands">
-      <div class="brand-group">
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/rollsroys_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <!-- duplicate -->
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/rollsroys_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-        <div class="brand-card">
-          <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
-        </div>
-        <div class="brand-card">
-          <img
-            src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
-            alt="logo"
-          />
-        </div>
-      </div>
-    </div>
-
-    <div class="title">
-      <span
-        ><hr />
-        STYLE
-        <hr
-      /></span>
-      <h1>DISCOVER BY <span>STYLE</span></h1>
-    </div>
-
-    <div class="car-style">
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/sedan-style.png' %}" alt="" />
-        <h2>SEDAN</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/suv-style.png' %}" alt="" />
-        <h2>SUV</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/sports-style.png' %}" alt="" />
-        <h2>SPORTS</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/supercar-style.png' %}" alt="" />
-        <h2>SUPERCAR</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/hypercar-style.png' %}" alt="" />
-        <h2>HYPERCAR</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/gt-style.png' %}" alt="" />
-        <h2>GT</h2>
-      </div>
-      <div class="style-card">
-        <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-        <h2>ELECTRIC</h2>
-      </div>
-    </div>
-    <div class="see-all">
-      <span>See All >>></span>
-    </div>
-
-    <div class="title" id="services">
-      <span
-        ><hr />
-        SERVICES
-        <hr
-      /></span>
-      <h1>BEST <span>QUALITY</span> BEST <span>SERVICE</span></h1>
-    </div>
-    <div class="services" id="services">
-      <img
-        class="top-car"
-        src="{% static 'myapp/imgs/top-black.png' %}"
-        alt=""
-      />
-      <!-- LEFT TOP -->
-      <div class="service left top">
-        <div class="service-description">
-          <span>Executive Rentals </span>
-          <p>
-            Luxury self-drive cars for premium <br /><span>comfort </span> and
-            <span>freedom</span> .
-          </p>
-        </div>
-        <svg viewBox="0 0 200 100">
-          <path d="M10,60 C90,10 150,10 190,50" />
-          <circle cx="190" cy="50" r="4" />
-        </svg>
+      <div class="title">
+        <span
+          ><hr />
+          BRANDS
+          <hr
+        /></span>
+        <h1>DISCOVER BY <span>BRANDS</span></h1>
       </div>
 
-      <!-- LEFT BOTTOM -->
-      <div class="service left bottom">
-        <div class="service-description">
-          <span>Premium Protection</span>
-          <p>
-            Full coverage insurance for complete <br />
-            <span>peace of mind</span> on every ride.
-          </p>
-        </div>
-        <svg viewBox="0 0 200 100">
-          <path d="M10,60 C90,10 150,10 190,50" />
-          <circle cx="190" cy="50" r="4" />
-        </svg>
-      </div>
-
-      <!-- RIGHT TOP -->
-      <div class="service right top">
-        <div class="service-description">
-          <span>Elite Chauffeur</span>
-          <p>
-            Professional drivers for a <span> smooth</span>, <br />
-            <span>first-class</span> travel experience.
-          </p>
-        </div>
-        <svg viewBox="0 0 200 100">
-          <path d="M10,60 C90,10 150,10 190,50" />
-          <circle cx="190" cy="50" r="4" />
-        </svg>
-      </div>
-
-      <!-- RIGHT BOTTOM -->
-      <div class="service right bottom">
-        <div class="service-description">
-          <span>Prestige Leasing</span>
-          <p>
-            <span>Flexible </span>long-term leasing <br />
-            of <span>high-end</span> luxury vehicles.
-          </p>
-        </div>
-        <svg viewBox="0 0 200 100">
-          <path d="M10,60 C90,10 150,10 190,50" />
-          <circle cx="190" cy="50" r="4" />
-        </svg>
-      </div>
-    </div>
-
-    <div class="title">
-      <span
-        ><hr />
-        CARS
-        <hr
-      /></span>
-      <h1>FEATURED <span>CARS</span></h1>
-    </div>
-    <div class="featured-cars">
-      <div class="ft-cars-card">
-        <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-        <h1>MERCEDES GT-603 S</h1>
-        <span>SPORTS</span>
-        <div class="car-details">
-          <span><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span>
-          <span
-            ><img src="{% static 'myapp/imgs/gear.svg' %}" alt="" />MANUEL</span
-          >
-          <span
-            ><img
-              src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-              alt=""
-            />GASOLINE</span
-          >
-        </div>
-        <button href="ourfleet.html">MORE DETAILS</button>
-      </div>
-      <div class="ft-cars-card">
-        <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-        <h1>MERCEDES GT-603 S</h1>
-        <span>SPORTS</span>
-        <div class="car-details">
-          <span><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span>
-          <span
-            ><img src="{% static 'myapp/imgs/gear.svg' %}" alt="" />MANUEL</span
-          >
-          <span
-            ><img
-              src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-              alt=""
-            />GASOLINE</span
-          >
-        </div>
-        <button href="ourfleet.html">MORE DETAILS</button>
-      </div>
-      <div class="ft-cars-card">
-        <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-        <h1>MERCEDES GT-603 S</h1>
-        <span>SPORTS</span>
-        <div class="car-details">
-          <span><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span>
-          <span
-            ><img src="{% static 'myapp/imgs/gear.svg' %}" alt="" />MANUEL</span
-          >
-          <span
-            ><img
-              src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-              alt=""
-            />GASOLINE</span
-          >
-        </div>
-        <button href="ourfleet.html">MORE DETAILS</button>
-      </div>
-      <div class="ft-cars-card">
-        <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-        <h1>MERCEDES GT-603 S</h1>
-        <span>SPORTS</span>
-        <div class="car-details">
-          <span><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span>
-          <span
-            ><img src="{% static 'myapp/imgs/gear.svg' %}" alt="" />MANUEL</span
-          >
-          <span
-            ><img
-              src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-              alt=""
-            />GASOLINE</span
-          >
-        </div>
-        <button href="ourfleet.html">MORE DETAILS</button>
-      </div>
-    </div>
-    <div class="see-all">
-      <span>See All Cars>>></span>
-    </div>
-    <div class="title">
-      <span
-        ><hr />
-        ABOUT US
-        <hr
-      /></span>
-      <h1>KNOW MORE <span>ABOUT US</span></h1>
-    </div>
-    <section class="about" id="about">
-      <div class="about__body">
-        <div class="about__image-wrapper">
-          <div class="about__image-frame">
+      <div class="brands">
+        <div class="brand-group">
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
             <img
-              src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
-              alt="Luxury Car"
+              src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
+              alt="logo"
             />
           </div>
-          <div class="about__accent about__accent--tr"></div>
-          <div class="about__accent about__accent--bl"></div>
-        </div>
-
-        <div class="about__content">
-          <p class="about__eyebrow-small">KNOW ABOUT US</p>
-          <h2 class="about__title">
-            WHO WE ARE IN THIS <span>INDUSTRY WE</span> SHOW YOU
-          </h2>
-          <div class="about__divider"></div>
-          <p class="about__text">
-            Lorem Ipsum has been the industry's standard dummy text ever since
-            the 1500s, when an unknown printer took a galley of type and
-            scrambled it to make a type specimen book. It has survived not only
-            five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged.
-          </p>
-          <ul class="about__list">
-            <li>
-              <span class="about__bullet"></span>
-              Lorem Ipsum has been the industry's standard dummy text ever
-            </li>
-            <li>
-              <span class="about__bullet"></span>
-              Lorem Ipsum has been the industry's standard dummy text ever
-            </li>
-            <li>
-              <span class="about__bullet"></span>
-              Lorem Ipsum has been the industry's standard dummy text ever
-            </li>
-          </ul>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/rollsroys_logo.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <!-- duplicate -->
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/Dacia_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/ferrari_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/mclaren_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/bugatti_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/rollsroys_logo.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/porshe_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/laborghini_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/astonmartin_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
+          <div class="brand-card">
+            <img src="{% static 'myapp/imgs/mercedes_logo.png' %}" alt="logo" />
+          </div>
+          <div class="brand-card">
+            <img
+              src="{% static 'myapp/imgs/bentley_logo-removebg-preview.png' %}"
+              alt="logo"
+            />
+          </div>
         </div>
       </div>
-    </section>
 
-    <div class="title">
-      <span
-        ><hr />
-        REVIEWS
-        <hr
-      /></span>
-      <h1>CLIENTS <span>SATISFACTION</span></h1>
+      <div class="title">
+        <span
+          ><hr />
+          STYLE
+          <hr
+        /></span>
+        <h1>DISCOVER BY <span>STYLE</span></h1>
+      </div>
+
+      <div class="car-style">
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/sedan-style.png' %}" alt="" />
+          <h2>SEDAN</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/suv-style.png' %}" alt="" />
+          <h2>SUV</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/sports-style.png' %}" alt="" />
+          <h2>SPORTS</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/supercar-style.png' %}" alt="" />
+          <h2>SUPERCAR</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/hypercar-style.png' %}" alt="" />
+          <h2>HYPERCAR</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/gt-style.png' %}" alt="" />
+          <h2>GT</h2>
+        </div>
+        <div class="style-card">
+          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
+          <h2>ELECTRIC</h2>
+        </div>
+      </div>
+      <div class="see-all">
+        <span>See All >>></span>
+      </div>
+
+      <div class="title">
+        <span
+          ><hr />
+          CARS
+          <hr
+        /></span>
+        <h1>FEATURED <span>CARS</span></h1>
+      </div>
+      <div class="featured-cars">
+        <div class="ft-cars-card">
+          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
+          <h1>MERCEDES GT-603 S</h1>
+          <span>SPORTS</span>
+          <div class="car-details">
+            <span
+              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/gear.svg' %}"
+                alt=""
+              />MANUEL</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
+                alt=""
+              />GASOLINE</span
+            >
+          </div>
+          <button href="ourfleet.html">MORE DETAILS</button>
+        </div>
+        <div class="ft-cars-card">
+          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
+          <h1>MERCEDES GT-603 S</h1>
+          <span>SPORTS</span>
+          <div class="car-details">
+            <span
+              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/gear.svg' %}"
+                alt=""
+              />MANUEL</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
+                alt=""
+              />GASOLINE</span
+            >
+          </div>
+          <button href="ourfleet.html">MORE DETAILS</button>
+        </div>
+        <div class="ft-cars-card">
+          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
+          <h1>MERCEDES GT-603 S</h1>
+          <span>SPORTS</span>
+          <div class="car-details">
+            <span
+              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/gear.svg' %}"
+                alt=""
+              />MANUEL</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
+                alt=""
+              />GASOLINE</span
+            >
+          </div>
+          <button href="ourfleet.html">MORE DETAILS</button>
+        </div>
+        <div class="ft-cars-card">
+          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
+          <h1>MERCEDES GT-603 S</h1>
+          <span>SPORTS</span>
+          <div class="car-details">
+            <span
+              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/gear.svg' %}"
+                alt=""
+              />MANUEL</span
+            >
+            <span
+              ><img
+                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
+                alt=""
+              />GASOLINE</span
+            >
+          </div>
+          <button href="ourfleet.html">MORE DETAILS</button>
+        </div>
+      </div>
+      <div class="see-all">
+        <span>See All Cars>>></span>
+      </div>
+      <div class="title" id="services">
+        <span
+          ><hr />
+          SERVICES
+          <hr
+        /></span>
+        <h1>BEST <span>QUALITY</span> BEST <span>SERVICE</span></h1>
+      </div>
+      <div class="services" id="services">
+        <img
+          class="top-car"
+          src="{% static 'myapp/imgs/top-black.png' %}"
+          alt=""
+        />
+        <!-- LEFT TOP -->
+        <div class="service left top">
+          <div class="service-description">
+            <span>Executive Rentals </span>
+            <p>
+              Luxury self-drive cars for premium <br /><span>comfort </span> and
+              <span>freedom</span> .
+            </p>
+          </div>
+          <svg viewBox="0 0 200 100">
+            <path d="M10,60 C90,10 150,10 190,50" />
+            <circle cx="190" cy="50" r="4" />
+          </svg>
+        </div>
+
+        <!-- LEFT BOTTOM -->
+        <div class="service left bottom">
+          <div class="service-description">
+            <span>Premium Protection</span>
+            <p>
+              Full coverage insurance for complete <br />
+              <span>peace of mind</span> on every ride.
+            </p>
+          </div>
+          <svg viewBox="0 0 200 100">
+            <path d="M10,60 C90,10 150,10 190,50" />
+            <circle cx="190" cy="50" r="4" />
+          </svg>
+        </div>
+
+        <!-- RIGHT TOP -->
+        <div class="service right top">
+          <div class="service-description">
+            <span>Elite Chauffeur</span>
+            <p>
+              Professional drivers for a <span> smooth</span>, <br />
+              <span>first-class</span> travel experience.
+            </p>
+          </div>
+          <svg viewBox="0 0 200 100">
+            <path d="M10,60 C90,10 150,10 190,50" />
+            <circle cx="190" cy="50" r="4" />
+          </svg>
+        </div>
+
+        <!-- RIGHT BOTTOM -->
+        <div class="service right bottom">
+          <div class="service-description">
+            <span>Prestige Leasing</span>
+            <p>
+              <span>Flexible </span>long-term leasing <br />
+              of <span>high-end</span> luxury vehicles.
+            </p>
+          </div>
+          <svg viewBox="0 0 200 100">
+            <path d="M10,60 C90,10 150,10 190,50" />
+            <circle cx="190" cy="50" r="4" />
+          </svg>
+        </div>
+      </div>
+
+      <div class="title">
+        <span
+          ><hr />
+          ABOUT US
+          <hr
+        /></span>
+        <h1>KNOW MORE <span>ABOUT US</span></h1>
+      </div>
+      <section class="about" id="about">
+        <div class="about__body">
+          <div class="about__image-wrapper">
+            <div class="about__image-frame">
+              <img
+                src="{% static 'myapp/imgs/2007-mercedes-g-class-699dd21a1e5bc.webp' %}"
+                alt="Luxury Car"
+              />
+            </div>
+            <div class="about__accent about__accent--tr"></div>
+            <div class="about__accent about__accent--bl"></div>
+          </div>
+
+          <div class="about__content">
+            <p class="about__eyebrow-small">KNOW ABOUT US</p>
+            <h2 class="about__title">
+              WHO WE ARE IN THIS <span>INDUSTRY WE</span> SHOW YOU
+            </h2>
+            <div class="about__divider"></div>
+            <p class="about__text">
+              Lorem Ipsum has been the industry's standard dummy text ever since
+              the 1500s, when an unknown printer took a galley of type and
+              scrambled it to make a type specimen book. It has survived not
+              only five centuries, but also the leap into electronic
+              typesetting, remaining essentially unchanged.
+            </p>
+            <ul class="about__list">
+              <li>
+                <span class="about__bullet"></span>
+                Lorem Ipsum has been the industry's standard dummy text ever
+              </li>
+              <li>
+                <span class="about__bullet"></span>
+                Lorem Ipsum has been the industry's standard dummy text ever
+              </li>
+              <li>
+                <span class="about__bullet"></span>
+                Lorem Ipsum has been the industry's standard dummy text ever
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="title">
+        <span
+          ><hr />
+          REVIEWS
+          <hr
+        /></span>
+        <h1>CLIENTS <span>SATISFACTION</span></h1>
+      </div>
+      <section class="reviews">
+        <div class="reviews__slider-wrapper">
+          <div class="reviews__deco reviews__deco--left">
+            <div class="deco-sq deco-sq--1"></div>
+            <div class="deco-sq deco-sq--2"></div>
+            <div class="deco-sq deco-sq--3"></div>
+          </div>
+
+          <button class="reviews__arrow reviews__arrow--left">&#10094;</button>
+
+          <div class="reviews__track" id="reviewsTrack">
+            <div class="reviews__card active">
+              <div class="reviews__card-header">
+                <h3>AHMED GOMÂA</h3>
+                <div class="reviews__stars">★★★★★</div>
+              </div>
+              <p>
+                Lorem Ipsum has been the industry's standard dummy text ever
+                since the 1500s, when an unknown printer took a galley of type
+                and scrambled it to make a type specimen book. It has survived
+                not only.
+              </p>
+            </div>
+            <div class="reviews__card">
+              <div class="reviews__card-header">
+                <h3>SARAH MILLER</h3>
+                <div class="reviews__stars">★★★★★</div>
+              </div>
+              <p>
+                Lorem Ipsum has been the industry's standard dummy text ever
+                since the 1500s, when an unknown printer took a galley of type
+                and scrambled it to make a type specimen book. It has survived
+                not only.
+              </p>
+            </div>
+            <div class="reviews__card">
+              <div class="reviews__card-header">
+                <h3>JOHN CARTER</h3>
+                <div class="reviews__stars">★★★★☆</div>
+              </div>
+              <p>
+                Lorem Ipsum has been the industry's standard dummy text ever
+                since the 1500s, when an unknown printer took a galley of type
+                and scrambled it to make a type specimen book. It has survived
+                not only.
+              </p>
+            </div>
+          </div>
+
+          <button class="reviews__arrow reviews__arrow--right">&#10095;</button>
+
+          <div class="reviews__deco reviews__deco--right">
+            <div class="deco-sq deco-sq--1"></div>
+            <div class="deco-sq deco-sq--2"></div>
+            <div class="deco-sq deco-sq--3"></div>
+          </div>
+        </div>
+      </section>
     </div>
-    <section class="reviews">
-      <div class="reviews__slider-wrapper">
-        <div class="reviews__deco reviews__deco--left">
-          <div class="deco-sq deco-sq--1"></div>
-          <div class="deco-sq deco-sq--2"></div>
-          <div class="deco-sq deco-sq--3"></div>
-        </div>
-
-        <button class="reviews__arrow reviews__arrow--left">&#10094;</button>
-
-        <div class="reviews__track" id="reviewsTrack">
-          <div class="reviews__card active">
-            <div class="reviews__card-header">
-              <h3>AHMED GOMÂA</h3>
-              <div class="reviews__stars">★★★★★</div>
-            </div>
-            <p>
-              Lorem Ipsum has been the industry's standard dummy text ever since
-              the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not
-              only.
-            </p>
-          </div>
-          <div class="reviews__card">
-            <div class="reviews__card-header">
-              <h3>SARAH MILLER</h3>
-              <div class="reviews__stars">★★★★★</div>
-            </div>
-            <p>
-              Lorem Ipsum has been the industry's standard dummy text ever since
-              the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not
-              only.
-            </p>
-          </div>
-          <div class="reviews__card">
-            <div class="reviews__card-header">
-              <h3>JOHN CARTER</h3>
-              <div class="reviews__stars">★★★★☆</div>
-            </div>
-            <p>
-              Lorem Ipsum has been the industry's standard dummy text ever since
-              the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not
-              only.
-            </p>
-          </div>
-        </div>
-
-        <button class="reviews__arrow reviews__arrow--right">&#10095;</button>
-
-        <div class="reviews__deco reviews__deco--right">
-          <div class="deco-sq deco-sq--1"></div>
-          <div class="deco-sq deco-sq--2"></div>
-          <div class="deco-sq deco-sq--3"></div>
-        </div>
-      </div>
-    </section>
-
     <footer class="footer">
       <div class="footer__main">
         <div class="footer__brand">
@@ -573,7 +604,13 @@
                 >Home</a
               >
             </li>
-            <li><a href="{% url 'fleet' %}#services"  class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}">Our Fleet</a></li>
+            <li>
+              <a
+                href="{% url 'fleet' %}#services"
+                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+                >Our Fleet</a
+              >
+            </li>
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
             <li>
@@ -684,11 +721,11 @@
 
     <script>
       new FinisherHeader({
-        count: 100,
+        count: 180,
         size: {
           min: 1,
           max: 8,
-          pulse: 0.1,
+          pulse: 0.2,
         },
         speed: {
           x: {
@@ -701,7 +738,7 @@
           },
         },
         colors: {
-          background: "#e0e0e0",
+          background: "#0a0a0a",
           particles: ["#a8872d", "#6366f1", "black"],
         },
         blending: "overlay",

@@ -15,7 +15,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -31,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -120,7 +122,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 LOGIN_URL = '/auth/'
 
@@ -137,3 +138,17 @@ from django.contrib.messages import constants as messages
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Elite Wheels Admin",
+    "site_header": "Elite Wheels",
+    "site_brand": "Elite Wheels",
+
+    # MUST be here
+    "custom_css": "myapp/css/admin.css",
+}
+JAZZMIN_UI_TWEAKS = {
+    "navbar": "navbar-dark",
+    "sidebar": "sidebar-dark-primary",
+    "theme": "darkly",
+}

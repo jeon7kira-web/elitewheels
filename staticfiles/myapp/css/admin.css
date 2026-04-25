@@ -1,0 +1,195 @@
+/* =========================
+   ELITE WHEELS ADMIN THEME
+   BLACK + GOLD LUXURY UI
+========================= */
+
+:root {
+  --gold: #d4af37;
+  --gold-soft: rgba(212, 175, 55, 0.2);
+  --dark: #0b0b0b;
+  --dark-2: #121212;
+}
+
+html, body {
+  background: #0b0b0b !important;
+}
+
+.wrapper,
+.content-wrapper,
+.jazzmin-page-wrapper,
+.content {
+  background: #0b0b0b !important;
+}
+/* =========================
+   TOP NAVBAR
+
+========================= */
+.main-header.navbar {
+  background: #0e0e0e !important;
+  border-bottom: 1px solid var(--gold-soft);
+}
+
+.main-header .nav-link,
+.main-header .navbar-brand {
+  color: var(--gold) !important;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+.main-sidebar {
+  background: #0e0e0e !important;
+  border-right: 1px solid var(--gold-soft);
+}
+
+.brand-link {
+  background: #0b0b0b !important;
+  color: var(--gold) !important;
+  font-weight: 600;
+  border-bottom: 1px solid var(--gold-soft);
+}
+
+/* Sidebar menu items */
+.nav-sidebar .nav-link {
+  color: #bbb !important;
+  transition: 0.3s ease;
+}
+
+.nav-sidebar .nav-link:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+  color: var(--gold) !important;
+}
+
+.nav-sidebar .nav-link.active {
+  background: rgba(212, 175, 55, 0.15) !important;
+  border-left: 3px solid var(--gold);
+  color: var(--gold) !important;
+}
+
+/* =========================
+   DASHBOARD CARDS
+========================= */
+.small-box {
+  background: var(--dark-2) !important;
+  border: 1px solid var(--gold-soft) !important;
+  border-radius: 14px;
+  transition: 0.3s ease;
+  color: #fff !important;
+}
+
+.small-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 35px rgba(212, 175, 55, 0.2);
+}
+
+/* Icons inside cards */
+.small-box .icon {
+  color: var(--gold) !important;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn-primary {
+  background: linear-gradient(135deg, #c9a646, #f5d77a) !important;
+  border: none !important;
+  color: #000 !important;
+  font-weight: 600;
+  border-radius: 6px;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+}
+
+/* =========================
+   TABLES
+========================= */
+.table {
+  background: #0e0e0e !important;
+  color: #ddd !important;
+}
+
+.table thead {
+  background: #121212 !important;
+  color: var(--gold) !important;
+}
+
+.table tbody tr:hover {
+  background: rgba(212, 175, 55, 0.05) !important;
+}
+
+/* =========================
+   TITLES
+========================= */
+h1,
+h2,
+h3,
+.content-header {
+  color: var(--gold) !important;
+}
+
+/* =========================
+   BREADCRUMB
+========================= */
+.breadcrumb a {
+  color: var(--gold) !important;
+}
+
+/* =========================
+   FORMS
+========================= */
+input,
+select,
+textarea {
+  background: #121212 !important;
+  border: 1px solid var(--gold-soft) !important;
+  color: #fff !important;
+}
+
+input:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+}
+
+/* =========================
+   SCROLLBAR (LUXURY TOUCH)
+========================= */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 10px;
+}
+.form-control,
+.form-select,
+textarea {
+  background: #121212 !important;
+  border: 1px solid var(--gold-soft) !important;
+  color: #fff !important;
+}
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+  background: #121212 !important;
+  color: #fff !important;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) #0b0b0b;
+}
+.table tbody tr:nth-child(even) {
+  background: #101010 !important;
+}
+::selection {
+  background: var(--gold);
+  color: #000;
+}
