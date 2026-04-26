@@ -177,3 +177,11 @@ def book_car(request, car_id):
             pickup_date=pickup,
             dropoff_date=dropoff
         )
+
+@login_required(login_url='/auth/')
+def booking_view(request):
+    return render(request,'myapp/booking.html')
+
+def confirmation_view(request):
+    return render(request,'myapp/confirmation.html')
+

@@ -1,0 +1,188 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home</title>
+
+    <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+    <link rel="stylesheet" href="{% static 'myapp/css/fleet.css' %}" />
+    <link rel="stylesheet" href="{% static 'myapp/css/booking.css' %}" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">
+        <h1>Elite<span>Wheels</span></h1>
+        <p>Luxury Car Rentals</p>
+      </div>
+
+      <ul>
+        <li>
+          <a
+            href="{% url 'home' %}"
+            class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+          >
+            Home
+          </a>
+        </li>
+        <li>
+          <a
+            href="{% url 'fleet' %}"
+            class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+            >Our Fleet</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#services"
+            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
+            >Services</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'home' %}#about"
+            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+            >About us</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'contact' %}"
+            class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
+            >Contact</a
+          >
+        </li>
+        <li>
+          <a
+            href="{% url 'faq' %}"
+            class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
+            >FAQs</a
+          >
+        </li>
+      </ul>
+
+      <div class="profile">
+        {% if user.is_authenticated %}
+
+        <a
+          href="{% url 'dashboard' %}"
+          class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+        >
+          {{ user.first_name|default:user.username }}'s Dashboard ▼
+        </a>
+
+        <!-- LOGOUT BUTTON -->
+        <form method="POST" action="{% url 'logout' %}" style="display: inline">
+          {% csrf_token %}
+          <button class="btn logout" type="submit">Logout</button>
+        </form>
+
+        {% else %}
+
+        <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+
+        {% endif %}
+      </div>
+    </nav>
+    <div class="whatsapp-icon">
+      <img src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}" />
+    </div>
+    <div class="header finisher-header">
+      <div class="card">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        </div>
+
+        <h2>Booking Confirmed!</h2>
+        <p class="subtitle">
+          Your reservation for the <strong>Renault Megane 4</strong> has been
+          confirmed. You'll receive a confirmation email shortly at
+          <span>example@gmail.com</span>.
+        </p>
+
+        <div class="details-box">
+          <h3>Booking Details</h3>
+
+          <div class="detail-row">
+            <span class="d-label">Vehicle</span>
+            <span class="d-value">Renault Megane 4</span>
+          </div>
+          <div class="detail-row">
+            <span class="d-label">Category</span>
+            <span class="d-value">Sports</span>
+          </div>
+          <div class="detail-row">
+            <span class="d-label">Pick-up Date</span>
+            <span class="d-value">2027-02-10</span>
+          </div>
+          <div class="detail-row">
+            <span class="d-label">Return Date</span>
+            <span class="d-value">2027-02-13</span>
+          </div>
+          <div class="detail-row">
+            <span class="d-label">Duration</span>
+            <span class="d-value">3 Days</span>
+          </div>
+          <div class="detail-row">
+            <span class="d-label">Additional Driver</span>
+            <span class="d-value">Yes</span>
+          </div>
+
+          <div class="total-row">
+            <span class="d-label">Total Amount</span>
+            <span class="d-value">1,050 MAD</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="{% url 'home' %}"
+            ><button class="btn-home">Back To Home</button></a
+          >
+          <a href="{% url 'fleet' %}"
+            ><button class="btn-browse">Browse More Cars</button></a
+          >
+        </div>
+      </div>
+    </div>
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: {
+          min: 1,
+          max: 8,
+          pulse: 0.1,
+        },
+        speed: {
+          x: {
+            min: 0,
+            max: 0.4,
+          },
+          y: {
+            min: 0,
+            max: 0.6,
+          },
+        },
+        colors: {
+          background: "#0a0a0a",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: {
+          center: 1,
+          edge: 0.05,
+        },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
+    </script>
+    <script src="{% static 'myapp/js/home.js' %}"></script>
+  </body>
+</html>

@@ -18,22 +18,18 @@ function filterCars() {
 
     let show = true;
 
-    
     if (brandFilter.value && brand !== brandFilter.value) {
       show = false;
     }
 
-    
     if (typeFilter.value && type !== typeFilter.value) {
       show = false;
     }
 
-    
     if (transFilter.value && trans !== transFilter.value) {
       show = false;
     }
 
-    
     if (priceFilter.value) {
       const [min, max] = priceFilter.value.split("-").map(Number);
       if (price < min || price > max) {
@@ -55,3 +51,5 @@ brandFilter.addEventListener("change", filterCars);
 typeFilter.addEventListener("change", filterCars);
 transFilter.addEventListener("change", filterCars);
 priceFilter.addEventListener("change", filterCars);
+
+

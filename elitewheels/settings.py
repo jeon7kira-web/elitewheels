@@ -143,8 +143,6 @@ JAZZMIN_SETTINGS = {
     "site_title": "Elite Wheels Admin",
     "site_header": "Elite Wheels",
     "site_brand": "Elite Wheels",
-
-    # MUST be here
     "custom_css": "myapp/css/admin.css",
 }
 JAZZMIN_UI_TWEAKS = {

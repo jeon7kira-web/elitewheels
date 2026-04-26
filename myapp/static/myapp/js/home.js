@@ -86,3 +86,25 @@ window.addEventListener("load", () => {
     }
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+  const openBtn = document.getElementById("summary-btn");
+  const overlay = document.getElementById("summary-overlay");
+  const closeBtn = document.getElementById("close-summary");
+
+  openBtn.addEventListener("click", () => {
+    overlay.classList.add("active");
+    document.body.style.overflow = "hidden";
+  });
+
+  closeBtn.addEventListener("click", () => {
+    overlay.classList.remove("active");
+    document.body.style.overflow = "auto";
+  });
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) {
+      overlay.classList.remove("active");
+    }
+  });
+});
