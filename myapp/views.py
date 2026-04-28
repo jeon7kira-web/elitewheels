@@ -99,9 +99,13 @@ def fleet(request):
     cars = Car.objects.all()
 
     if pickup and dropoff:
+        pickup_date = date.fromisoformat(pickup)
+        dropoff_date = date.fromisoformat(dropoff)
+
         booked_cars = Booking.objects.filter(
-            Q(pickup_date__lt=dropoff) & Q(dropoff_date__gt=pickup),
-            status__in=['pending', 'confirmed']
+            Q(pickup_date__lt=dropoff_date) &
+            Q(dropoff_date__gt=pickup_date),
+            status__in=['pending', 'confirmed', 'active']
         ).values_list("car_id", flat=True)
 
         cars = cars.exclude(id__in=booked_cars)
