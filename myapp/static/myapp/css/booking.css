@@ -223,7 +223,22 @@ input:focus {
   background: #a66628;
   box-shadow: 0 6px 20px rgba(184, 115, 51, 0.45);
 }
-
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+.card-header p {
+  color: var(--gold);
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.card-header p:hover {
+  color: var(--text);
+}
 .card-header h2 {
   font-size: 1.15rem;
   font-weight: 600;
@@ -380,11 +395,9 @@ input:focus {
   position: fixed;
   inset: 0;
   z-index: 99999;
-
   background: rgba(0, 0, 0, 0.65);
 
   display: none;
-
   justify-content: center;
   align-items: flex-start;
 

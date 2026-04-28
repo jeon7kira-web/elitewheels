@@ -67,9 +67,7 @@
       </div>
     </nav>
     <div class="whatsapp-icon">
-      <img
-        src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}"
-      />
+      <img src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}" />
     </div>
     <!-- 🔥 FINISHER HEADER (IMPORTANT PART) -->
     <div class="header finisher-header">
@@ -108,14 +106,15 @@
             <div class="dates">
               <div class="input-group">
                 <label>Pickup Date</label>
-                <input type="date" name="pickup-date" />
+                <input type="date" name="pickup_date" />
               </div>
 
               <div class="input-group">
                 <label>Drop off date</label>
-                <input type="date" />
+                <input type="date" name="dropoff_date" />
               </div>
-              <button>Search</button>
+
+              <button type="submit">Search</button>
             </div>
           </div>
         </form>

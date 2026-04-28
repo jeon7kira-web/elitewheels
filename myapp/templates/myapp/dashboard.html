@@ -151,6 +151,30 @@
       <h1>MANAGE YOUR<span>BOOKINGS</span></h1>
     </div>
     <!-- BOOKINGS -->
+    <h2>My Bookings</h2>
+
+    <h3>🚗 Active</h3>
+    {% for booking in active_bookings %}
+    <div>
+      <img src="{{ booking.car.image.url }}" width="120" />
+      <p>{{ booking.car.name }}</p>
+      <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+      <p>Status: {{ booking.status }}</p>
+    </div>
+    {% empty %}
+    <p>No active bookings</p>
+    {% endfor %}
+
+    <h3>✅ Completed</h3>
+    {% for booking in completed_bookings %}
+    <div style="opacity: 0.6">
+      <img src="{{ booking.car.image.url }}" width="120" />
+      <p>{{ booking.car.name }}</p>
+      <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+    </div>
+    {% empty %}
+    <p>No past bookings</p>
+    {% endfor %} {% comment %}
     <section class="dash-section">
       <div class="bookings-grid">
         <div class="booking-card">
@@ -228,6 +252,7 @@
         </div>
       </div>
     </section>
+    {% endcomment %}
 
     <!-- SETTINGS (PASSWORD) -->
     <div class="title">

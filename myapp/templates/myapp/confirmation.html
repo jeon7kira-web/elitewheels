@@ -101,42 +101,46 @@
 
         <h2>Booking Confirmed!</h2>
         <p class="subtitle">
-          Your reservation for the <strong>Renault Megane 4</strong> has been
-          confirmed. You'll receive a confirmation email shortly at
-          <span>example@gmail.com</span>.
+          Your reservation for the
+          <strong><span class="d-value">{{ booking.car.name }}</span></strong>
+          has been confirmed. You'll receive a confirmation email shortly at
+          <span class="d-value">{{ booking.user.email }}</span>.
         </p>
-
         <div class="details-box">
           <h3>Booking Details</h3>
 
           <div class="detail-row">
             <span class="d-label">Vehicle</span>
-            <span class="d-value">Renault Megane 4</span>
+            <span class="d-value">{{ booking.car.name }}</span>
           </div>
           <div class="detail-row">
             <span class="d-label">Category</span>
-            <span class="d-value">Sports</span>
+            <span class="d-value">{{ booking.car.car_type }}</span>
           </div>
           <div class="detail-row">
-            <span class="d-label">Pick-up Date</span>
-            <span class="d-value">2027-02-10</span>
+            <span class="d-label">Pick Up Date</span>
+            <span class="d-value">{{ booking.pickup_date }}</span>
           </div>
           <div class="detail-row">
             <span class="d-label">Return Date</span>
-            <span class="d-value">2027-02-13</span>
+            <span class="d-value">{{ booking.dropoff_date }}</span>
           </div>
           <div class="detail-row">
             <span class="d-label">Duration</span>
-            <span class="d-value">3 Days</span>
+            <span class="d-value">
+              {{ booking.dropoff_date|timeuntil:booking.pickup_date }}
+            </span>
           </div>
           <div class="detail-row">
             <span class="d-label">Additional Driver</span>
-            <span class="d-value">Yes</span>
+            <span class="d-value">
+              {% if booking.with_driver %}Yes{% else %}No{% endif %}
+            </span>
           </div>
 
           <div class="total-row">
             <span class="d-label">Total Amount</span>
-            <span class="d-value">1,050 MAD</span>
+            <span class="d-value">{{ booking.total_price }} MAD</span>
           </div>
         </div>
 

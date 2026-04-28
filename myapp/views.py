@@ -1,12 +1,14 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from .models import Profile, Car, Booking
 from django.db.models import Q
-
-
+from django.utils import timezone
+from datetime import date
+from django.shortcuts import get_object_or_404
 
 
 def home(request):
@@ -17,18 +19,16 @@ def auth_view(request):
     return render(request, 'myapp/auth.html')
 
 
-
 def faq_view(request):
-    return render(request,'myapp/faq.html')
+    return render(request, 'myapp/faq.html')
+
 
 def contact_view(request):
-    return render(request,'myapp/contact.html')
+    return render(request, 'myapp/contact.html')
+
 
 def about_view(request):
-    return render(request,'myapp/#about')
-
-
-
+    return render(request, 'myapp/#about')
 
 
 def register_view(request):
@@ -40,7 +40,6 @@ def register_view(request):
         confirm_password = request.POST.get('confirm_password')
         license_file = request.FILES.get('license')
 
-        
         if password != confirm_password:
             messages.error(request, "Passwords do not match")
             return redirect('auth')
@@ -54,11 +53,9 @@ def register_view(request):
             email=email,
             password=password
         )
-
         user.first_name = full_name
         user.save()
 
-        
         Profile.objects.create(
             user=user,
             phone=phone,
@@ -86,12 +83,134 @@ def login_view(request):
             return redirect('auth')
 
     return redirect('auth')
+
+
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return redirect('home')
+    return redirect('home')
+
+
+def fleet(request):
+    pickup = request.GET.get("pickup_date")
+    dropoff = request.GET.get("dropoff_date")
+
+    cars = Car.objects.all()
+
+    if pickup and dropoff:
+        booked_cars = Booking.objects.filter(
+            Q(pickup_date__lt=dropoff) & Q(dropoff_date__gt=pickup),
+            status__in=['pending', 'confirmed']
+        ).values_list("car_id", flat=True)
+
+        cars = cars.exclude(id__in=booked_cars)
+
+    brands = Car.objects.values_list('brand', flat=True).distinct()
+    types = Car.objects.values_list('car_type', flat=True).distinct()
+    transmissions = Car.objects.values_list('transmission', flat=True).distinct()
+
+    return render(request, "myapp/ourfleet.html", {
+        "cars": cars,
+        "brands": brands,
+        "types": types,
+        "transmissions": transmissions,
+        "pickup_date": pickup,
+        "dropoff_date": dropoff,
+    })
+
+
+def car_details(request, car_id):
+    car = Car.objects.get(id=car_id)
+
+    if request.method == "POST":
+        pickup = request.POST.get("pickup_date")
+        dropoff = request.POST.get("dropoff_date")
+
+        request.session["pickup_date"] = pickup
+        request.session["dropoff_date"] = dropoff
+
+        return redirect(f"/book/{car.id}/")
+
+    return render(request, "myapp/cardetails.html", {
+        "car": car
+    })
+
+
+@login_required(login_url='/auth/')
+def book_car(request, car_id):
+    car = Car.objects.get(id=car_id)
+
+    # ✅ GET FROM SESSION (NOT GET PARAMS)
+    pickup = request.session.get("pickup_date")
+    dropoff = request.session.get("dropoff_date")
+
+    # safety check
+    if not pickup or not dropoff:
+        return redirect("cardetails", car_id=car.id)
+
+    # calculate pricing
+    pickup_date = date.fromisoformat(pickup)
+    dropoff_date = date.fromisoformat(dropoff)
+
+    total_days = (dropoff_date - pickup_date).days
+    total_price = None
+
+    if total_days > 0:
+        total_price = total_days * car.price_per_day
+
+    # POST = confirm booking
+    if request.method == "POST":
+        try:
+            booking = Booking.objects.create(
+                user=request.user,
+                car=car,
+                pickup_date=pickup_date,
+                dropoff_date=dropoff_date,
+                with_driver=request.POST.get("with_driver") == "on"
+            )
+
+            # optional: clear session after booking
+            request.session.pop("pickup_date", None)
+            request.session.pop("dropoff_date", None)
+
+            return redirect("confirmation", booking_id=booking.id)
+
+        except ValidationError as e:
+            return render(request, "myapp/booking.html", {
+                "car": car,
+                "error": e.message_dict.get("__all__", e.messages),
+                "pickup_date": pickup,
+                "dropoff_date": dropoff,
+                "total_price": total_price,
+                "total_days": total_days,
+            })
+
+    return render(request, "myapp/booking.html", {
+        "car": car,
+        "pickup_date": pickup,
+        "dropoff_date": dropoff,
+        "total_price": total_price,
+        "total_days": total_days,
+    })
+
+def confirmation_view(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    return render(request, "myapp/confirmation.html", {
+        "booking": booking
+    }) 
+
 @login_required(login_url='/auth/')
 def dashboard_view(request):
     user = request.user
-
-    
     profile, created = Profile.objects.get_or_create(user=user)
+
+    today = timezone.now().date()
+
+    bookings = Booking.objects.filter(user=user).select_related('car').order_by('-pickup_date')
+    active_bookings = bookings.filter(dropoff_date__gte=today)
+    completed_bookings = bookings.filter(dropoff_date__lt=today)
 
     if request.method == "POST":
 
@@ -100,13 +219,16 @@ def dashboard_view(request):
             user.last_name = request.POST.get("last_name")
             user.email = request.POST.get("email")
             profile.phone = request.POST.get("phone")
+
             if request.FILES.get("license"):
                 profile.license = request.FILES.get("license")
+
             user.save()
             profile.save()
+
             messages.success(request, "Profile updated successfully!")
             return redirect("dashboard")
-        
+
         if "change_password" in request.POST:
             old_password = request.POST.get("old_password")
             new_password = request.POST.get("new_password")
@@ -122,66 +244,22 @@ def dashboard_view(request):
 
             user.set_password(new_password)
             user.save()
-            
             update_session_auth_hash(request, user)
 
             messages.success(request, "Password changed successfully!")
             return redirect("dashboard")
 
     return render(request, "myapp/dashboard.html", {
-        "profile": profile
+        "profile": profile,
+        "active_bookings": active_bookings,
+        "completed_bookings": completed_bookings,
     })
 
-def logout_view(request):
-    if request.method == 'POST':
-        logout(request)
-        return redirect('home')
-    
-    # views.py
 
-def fleet(request):
-    pickup = request.GET.get("pickup_date")
-    dropoff = request.GET.get("dropoff_date")
-
-    cars = Car.objects.all()
-
-    if pickup and dropoff:
-        booked_cars = Booking.objects.filter(
-            Q(pickup_date__lt=dropoff) & Q(dropoff_date__gt=pickup)
-        ).values_list("car_id", flat=True)
-
-        cars = cars.exclude(id__in=booked_cars)
-
-    brands = Car.objects.values_list('brand', flat=True).distinct()
-    types = Car.objects.values_list('car_type', flat=True).distinct()
-    transmissions = Car.objects.values_list('transmission', flat=True).distinct()
-
-    return render(request, "myapp/ourfleet.html", {
-        "cars": cars,
-        "brands": brands,
-        "types": types,
-        "transmissions": transmissions
-    })
-    
-
-    
 @login_required
-def book_car(request, car_id):
-    if request.method == "POST":
-        pickup = request.POST.get("pickup_date")
-        dropoff = request.POST.get("dropoff_date")
-
-        Booking.objects.create(
-            user=request.user,
-            car_id=car_id,
-            pickup_date=pickup,
-            dropoff_date=dropoff
-        )
-
-@login_required(login_url='/auth/')
-def booking_view(request):
-    return render(request,'myapp/booking.html')
-
-def confirmation_view(request):
-    return render(request,'myapp/confirmation.html')
-
+def cancel_booking(request, booking_id):
+    booking = Booking.objects.get(id=booking_id, user=request.user)
+    booking.status = 'cancelled'
+    booking.save()
+    messages.success(request, "Booking cancelled")
+    return redirect("dashboard")    
