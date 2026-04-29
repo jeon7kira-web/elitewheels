@@ -130,3 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+const disabledDates = { disabled_dates,safe };
+
+flatpickr("#date-range", {
+  mode: "range",
+  dateFormat: "Y-m-d",
+  minDate: "today",
+  disable: disabledDates,
+  showMonths: 2
+});

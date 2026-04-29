@@ -1250,3 +1250,10 @@ hr {
   margin-bottom: 15px;
   font-weight: 500;
 }
+.booked-day {
+  background: #2a2a2a !important;
+  color: #777 !important;
+  text-decoration: line-through;
+  pointer-events: none;
+  opacity: 0.5;
+}

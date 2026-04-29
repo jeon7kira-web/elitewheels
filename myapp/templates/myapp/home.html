@@ -7,6 +7,10 @@
     <title>Home</title>
 
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
   </head>
 
   <body>
@@ -104,15 +108,12 @@
         <form method="GET" action="{% url 'fleet' %}">
           <div class="book-now">
             <div class="dates">
-              <div class="input-group">
-                <label>Pickup Date</label>
-                <input type="date" name="pickup_date" />
-              </div>
-
-              <div class="input-group">
-                <label>Drop off date</label>
-                <input type="date" name="dropoff_date" />
-              </div>
+              <input
+                type="text"
+                id="date-range"
+                name="date_range"
+                placeholder="Select dates"
+              />
 
               <button type="submit">Search</button>
             </div>
@@ -749,6 +750,36 @@
         shapes: ["c", "t", "s"],
       });
     </script>
+    <script>
+      let disabledDates = [];
+
+      try {
+        disabledDates = JSON.parse(
+          '{{ disabled_dates|default:"[]"|escapejs }}',
+        );
+      } catch (e) {
+        disabledDates = [];
+      }
+    </script>
+    {% if disabled_dates %}
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const input = document.querySelector("#date-range");
+        if (!input) return;
+
+        flatpickr("#date-range", {
+          mode: "range",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          showMonths: 2,
+          disable: disabledDates || [],
+        });
+      });
+    </script>
+    {% endif %}
     <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
 </html>

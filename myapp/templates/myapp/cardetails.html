@@ -8,6 +8,10 @@
 
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/fleet.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
   </head>
 
   <body>
@@ -130,11 +134,12 @@
       <form method="POST">
         {% csrf_token %}
 
-        <label>Pickup Date:</label>
-        <input type="date" name="pickup_date" required />
-
-        <label>Dropoff Date:</label>
-        <input type="date" name="dropoff_date" required />
+        <input
+          type="text"
+          id="date-range"
+          name="date_range"
+          placeholder="Select dates"
+        />
 
         <button type="submit">Book Now</button>
       </form>
@@ -307,6 +312,18 @@
         },
         skew: 0,
         shapes: ["c", "t", "s"],
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#date-range", {
+          mode: "range",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          showMonths: 2,
+        });
       });
     </script>
     <script src="{% static 'myapp/js/fleet.js' %}"></script>

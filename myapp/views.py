@@ -7,8 +7,11 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile, Car, Booking
 from django.db.models import Q
 from django.utils import timezone
-from datetime import date
+from datetime import date, timedelta    
+import json
 from django.shortcuts import get_object_or_404
+from django.utils.dateparse import parse_date
+
 
 
 def home(request):
@@ -141,63 +144,56 @@ def car_details(request, car_id):
     })
 
 
+from datetime import date, timedelta
+import json
+
 @login_required(login_url='/auth/')
 def book_car(request, car_id):
     car = Car.objects.get(id=car_id)
 
-    # ✅ GET FROM SESSION (NOT GET PARAMS)
-    pickup = request.session.get("pickup_date")
-    dropoff = request.session.get("dropoff_date")
+    bookings = Booking.objects.filter(
+        car=car,
+        status__in=["pending", "confirmed", "active"]
+    )
 
-    # safety check
-    if not pickup or not dropoff:
-        return redirect("cardetails", car_id=car.id)
+    disabled_dates_list = []
 
-    # calculate pricing
-    pickup_date = date.fromisoformat(pickup)
-    dropoff_date = date.fromisoformat(dropoff)
+    for b in bookings:
+        current = b.pickup_date
+        while current <= b.dropoff_date:
+            disabled_dates_list.append(current.strftime("%Y-%m-%d"))
+            current += timedelta(days=1)
 
-    total_days = (dropoff_date - pickup_date).days
-    total_price = None
-
-    if total_days > 0:
-        total_price = total_days * car.price_per_day
-
-    # POST = confirm booking
     if request.method == "POST":
-        try:
-            booking = Booking.objects.create(
-                user=request.user,
-                car=car,
-                pickup_date=pickup_date,
-                dropoff_date=dropoff_date,
-                with_driver=request.POST.get("with_driver") == "on"
-            )
+        date_range = request.POST.get("date_range")
 
-            # optional: clear session after booking
-            request.session.pop("pickup_date", None)
-            request.session.pop("dropoff_date", None)
+        if not date_range:
+            return redirect("cardetails", car_id=car.id)
 
-            return redirect("confirmation", booking_id=booking.id)
+        pickup, dropoff = date_range.split(" to ")
 
-        except ValidationError as e:
-            return render(request, "myapp/booking.html", {
-                "car": car,
-                "error": e.message_dict.get("__all__", e.messages),
-                "pickup_date": pickup,
-                "dropoff_date": dropoff,
-                "total_price": total_price,
-                "total_days": total_days,
-            })
+        pickup_date = date.fromisoformat(pickup)
+        dropoff_date = date.fromisoformat(dropoff)
+
+        total_days = (dropoff_date - pickup_date).days
+
+        if total_days <= 0:
+            raise ValidationError("Invalid date range")
+
+        booking = Booking.objects.create(
+            user=request.user,
+            car=car,
+            pickup_date=pickup_date,
+            dropoff_date=dropoff_date,
+            with_driver=request.POST.get("with_driver") == "on"
+        )
+
+        return redirect("confirmation", booking_id=booking.id)
 
     return render(request, "myapp/booking.html", {
         "car": car,
-        "pickup_date": pickup,
-        "dropoff_date": dropoff,
-        "total_price": total_price,
-        "total_days": total_days,
+        "disabled_dates": json.dumps(disabled_dates_list),
     })
-
 def confirmation_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
 
@@ -267,3 +263,5 @@ def cancel_booking(request, booking_id):
     booking.save()
     messages.success(request, "Booking cancelled")
     return redirect("dashboard")    
+
+

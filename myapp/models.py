@@ -146,3 +146,4 @@ class Booking(models.Model):
             if self.with_driver:
                 self.total_price += days * 50  # +50 MAD/day for driver
         super().save(*args, **kwargs)
+

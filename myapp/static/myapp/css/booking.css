@@ -243,6 +243,7 @@ input:focus {
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--text);
+  color: darkblue;
   letter-spacing: -0.02em;
 }
 
