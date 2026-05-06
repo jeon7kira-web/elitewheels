@@ -216,25 +216,33 @@ def dashboard_view(request):
 
     today = timezone.now().date()
 
-    bookings = Booking.objects.filter(user=user)\
-        .select_related('car')\
+    bookings = (
+        Booking.objects
+        .filter(user=user)
+        .select_related('car')
         .order_by('-pickup_date')
+    )
 
-    # ✅ Smart status enhancement (DO NOT override everything)
-    bookings = Booking.objects.filter(user=user)\
-    .select_related('car')\
-    .order_by('-pickup_date')
+    # ---- SMART STATUS (computed, not saved) ----
+    for booking in bookings:
+        if booking.pickup_date and booking.pickup_date > today:
+            booking.smart_status = "upcoming"
+        elif hasattr(booking, "return_date") and booking.return_date and booking.return_date < today:
+            booking.smart_status = "completed"
+        else:
+            booking.smart_status = getattr(booking, "status", "unknown")
 
     if request.method == "POST":
 
+        # -------- PROFILE UPDATE --------
         if "update_profile" in request.POST:
-            user.first_name = request.POST.get("first_name")
-            user.last_name = request.POST.get("last_name")
-            user.email = request.POST.get("email")
-            profile.phone = request.POST.get("phone")
+            user.first_name = request.POST.get("first_name", "")
+            user.last_name = request.POST.get("last_name", "")
+            user.email = request.POST.get("email", "")
+            profile.phone = request.POST.get("phone", "")
 
             if request.FILES.get("license"):
-                profile.license = request.FILES.get("license")
+                profile.license = request.FILES["license"]
 
             user.save()
             profile.save()
@@ -242,6 +250,7 @@ def dashboard_view(request):
             messages.success(request, "Profile updated successfully!")
             return redirect("dashboard")
 
+        # -------- PASSWORD CHANGE --------
         if "change_password" in request.POST:
             old_password = request.POST.get("old_password")
             new_password = request.POST.get("new_password")
