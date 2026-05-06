@@ -108,12 +108,11 @@
         <form method="GET" action="{% url 'fleet' %}">
           <div class="book-now">
             <div class="dates">
-              <input
-                type="text"
-                id="date-range"
-                name="date_range"
-                placeholder="Select dates"
-              />
+              <input type="text" id="date-range" placeholder="Select dates" />
+
+              <!-- hidden inputs -->
+              <input type="hidden" name="pickup_date" id="pickup-date" />
+              <input type="hidden" name="dropoff_date" id="dropoff-date" />
 
               <button type="submit">Search</button>
             </div>
@@ -282,7 +281,7 @@
         </div>
       </div>
       <div class="see-all">
-        <span>See All >>></span>
+        <span>See All  &gt;&gt;&gt;</span>
       </div>
 
       <div class="title">
@@ -388,7 +387,7 @@
         </div>
       </div>
       <div class="see-all">
-        <span>See All Cars>>></span>
+        <span>See All Cars &gt;&gt;&gt;</span>
       </div>
       <div class="title" id="services">
         <span
@@ -750,36 +749,28 @@
         shapes: ["c", "t", "s"],
       });
     </script>
-    <script>
-      let disabledDates = [];
-
-      try {
-        disabledDates = JSON.parse(
-          '{{ disabled_dates|default:"[]"|escapejs }}',
-        );
-      } catch (e) {
-        disabledDates = [];
-      }
-    </script>
-    {% if disabled_dates %}
 
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const input = document.querySelector("#date-range");
-        if (!input) return;
-
         flatpickr("#date-range", {
-          mode: "range",
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          showMonths: 2,
-          disable: disabledDates || [],
-        });
+  mode: "range",
+  dateFormat: "Y-m-d",
+  minDate: "today",
+  showMonths: 2,
+
+  onChange: function(selectedDates) {
+    if (selectedDates.length === 2) {
+      const pickup = selectedDates[0].toISOString().split("T")[0];
+      const dropoff = selectedDates[1].toISOString().split("T")[0];
+
+      document.getElementById("pickup-date").value = pickup;
+      document.getElementById("dropoff-date").value = dropoff;
+    }
+  }
+});
       });
     </script>
-    {% endif %}
     <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
 </html>

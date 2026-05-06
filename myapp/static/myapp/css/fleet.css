@@ -362,3 +362,103 @@ body {
 .title h1 span {
   color: #a8872d;
 }
+/* FLATPICKR DARK GOLD THEME */
+.flatpickr-calendar {
+  background: var(--card) !important;
+  border: 1px solid #a8872d !important;
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(168, 135, 45, 0.2);
+}
+
+/* Header (month/year) */
+.flatpickr-months {
+  background: #111;
+  border-radius: 8px 8px 0 0;
+  color: #a8872d !important;
+}
+
+.flatpickr-month {
+  color: #a8872d !important;
+  fill: #a8872d;
+  background: #0a0a0a;
+}
+
+.flatpickr-current-month input.cur-year,
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  color: #a8872d !important;
+  background: transparent;
+  font-weight: 600;
+}
+
+.flatpickr-monthDropdown-months option {
+  background: #0a0a0a;
+}
+
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  fill: #a8872d !important;
+  color: #a8872d !important;
+}
+
+.flatpickr-prev-month:hover svg,
+.flatpickr-next-month:hover svg {
+  fill: #fff !important;
+}
+
+/* Day names (Mon, Tue...) */
+.flatpickr-weekday {
+  color: #a8872d !important;
+  font-weight: 600;
+}
+
+/* Regular days */
+.flatpickr-day {
+  color: #fff !important;
+  border-radius: 4px;
+}
+
+.flatpickr-day:hover {
+  background: #a8872d !important;
+  border-color: #a8872d !important;
+  color: #000;
+}
+
+/* Selected day */
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+  background: #a8872d !important;
+  border-color: #a8872d !important;
+  color: #000 !important;
+  font-weight: 700;
+}
+
+/* Range in-between */
+.flatpickr-day.inRange {
+  background: rgba(168, 135, 45, 0.2) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+
+/* flatpickr-disabled dates */
+.flatpickr-day.flatpickr-disabled {
+  background: #3d3d3d !important;
+  color: var(--muted) !important;
+  text-decoration: line-through !important;
+  cursor: not-allowed !important;
+  border-color: transparent !important;
+  opacity: 1 !important;
+}
+
+/* Today */
+.flatpickr-day.today {
+  border-color: #a8872d !important;
+}
+.calendar-note {
+  padding: 12px;
+  text-align: center;
+  font-size: 13px;
+  color: #c94f4f; /* gold vibe */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: #0a0a0a;
+}

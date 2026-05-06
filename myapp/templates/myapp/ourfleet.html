@@ -162,20 +162,6 @@
     </div>
 
   </div>
-  <form method="GET" action="{% url 'fleet' %}" class="date-search">
-  <div class="filter-bar">
-    
-    <input
-          type="text"
-          id="date-range"
-          name="date_range"
-          placeholder="Select dates"
-        />
-
-    <button type="submit">Search Availability</button>
-
-  </div>
-</form>
 
   <!-- RESULTS COUNT -->
   <div class="results-count">
@@ -234,7 +220,7 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
 
 </div>
 <div class="see-all">
-    <span>Discover More >></span>
+    <span>Discover More  &gt;&gt;&gt;</span>
 </div>
     </div>
     <footer class="footer">
@@ -397,18 +383,7 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
         shapes: ["c", "t", "s"],
       });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        flatpickr("#date-range", {
-          mode: "range",
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          showMonths: 2,
-        });
-      });
-    </script>
+  
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>
 </html>

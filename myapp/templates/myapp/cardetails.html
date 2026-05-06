@@ -133,15 +133,17 @@
 
       <form method="POST">
         {% csrf_token %}
-
         <input
           type="text"
           id="date-range"
           name="date_range"
           placeholder="Select dates"
         />
-
-        <button type="submit">Book Now</button>
+        <div class="price-preview">
+          <p id="days">0 days</p>
+          <p id="total">0 MAD</p>
+        </div>
+        <button type="submit">Continue to Book</button>
       </form>
 
       <a href="{% url 'fleet' %}">
@@ -281,50 +283,46 @@
     </footer>
 
     <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
-    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
-
     <script>
-      new FinisherHeader({
-        count: 100,
-        size: {
-          min: 1,
-          max: 8,
-          pulse: 0.1,
-        },
-        speed: {
-          x: {
-            min: 0,
-            max: 0.4,
-          },
-          y: {
-            min: 0,
-            max: 0.6,
-          },
-        },
-        colors: {
-          background: "#0a0a0a",
-          particles: ["#a8872d", "#6366f1", "black"],
-        },
-        blending: "overlay",
-        opacity: {
-          center: 1,
-          edge: 0.05,
-        },
-        skew: 0,
-        shapes: ["c", "t", "s"],
-      });
+      const pricePerDay = {{ car.price_per_day }};
     </script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
     <script>
-      document.addEventListener("DOMContentLoaded", function () {
-        flatpickr("#date-range", {
-          mode: "range",
-          dateFormat: "Y-m-d",
-          minDate: "today",
-          showMonths: 2,
-        });
+            const disabled_dates = {{ disabled_dates|safe }};
+
+            document.addEventListener("DOMContentLoaded", function () {
+             flatpickr("#date-range", {
+        mode: "range",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disable: disabled_dates,
+        showMonths: 2,
+
+        onReady: function (_, __, instance) {
+          if (!instance.calendarContainer.querySelector(".calendar-note")) {
+            const note = document.createElement("div");
+            note.className = "calendar-note";
+            note.innerHTML = "! Unavailable dates appear in gray";
+            instance.calendarContainer.appendChild(note);
+          }
+        },
+
+        onChange: function(selectedDates) {
+          if (selectedDates.length === 2) {
+            const start = selectedDates[0];
+            const end = selectedDates[1];
+
+            const diffTime = end - start;
+             const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+            const total = days * pricePerDay;
+
+            document.getElementById("days").innerText = days + " days";
+            document.getElementById("total").innerText = total + " MAD";
+          }
+        }
       });
+            });
     </script>
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>

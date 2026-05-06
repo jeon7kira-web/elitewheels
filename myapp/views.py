@@ -130,34 +130,12 @@ def fleet(request):
 def car_details(request, car_id):
     car = Car.objects.get(id=car_id)
 
-    if request.method == "POST":
-        pickup = request.POST.get("pickup_date")
-        dropoff = request.POST.get("dropoff_date")
-
-        request.session["pickup_date"] = pickup
-        request.session["dropoff_date"] = dropoff
-
-        return redirect(f"/book/{car.id}/")
-
-    return render(request, "myapp/cardetails.html", {
-        "car": car
-    })
-
-
-from datetime import date, timedelta
-import json
-
-@login_required(login_url='/auth/')
-def book_car(request, car_id):
-    car = Car.objects.get(id=car_id)
-
     bookings = Booking.objects.filter(
         car=car,
         status__in=["pending", "confirmed", "active"]
     )
 
     disabled_dates_list = []
-
     for b in bookings:
         current = b.pickup_date
         while current <= b.dropoff_date:
@@ -166,19 +144,47 @@ def book_car(request, car_id):
 
     if request.method == "POST":
         date_range = request.POST.get("date_range")
+        if date_range and " to " in date_range:
+            pickup, dropoff = date_range.split(" to ")
+            request.session["pickup_date"] = pickup
+            request.session["dropoff_date"] = dropoff
+            return redirect("book_car", car_id=car.id)
 
-        if not date_range:
-            return redirect("cardetails", car_id=car.id)
+    return render(request, "myapp/cardetails.html", {
+        "car": car,
+        "disabled_dates": json.dumps(disabled_dates_list),
+    })
 
-        pickup, dropoff = date_range.split(" to ")
+
+@login_required(login_url='/auth/')
+def book_car(request, car_id):
+    car = Car.objects.get(id=car_id)
+
+    pickup = request.session.get("pickup_date")
+    dropoff = request.session.get("dropoff_date")
+
+    # Calculate totals for the summary
+    total_days = 0
+    total_price = 0
+    if pickup and dropoff:
+        pickup_date = date.fromisoformat(pickup)
+        dropoff_date = date.fromisoformat(dropoff)
+        total_days = (dropoff_date - pickup_date).days
+        total_price = total_days * car.price_per_day
+
+    if request.method == "POST":
+        pickup = request.POST.get("pickup_date") or pickup
+        dropoff = request.POST.get("dropoff_date") or dropoff
+
+        if not pickup or not dropoff:
+            return redirect("car_details", car_id=car.id)
 
         pickup_date = date.fromisoformat(pickup)
         dropoff_date = date.fromisoformat(dropoff)
-
         total_days = (dropoff_date - pickup_date).days
 
         if total_days <= 0:
-            raise ValidationError("Invalid date range")
+            return redirect("car_details", car_id=car.id)
 
         booking = Booking.objects.create(
             user=request.user,
@@ -187,12 +193,14 @@ def book_car(request, car_id):
             dropoff_date=dropoff_date,
             with_driver=request.POST.get("with_driver") == "on"
         )
-
         return redirect("confirmation", booking_id=booking.id)
 
     return render(request, "myapp/booking.html", {
         "car": car,
-        "disabled_dates": json.dumps(disabled_dates_list),
+        "pickup_date": pickup,
+        "dropoff_date": dropoff,
+        "total_days": total_days,
+        "total_price": total_price,
     })
 def confirmation_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
@@ -208,9 +216,14 @@ def dashboard_view(request):
 
     today = timezone.now().date()
 
-    bookings = Booking.objects.filter(user=user).select_related('car').order_by('-pickup_date')
-    active_bookings = bookings.filter(dropoff_date__gte=today)
-    completed_bookings = bookings.filter(dropoff_date__lt=today)
+    bookings = Booking.objects.filter(user=user)\
+        .select_related('car')\
+        .order_by('-pickup_date')
+
+    # ✅ Smart status enhancement (DO NOT override everything)
+    bookings = Booking.objects.filter(user=user)\
+    .select_related('car')\
+    .order_by('-pickup_date')
 
     if request.method == "POST":
 
@@ -251,11 +264,8 @@ def dashboard_view(request):
 
     return render(request, "myapp/dashboard.html", {
         "profile": profile,
-        "active_bookings": active_bookings,
-        "completed_bookings": completed_bookings,
+        "bookings": bookings,
     })
-
-
 @login_required
 def cancel_booking(request, booking_id):
     booking = Booking.objects.get(id=booking_id, user=request.user)

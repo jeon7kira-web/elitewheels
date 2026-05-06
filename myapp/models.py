@@ -112,10 +112,16 @@ class Booking(models.Model):
 
         if self.status == "cancelled":
             return "cancelled"
+
+        if self.status == "pending":
+            return "pending"
+
         if today < self.pickup_date:
             return "confirmed"
+
         if self.pickup_date <= today <= self.dropoff_date:
             return "active"
+
         return "completed"
 
     # 🔒 VALIDATION

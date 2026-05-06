@@ -51,5 +51,3 @@ brandFilter.addEventListener("change", filterCars);
 typeFilter.addEventListener("change", filterCars);
 transFilter.addEventListener("change", filterCars);
 priceFilter.addEventListener("change", filterCars);
-
-
