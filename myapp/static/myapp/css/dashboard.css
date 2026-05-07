@@ -126,52 +126,65 @@
 }
 
 /* ===== BADGES (LUXURY STYLE) ===== */
+
+/* ACTIVE */
+.booking-card.active {
+  border-color: #22c55e;
+}
+
+/* CONFIRMED */
+.booking-card.confirmed {
+  border-color: darkblue;
+}
+
+/* PENDING */
+.booking-card.pending {
+  border-color: #facc15;
+}
+
+/* COMPLETED */
+.booking-card.completed {
+  border-color: var(--gold);
+  opacity: 0.8;
+}
+
+/* CANCELLED */
+.booking-card.cancelled {
+  border-color: #ef4444;
+  opacity: 0.6;
+}
+
+/* BADGES */
 .badge {
   position: absolute;
-  top: 14px;
-  left: 14px;
-
-  padding: 6px 14px;
+  top: 10px;
+  right: 10px;
+  padding: 6px 12px;
   border-radius: 999px;
-
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-
-  backdrop-filter: blur(6px);
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  box-shadow:
-    0 4px 12px rgba(0, 0, 0, 0.4),
-    inset 0 0 6px rgba(255, 255, 255, 0.05);
-
-  transition: 0.3s;
+  color: white;
 }
 
-/* ===== CONFIRMED (gold luxury) ===== */
-.badge.confirmed {
-  background: linear-gradient(135deg, #e8c96a, #c9a84c);
-  color: #1a1a1a;
-}
-
-/* ===== ACTIVE (slightly brighter gold) ===== */
 .badge.active {
-  background: linear-gradient(135deg, #f5d97a, #d4b24f);
-  color: #1a1a1a;
+  background: #22c55e;
 }
 
-/* ===== COMPLETED (muted dark) ===== */
+.badge.confirmed {
+  background: rgb(2, 2, 85);
+}
+
+.badge.pending {
+  background: #facc15;
+  color: black;
+}
+
 .badge.completed {
-  background: linear-gradient(135deg, #2f2f2f, #1a1a1a);
-  color: #999;
+  background: var(--gold);
 }
 
-/* ===== CANCELLED (luxury red) ===== */
 .badge.cancelled {
-  background: linear-gradient(135deg, #7a1f1f, #3a0d0d);
-  color: #ffb4b4;
+  background: #ef4444;
 }
 /* hover effect */
 .booking-card:hover .badge {

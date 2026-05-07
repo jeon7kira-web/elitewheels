@@ -10,6 +10,7 @@ from django.utils import timezone
 from datetime import date, timedelta    
 import json
 from django.shortcuts import get_object_or_404
+from django.db.models import Case, When, Value, IntegerField
 from django.utils.dateparse import parse_date
 
 
@@ -214,23 +215,24 @@ def dashboard_view(request):
     user = request.user
     profile, created = Profile.objects.get_or_create(user=user)
 
-    today = timezone.now().date()
-
-    bookings = (
-        Booking.objects
-        .filter(user=user)
-        .select_related('car')
-        .order_by('-pickup_date')
+    bookings = list(
+    Booking.objects.filter(user=user).select_related('car')
     )
 
-    # ---- SMART STATUS (computed, not saved) ----
-    for booking in bookings:
-        if booking.pickup_date and booking.pickup_date > today:
-            booking.smart_status = "upcoming"
-        elif hasattr(booking, "return_date") and booking.return_date and booking.return_date < today:
-            booking.smart_status = "completed"
-        else:
-            booking.smart_status = getattr(booking, "status", "unknown")
+    priority = {
+        "active": 1,
+        "confirmed": 2,
+        "pending": 3,
+        "cancelled": 4,
+        "completed": 5,
+    }
+
+    bookings.sort(
+        key=lambda b: (
+            priority.get(b.status_auto, 99),
+            -b.pickup_date.toordinal()
+        )
+    )
 
     if request.method == "POST":
 
@@ -270,10 +272,19 @@ def dashboard_view(request):
 
             messages.success(request, "Password changed successfully!")
             return redirect("dashboard")
+    active_bookings = [
+      b for b in bookings if b.status_auto == "active"
+]
 
+    completed_bookings = [
+        b for b in bookings if b.status_auto == "completed"
+    ]
     return render(request, "myapp/dashboard.html", {
         "profile": profile,
         "bookings": bookings,
+        "active_bookings": active_bookings,
+        "completed_bookings": completed_bookings,
+        
     })
 @login_required
 def cancel_booking(request, booking_id):

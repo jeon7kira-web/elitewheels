@@ -126,9 +126,9 @@
 
             <div class="booking-grid">
               {% for booking in bookings %}
-              <div class="booking-card {{ booking.status }}">
-                <span class="badge {{ booking.smart_status|lower }}">
-                  {{ booking.smart_status|title }}
+              <div class="booking-card {{ booking.status_auto }}">
+                <span class="badge {{ booking.status_auto|lower }}">
+                  {{ booking.status_auto|title }}
                 </span>
 
                 {% if booking.car.image %}
@@ -140,10 +140,7 @@
 
                 <div class="info">
                   <h3>{{ booking.car.name }}</h3>
-                  <p>
-                    {{ booking.pickup_date|date:"M d, Y" }} → {{
-                    booking.dropoff_date|date:"M d, Y" }}
-                  </p>
+                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
                 </div>
               </div>
               {% empty %}
