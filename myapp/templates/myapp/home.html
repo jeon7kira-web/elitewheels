@@ -11,6 +11,10 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
     />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -281,7 +285,7 @@
         </div>
       </div>
       <div class="see-all">
-        <span>See All  &gt;&gt;&gt;</span>
+        <span>See All &gt;&gt;&gt;</span>
       </div>
 
       <div class="title">
@@ -754,21 +758,21 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         flatpickr("#date-range", {
-  mode: "range",
-  dateFormat: "Y-m-d",
-  minDate: "today",
-  showMonths: 2,
+          mode: "range",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          showMonths: 2,
 
-  onChange: function(selectedDates) {
-    if (selectedDates.length === 2) {
-      const pickup = selectedDates[0].toISOString().split("T")[0];
-      const dropoff = selectedDates[1].toISOString().split("T")[0];
+          onChange: function (selectedDates) {
+            if (selectedDates.length === 2) {
+              const pickup = selectedDates[0].toISOString().split("T")[0];
+              const dropoff = selectedDates[1].toISOString().split("T")[0];
 
-      document.getElementById("pickup-date").value = pickup;
-      document.getElementById("dropoff-date").value = dropoff;
-    }
-  }
-});
+              document.getElementById("pickup-date").value = pickup;
+              document.getElementById("dropoff-date").value = dropoff;
+            }
+          },
+        });
       });
     </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>

@@ -8,6 +8,10 @@
 
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/faq.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
 
   <body>
@@ -267,7 +271,13 @@
                 >Home</a
               >
             </li>
-            <li><a href="{% url 'fleet' %}#services"  class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}">Our Fleet</a></li>
+            <li>
+              <a
+                href="{% url 'fleet' %}#services"
+                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
+                >Our Fleet</a
+              >
+            </li>
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
             <li>

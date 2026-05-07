@@ -35,7 +35,10 @@
 
         <div class="profile">
           {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}">
+          <a
+            href="{% url 'dashboard' %}"
+            class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+          >
             {{ user.first_name|default:user.username }}'s Dashboard ▼
           </a>
           {% else %}
@@ -44,7 +47,7 @@
         </div>
       </nav>
 
-      <!-- MESSAGES -->
+      <!-- TOAST MESSAGES -->
       {% if messages %}
       <div class="messages-container">
         {% for message in messages %}
@@ -55,26 +58,28 @@
         {% endfor %}
       </div>
       {% endif %}
+
       <!-- DASHBOARD WRAPPER -->
       <div class="dashboard">
-        <!-- HEADER STATS -->
+        <!-- STAT CARDS -->
         <section class="stats-grid">
           <div class="stat-card">
-            <h3>Active Bookings</h3>
-            <p>{{ active_bookings|length }}</p>
+            <div class="label">Active bookings</div>
+            <div class="value">{{ active_bookings|length }}</div>
           </div>
-
           <div class="stat-card">
-            <h3>Completed</h3>
-            <p>{{ completed_bookings|length }}</p>
+            <div class="label">Pending</div>
+            <div class="value">{{ groups.pending|length }}</div>
           </div>
-
           <div class="stat-card">
-            <h3>Total Revenue</h3>
-            <p>— MAD</p>
+            <div class="label">Completed</div>
+            <div class="value">{{ completed_bookings|length }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total spent</div>
+            <div class="value">{{ total_spent|default:"—" }} MAD</div>
           </div>
         </section>
-        <!-- MESSAGES -->
 
         <!-- TABS -->
         <div class="tabs">
@@ -85,199 +90,358 @@
 
         <!-- TAB CONTENT -->
         <div class="tab-content">
-          <!-- PROFILE -->
+          <!--  PROFILE TAB  -->
           <section id="profile" class="tab-section active">
-            <h2>Profile</h2>
-
-            <form method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-
-              <div class="grid-2">
+            <div class="form-card">
+              <h2>Profile information</h2>
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="grid-2">
+                  <input
+                    type="text"
+                    name="first_name"
+                    value="{{ user.first_name }}"
+                    placeholder="First name"
+                  />
+                  <input
+                    type="text"
+                    name="last_name"
+                    value="{{ user.last_name }}"
+                    placeholder="Last name"
+                  />
+                </div>
                 <input
-                  name="first_name"
-                  value="{{ user.first_name }}"
-                  placeholder="First name"
+                  type="email"
+                  name="email"
+                  value="{{ user.email }}"
+                  placeholder="Email"
                 />
                 <input
-                  name="last_name"
-                  value="{{ user.last_name }}"
-                  placeholder="Last name"
+                  type="text"
+                  name="phone"
+                  value="{{ profile.phone }}"
+                  placeholder="Phone"
                 />
-              </div>
-
-              <input
-                name="email"
-                value="{{ user.email }}"
-                placeholder="Email"
-              />
-              <input
-                name="phone"
-                value="{{ profile.phone }}"
-                placeholder="Phone"
-              />
-
-              <button class="btn-primary" name="update_profile">Save</button>
-            </form>
+                <button class="btn-primary" name="update_profile">
+                  Save changes
+                </button>
+              </form>
+            </div>
           </section>
 
-          <!-- BOOKINGS -->
+          <!--  BOOKINGS TAB  -->
           <section id="bookings" class="tab-section">
-            <h2>Your Bookings</h2>
+            <div class="section-header">
+              <h2>Your bookings</h2>
+              <!-- SEARCH BAR (new) -->
+              <div class="search-bar">
+                <input
+                  type="text"
+                  id="booking-search"
+                  placeholder="Search by car or date..."
+                  oninput="filterBookings(this.value)"
+                />
+              </div>
+            </div>
 
             <!-- ACTIVE -->
-            <div class="booking-group collapsed">
-              <div class="group-header">
-                <h3 class="group-title active">Active Bookings</h3>
-                <button class="toggle-btn" onclick="toggleGroup(this)">
-                  Hide
+            <div class="booking-group open" data-status="active">
+              <div class="group-header" onclick="toggleGroup(this)">
+                <div class="group-title-row">
+                  <span class="group-title active">Active bookings</span>
+                  <span class="count-badge active"
+                    >{{ groups.active|length }}</span
+                  >
+                </div>
+                <button class="toggle-btn" aria-label="Toggle">
+                  <span class="chevron">&#8964;</span>
                 </button>
               </div>
-              <div class="booking-grid">
-                {% for booking in groups.active %}
-                <div class="booking-card active">
-                  <span class="badge active">Active </span>
-                  <img src="{{ booking.car.image.url }}" />
-                  <h3>{{ booking.car.name }}</h3>
-                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
-                  <p class="details">View details</p>
+              <div class="booking-grid-wrapper">
+                <div class="booking-grid-inner">
+                  <div class="booking-grid">
+                    {% for booking in groups.active %}
+                    <div
+                      class="booking-card active"
+                      data-name="{{ booking.car.name }}"
+                      data-dates="{{ booking.pickup_date }} {{ booking.dropoff_date }}"
+                    >
+                      <span class="badge active">Active</span>
+                      <img
+                        src="{{ booking.car.image.url }}"
+                        alt="{{ booking.car.name }}"
+                      />
+                      <div class="card-info">
+                        <h3>{{ booking.car.name }}</h3>
+                        <p class="dates">
+                          {{ booking.pickup_date }} → {{ booking.dropoff_date }}
+                        </p>
+                        <p class="price">
+                          {{ booking.total_price|default:"—" }} MAD
+                        </p>
+                        <div class="card-actions">
+                          <a
+                            href="{% url 'booking_detail' booking.id %}"
+                            class="link-details"
+                            >View details →</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No active bookings</p>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% empty %}
-                <p>No active bookings</p>
-                {% endfor %}
               </div>
             </div>
 
             <!-- CONFIRMED -->
-            <div class="booking-group collapsed">
-              <div class="group-header">
-                <h3 class="group-title confirmed">Confirmed Bookings</h3>
-                <button class="toggle-btn" onclick="toggleGroup(this)">
-                  Hide
+            <div class="booking-group open" data-status="confirmed">
+              <div class="group-header" onclick="toggleGroup(this)">
+                <div class="group-title-row">
+                  <span class="group-title confirmed">Confirmed bookings</span>
+                  <span class="count-badge confirmed"
+                    >{{ groups.confirmed|length }}</span
+                  >
+                </div>
+                <button class="toggle-btn" aria-label="Toggle">
+                  <span class="chevron">&#8964;</span>
                 </button>
               </div>
-              <div class="booking-grid">
-                {% for booking in groups.confirmed %}
-                <div class="booking-card confirmed">
-                  <span class="badge confirmed">Confirmed</span>
-                  <img src="{{ booking.car.image.url }}" />
-                  <h3>{{ booking.car.name }}</h3>
-                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
-                  <a
-                    href="{% url 'booking_detail' booking.id %}"
-                    class="details"
-                  >
-                    View Details
-                  </a>
+              <div class="booking-grid-wrapper">
+                <div class="booking-grid-inner">
+                  <div class="booking-grid">
+                    {% for booking in groups.confirmed %}
+                    <div
+                      class="booking-card confirmed"
+                      data-name="{{ booking.car.name }}"
+                      data-dates="{{ booking.pickup_date }} {{ booking.dropoff_date }}"
+                    >
+                      <span class="badge confirmed">Confirmed</span>
+                      <img
+                        src="{{ booking.car.image.url }}"
+                        alt="{{ booking.car.name }}"
+                      />
+                      <div class="card-info">
+                        <h3>{{ booking.car.name }}</h3>
+                        <p class="dates">
+                          {{ booking.pickup_date }} → {{ booking.dropoff_date }}
+                        </p>
+                        <p class="price">
+                          {{ booking.total_price|default:"—" }} MAD
+                        </p>
+                        <div class="card-actions">
+                          <a
+                            href="{% url 'booking_detail' booking.id %}"
+                            class="link-details"
+                            >View details →</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No confirmed bookings</p>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% empty %}
-                <p>No confirmed bookings</p>
-                {% endfor %}
               </div>
             </div>
 
             <!-- PENDING -->
-            <div class="booking-group collapsed">
-              <div class="group-header">
-                <h3 class="group-title pending">Pending Bookings</h3>
-                <button class="toggle-btn" onclick="toggleGroup(this)">
-                  Hide
+            <div class="booking-group" data-status="pending">
+              <div class="group-header" onclick="toggleGroup(this)">
+                <div class="group-title-row">
+                  <span class="group-title pending">Pending bookings</span>
+                  <span class="count-badge pending"
+                    >{{ groups.pending|length }}</span
+                  >
+                </div>
+                <button class="toggle-btn" aria-label="Toggle">
+                  <span class="chevron">&#8964;</span>
                 </button>
               </div>
-              <div class="booking-grid">
-                {% for booking in groups.pending %}
-                <div class="booking-card pending">
-                  <span class="badge pending">Pending</span>
-                  <img src="{{ booking.car.image.url }}" />
-                  <h3>{{ booking.car.name }}</h3>
-                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
-                  <p class="details">View details</p>
+              <div class="booking-grid-wrapper">
+                <div class="booking-grid-inner">
+                  <div class="booking-grid">
+                    {% for booking in groups.pending %}
+                    <div
+                      class="booking-card pending"
+                      data-name="{{ booking.car.name }}"
+                      data-dates="{{ booking.pickup_date }} {{ booking.dropoff_date }}"
+                    >
+                      <span class="badge pending">Pending</span>
+                      <img
+                        src="{{ booking.car.image.url }}"
+                        alt="{{ booking.car.name }}"
+                      />
+                      <div class="card-info">
+                        <h3>{{ booking.car.name }}</h3>
+                        <p class="dates">
+                          {{ booking.pickup_date }} → {{ booking.dropoff_date }}
+                        </p>
+                        <p class="price">
+                          {{ booking.total_price|default:"—" }} MAD
+                        </p>
+                        <div class="card-actions">
+                          <a
+                            href="{% url 'booking_detail' booking.id %}"
+                            class="link-details"
+                            >View details →</a
+                          >
+                          <!-- CANCEL BUTTON (new) — wire up cancel URL in Django -->
+                          <a
+                            href="{% url 'cancel_booking' booking.id %}"
+                            class="btn-cancel"
+                            onclick="return confirm('Cancel this booking?');"
+                            >Cancel</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No pending bookings</p>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% empty %}
-                <p>No pending bookings</p>
-                {% endfor %}
               </div>
             </div>
 
             <!-- CANCELLED -->
-            <div class="booking-group collapsed">
-              <div class="group-header">
-                <h3 class="group-title cancelled">Cancelled Bookings</h3>
-                <button class="toggle-btn" onclick="toggleGroup(this)">
-                  Hide
+            <div class="booking-group" data-status="cancelled">
+              <div class="group-header" onclick="toggleGroup(this)">
+                <div class="group-title-row">
+                  <span class="group-title cancelled">Cancelled bookings</span>
+                  <span class="count-badge cancelled"
+                    >{{ groups.cancelled|length }}</span
+                  >
+                </div>
+                <button class="toggle-btn" aria-label="Toggle">
+                  <span class="chevron">&#8964;</span>
                 </button>
               </div>
-              <div class="booking-grid">
-                {% for booking in groups.cancelled %}
-                <div class="booking-card cancelled">
-                  <span class="badge cancelled">Cancelled</span>
-                  <img src="{{ booking.car.image.url }}" />
-                  <h3>{{ booking.car.name }}</h3>
-                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
-                  <p class="details">View details</p>
+              <div class="booking-grid-wrapper">
+                <div class="booking-grid-inner">
+                  <div class="booking-grid">
+                    {% for booking in groups.cancelled %}
+                    <div
+                      class="booking-card cancelled"
+                      data-name="{{ booking.car.name }}"
+                      data-dates="{{ booking.pickup_date }} {{ booking.dropoff_date }}"
+                    >
+                      <span class="badge cancelled">Cancelled</span>
+                      <img
+                        src="{{ booking.car.image.url }}"
+                        alt="{{ booking.car.name }}"
+                      />
+                      <div class="card-info">
+                        <h3>{{ booking.car.name }}</h3>
+                        <p class="dates">
+                          {{ booking.pickup_date }} → {{ booking.dropoff_date }}
+                        </p>
+                        <p class="price">
+                          {{ booking.total_price|default:"—" }} MAD
+                        </p>
+                        <div class="card-actions">
+                          <a
+                            href="{% url 'booking_detail' booking.id %}"
+                            class="link-details"
+                            >View details →</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No cancelled bookings</p>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% empty %}
-                <p>No cancelled bookings</p>
-                {% endfor %}
               </div>
             </div>
 
             <!-- COMPLETED -->
-            <div class="booking-group collapsed">
-              <div class="group-header">
-                <h3 class="group-title completed">Completed Bookings</h3>
-
-                <button class="toggle-btn" onclick="toggleGroup(this)">
-                  Hide
+            <div class="booking-group" data-status="completed">
+              <div class="group-header" onclick="toggleGroup(this)">
+                <div class="group-title-row">
+                  <span class="group-title completed">Completed bookings</span>
+                  <span class="count-badge completed"
+                    >{{ groups.completed|length }}</span
+                  >
+                </div>
+                <button class="toggle-btn" aria-label="Toggle">
+                  <span class="chevron">&#8964;</span>
                 </button>
               </div>
-
-              <div class="booking-grid">
-                {% for booking in groups.completed %}
-                <div class="booking-card completed">
-                  <span class="badge completed">Completed</span>
-                  <img src="{{ booking.car.image.url }}" />
-                  <h3>{{ booking.car.name }}</h3>
-                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
-                  <p class="details">View details</p>
+              <div class="booking-grid-wrapper">
+                <div class="booking-grid-inner">
+                  <div class="booking-grid">
+                    {% for booking in groups.completed %}
+                    <div
+                      class="booking-card completed"
+                      data-name="{{ booking.car.name }}"
+                      data-dates="{{ booking.pickup_date }} {{ booking.dropoff_date }}"
+                    >
+                      <span class="badge completed">Completed</span>
+                      <img
+                        src="{{ booking.car.image.url }}"
+                        alt="{{ booking.car.name }}"
+                      />
+                      <div class="card-info">
+                        <h3>{{ booking.car.name }}</h3>
+                        <p class="dates">
+                          {{ booking.pickup_date }} → {{ booking.dropoff_date }}
+                        </p>
+                        <p class="price">
+                          {{ booking.total_price|default:"—" }} MAD
+                        </p>
+                        <div class="card-actions">
+                          <a
+                            href="{% url 'booking_detail' booking.id %}"
+                            class="link-details"
+                            >View details →</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    {% empty %}
+                    <p class="empty-state">No completed bookings</p>
+                    {% endfor %}
+                  </div>
                 </div>
-                {% empty %}
-                <p>No completed bookings</p>
-                {% endfor %}
               </div>
             </div>
           </section>
 
-          <!-- SETTINGS -->
           <section id="settings" class="tab-section">
-            <h2>Settings</h2>
-
-            <form method="POST">
-              {% csrf_token %}
-
-              <input
-                type="password"
-                name="old_password"
-                placeholder="Old password"
-              />
-              <input
-                type="password"
-                name="new_password"
-                placeholder="New password"
-              />
-              <input
-                type="password"
-                name="confirm_password"
-                placeholder="Confirm password"
-              />
-
-              <button class="btn-primary" name="change_password">
-                Update Password
-              </button>
-            </form>
+            <div class="form-card">
+              <h2>Change password</h2>
+              <form method="POST">
+                {% csrf_token %}
+                <input
+                  type="password"
+                  name="old_password"
+                  placeholder="Current password"
+                />
+                <input
+                  type="password"
+                  name="new_password"
+                  placeholder="New password"
+                />
+                <input
+                  type="password"
+                  name="confirm_password"
+                  placeholder="Confirm password"
+                />
+                <button class="btn-primary" name="change_password">
+                  Update password
+                </button>
+              </form>
+            </div>
           </section>
         </div>
       </div>
     </div>
+
     <!-- FOOTER -->
     <footer class="footer">
       <div class="footer__main">
@@ -285,7 +449,6 @@
           <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
           <p>Lorem Ipsum has been the industry's standard dummy text.</p>
         </div>
-
         <div class="footer__col">
           <h4>Quick Links</h4>
           <ul>
@@ -294,10 +457,9 @@
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
             <li><a href="{% url 'contact' %}">Contact</a></li>
-            <li><a href="{% url 'faq' %}">FAQS</a></li>
+            <li><a href="{% url 'faq' %}">FAQs</a></li>
           </ul>
         </div>
-
         <div class="footer__col">
           <h4>Contact</h4>
           <ul class="footer__contact">
@@ -307,7 +469,6 @@
           </ul>
         </div>
       </div>
-
       <div class="footer__bottom">
         <p>© 2026 EliteWheels. All rights reserved.</p>
       </div>
@@ -329,49 +490,50 @@
         shapes: ["c", "s"],
       });
     </script>
-    <script>
-      const toasts = document.querySelectorAll(".toast");
 
-      toasts.forEach((toast) => {
+    <script>
+      document.querySelectorAll(".toast").forEach((toast) => {
         setTimeout(() => {
           toast.style.opacity = "0";
           toast.style.transform = "translateX(50px)";
-          toast.style.transition = "0.4s ease";
-
-          setTimeout(() => {
-            toast.remove();
-          }, 400);
-        }, 4000); // 4 seconds
+          setTimeout(() => toast.remove(), 400);
+        }, 4000);
       });
-    </script>
-    <script>
-      const tabs = document.querySelectorAll(".tab");
-      const sections = document.querySelectorAll(".tab-section");
 
-      tabs.forEach((tab) => {
+      document.querySelectorAll(".tab").forEach((tab) => {
         tab.addEventListener("click", () => {
-          tabs.forEach((t) => t.classList.remove("active"));
-          sections.forEach((s) => s.classList.remove("active"));
-
+          document
+            .querySelectorAll(".tab")
+            .forEach((t) => t.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-section")
+            .forEach((s) => s.classList.remove("active"));
           tab.classList.add("active");
           document.getElementById(tab.dataset.tab).classList.add("active");
         });
       });
-    </script>
-    <script>
-      function toggleGroup(btn) {
-        const group = btn.closest(".booking-group");
-        const grid = group.querySelector(".booking-grid");
 
-        group.classList.toggle("collapsed");
+      function toggleGroup(header) {
+        header.closest(".booking-group").classList.toggle("open");
+      }
 
-        if (group.classList.contains("collapsed")) {
-          btn.innerText = "Show";
-        } else {
-          btn.innerText = "Hide";
-        }
+      function filterBookings(query) {
+        const q = query.toLowerCase().trim();
+        document.querySelectorAll(".booking-card").forEach((card) => {
+          const name = (card.dataset.name || "").toLowerCase();
+          const dates = (card.dataset.dates || "").toLowerCase();
+          const match = !q || name.includes(q) || dates.includes(q);
+          card.style.display = match ? "" : "none";
+        });
+
+        document.querySelectorAll(".booking-group").forEach((group) => {
+          const cards = group.querySelectorAll(".booking-card");
+          const visible = [...cards].some((c) => c.style.display !== "none");
+          group.style.display = cards.length === 0 || visible ? "" : "none";
+        });
       }
     </script>
+
     <script src="{% static 'myapp/js/script.js' %}"></script>
   </body>
 </html>
