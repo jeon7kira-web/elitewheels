@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.utils import timezone
 from datetime import date, timedelta    
 import json
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Case, When, Value, IntegerField
 from django.utils.dateparse import parse_date
@@ -216,23 +217,21 @@ def dashboard_view(request):
     profile, created = Profile.objects.get_or_create(user=user)
 
     bookings = list(
-    Booking.objects.filter(user=user).select_related('car')
+    Booking.objects
+    .filter(user=user)
+    .select_related('car')
     )
 
-    priority = {
-        "active": 1,
-        "confirmed": 2,
-        "pending": 3,
-        "cancelled": 4,
-        "completed": 5,
+    groups = {
+    "active": [],
+    "confirmed": [],
+    "pending": [],
+    "cancelled": [],
+    "completed": [],
     }
 
-    bookings.sort(
-        key=lambda b: (
-            priority.get(b.status_auto, 99),
-            -b.pickup_date.toordinal()
-        )
-    )
+    for b in bookings:
+        groups[b.status_auto].append(b)
 
     if request.method == "POST":
 
@@ -281,17 +280,38 @@ def dashboard_view(request):
     ]
     return render(request, "myapp/dashboard.html", {
         "profile": profile,
-        "bookings": bookings,
-        "active_bookings": active_bookings,
-        "completed_bookings": completed_bookings,
-        
+        "groups": groups,
+        "active_bookings":active_bookings,
+        "completed_bookings":completed_bookings,
     })
+
 @login_required
 def cancel_booking(request, booking_id):
-    booking = Booking.objects.get(id=booking_id, user=request.user)
-    booking.status = 'cancelled'
-    booking.save()
-    messages.success(request, "Booking cancelled")
-    return redirect("dashboard")    
+    if request.method == "POST":
+        booking = get_object_or_404(
+            Booking,
+            id=booking_id,
+            user=request.user
+        )
 
+        booking.status = "cancelled"
+        booking.save()
 
+        return JsonResponse({
+            "success": True,
+            "new_status": booking.status_auto
+        })
+
+    return JsonResponse({"success": False}, status=400)
+
+@login_required
+def booking_detail(request, booking_id):
+    booking = get_object_or_404(
+        Booking,
+        id=booking_id,
+        user=request.user
+    )
+
+    return render(request, "myapp/booking_detail.html", {
+        "booking": booking
+    })

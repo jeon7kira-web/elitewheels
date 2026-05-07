@@ -20,7 +20,8 @@ urlpatterns = [
     path('cardetails/<int:car_id>/', views.car_details, name='cardetails'),
     path('book/<int:car_id>/', views.book_car, name='book_car'),
     path('confirmation/<int:booking_id>/', views.confirmation_view, name='confirmation'),
-    path('dashboard/cancel/<int:booking_id>/', views.cancel_booking, name='cancel_booking'),
+    path("cancel-booking/<int:booking_id>/", views.cancel_booking, name="cancel_booking"),
+    path("booking/<int:booking_id>/", views.booking_detail, name="booking_detail"),
 
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),

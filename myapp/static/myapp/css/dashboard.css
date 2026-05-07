@@ -93,7 +93,8 @@
   border-radius: 18px;
   overflow: hidden;
   border: 1px solid rgba(201, 168, 76, 0.15);
-
+  width: 90%;
+  height: 280px;
   transition: all 0.35s ease;
   animation: fadeUp 0.5s ease both;
 }
@@ -192,19 +193,26 @@
 }
 
 /* ===== INFO ===== */
-.info {
-  padding: 18px;
-}
 
-.info h3 {
+.booking-card h3 {
   font-size: 16px;
   margin-bottom: 6px;
   color: var(--text);
+  padding: 10px;
 }
 
-.info p {
+.booking-card p {
   font-size: 13px;
   color: var(--muted);
+  padding: 10px;
+}
+.details {
+  position: absolute;
+  bottom: 26px;
+  text-decoration: none;
+  font-size: 13px;
+  color: var(--muted);
+  right: 12px;
 }
 
 /* ===== REMOVE OLD COLOR BORDERS ===== */
@@ -315,4 +323,51 @@ input {
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+.booking-group {
+  margin-bottom: 40px;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  background-color: var(--card);
+  padding: 10px;
+}
+
+.group-title {
+  font-size: 20px;
+  margin: 10px 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0 10px;
+}
+
+.toggle-btn {
+  background: var(--card);
+  color: var(--gold-light);
+  border: 1px solid var(--gold);
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.toggle-btn:hover {
+  background: #333;
+  color: var(--text);
+}
+
+.booking-grid {
+  display: grid;
+  transition:
+    max-height 0.4s ease,
+    opacity 0.3s ease;
+  overflow: hidden;
+  max-height: 1000px; /* big enough for content */
+  opacity: 1;
 }

@@ -124,28 +124,126 @@
           <section id="bookings" class="tab-section">
             <h2>Your Bookings</h2>
 
-            <div class="booking-grid">
-              {% for booking in bookings %}
-              <div class="booking-card {{ booking.status_auto }}">
-                <span class="badge {{ booking.status_auto|lower }}">
-                  {{ booking.status_auto|title }}
-                </span>
-
-                {% if booking.car.image %}
-                <img
-                  src="{{ booking.car.image.url }}"
-                  alt="{{ booking.car.name }}"
-                />
-                {% endif %}
-
-                <div class="info">
+            <!-- ACTIVE -->
+            <div class="booking-group collapsed">
+              <div class="group-header">
+                <h3 class="group-title active">Active Bookings</h3>
+                <button class="toggle-btn" onclick="toggleGroup(this)">
+                  Hide
+                </button>
+              </div>
+              <div class="booking-grid">
+                {% for booking in groups.active %}
+                <div class="booking-card active">
+                  <span class="badge active">Active </span>
+                  <img src="{{ booking.car.image.url }}" />
                   <h3>{{ booking.car.name }}</h3>
                   <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+                  <p class="details">View details</p>
                 </div>
+                {% empty %}
+                <p>No active bookings</p>
+                {% endfor %}
               </div>
-              {% empty %}
-              <p>No bookings yet.</p>
-              {% endfor %}
+            </div>
+
+            <!-- CONFIRMED -->
+            <div class="booking-group collapsed">
+              <div class="group-header">
+                <h3 class="group-title confirmed">Confirmed Bookings</h3>
+                <button class="toggle-btn" onclick="toggleGroup(this)">
+                  Hide
+                </button>
+              </div>
+              <div class="booking-grid">
+                {% for booking in groups.confirmed %}
+                <div class="booking-card confirmed">
+                  <span class="badge confirmed">Confirmed</span>
+                  <img src="{{ booking.car.image.url }}" />
+                  <h3>{{ booking.car.name }}</h3>
+                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+                  <a
+                    href="{% url 'booking_detail' booking.id %}"
+                    class="details"
+                  >
+                    View Details
+                  </a>
+                </div>
+                {% empty %}
+                <p>No confirmed bookings</p>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- PENDING -->
+            <div class="booking-group collapsed">
+              <div class="group-header">
+                <h3 class="group-title pending">Pending Bookings</h3>
+                <button class="toggle-btn" onclick="toggleGroup(this)">
+                  Hide
+                </button>
+              </div>
+              <div class="booking-grid">
+                {% for booking in groups.pending %}
+                <div class="booking-card pending">
+                  <span class="badge pending">Pending</span>
+                  <img src="{{ booking.car.image.url }}" />
+                  <h3>{{ booking.car.name }}</h3>
+                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+                  <p class="details">View details</p>
+                </div>
+                {% empty %}
+                <p>No pending bookings</p>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- CANCELLED -->
+            <div class="booking-group collapsed">
+              <div class="group-header">
+                <h3 class="group-title cancelled">Cancelled Bookings</h3>
+                <button class="toggle-btn" onclick="toggleGroup(this)">
+                  Hide
+                </button>
+              </div>
+              <div class="booking-grid">
+                {% for booking in groups.cancelled %}
+                <div class="booking-card cancelled">
+                  <span class="badge cancelled">Cancelled</span>
+                  <img src="{{ booking.car.image.url }}" />
+                  <h3>{{ booking.car.name }}</h3>
+                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+                  <p class="details">View details</p>
+                </div>
+                {% empty %}
+                <p>No cancelled bookings</p>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- COMPLETED -->
+            <div class="booking-group collapsed">
+              <div class="group-header">
+                <h3 class="group-title completed">Completed Bookings</h3>
+
+                <button class="toggle-btn" onclick="toggleGroup(this)">
+                  Hide
+                </button>
+              </div>
+
+              <div class="booking-grid">
+                {% for booking in groups.completed %}
+                <div class="booking-card completed">
+                  <span class="badge completed">Completed</span>
+                  <img src="{{ booking.car.image.url }}" />
+                  <h3>{{ booking.car.name }}</h3>
+                  <p>{{ booking.pickup_date }} → {{ booking.dropoff_date }}</p>
+                  <p class="details">View details</p>
+                </div>
+                {% empty %}
+                <p>No completed bookings</p>
+                {% endfor %}
+              </div>
             </div>
           </section>
 
@@ -259,6 +357,20 @@
           document.getElementById(tab.dataset.tab).classList.add("active");
         });
       });
+    </script>
+    <script>
+      function toggleGroup(btn) {
+        const group = btn.closest(".booking-group");
+        const grid = group.querySelector(".booking-grid");
+
+        group.classList.toggle("collapsed");
+
+        if (group.classList.contains("collapsed")) {
+          btn.innerText = "Show";
+        } else {
+          btn.innerText = "Hide";
+        }
+      }
     </script>
     <script src="{% static 'myapp/js/script.js' %}"></script>
   </body>
