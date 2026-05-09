@@ -427,14 +427,24 @@
                   name="new_password"
                   placeholder="New password"
                 />
+
                 <input
                   type="password"
                   name="confirm_password"
                   placeholder="Confirm password"
                 />
+
                 <button class="btn-primary" name="change_password">
                   Update password
                 </button>
+                <form
+                  method="POST"
+                  action="{% url 'logout' %}"
+                  style="display: inline"
+                >
+                  {% csrf_token %}
+                  <button class="btn logout" type="submit">Logout</button>
+                </form>
               </form>
             </div>
           </section>

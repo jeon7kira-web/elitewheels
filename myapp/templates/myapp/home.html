@@ -112,8 +112,26 @@
         <form method="GET" action="{% url 'fleet' %}">
           <div class="book-now">
             <div class="dates">
-              <input type="text" id="date-range" placeholder="Select dates" />
-
+              <input
+                type="date"
+                id="date-range"
+                placeholder="Select dates"
+                class="date-picker"
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="#a8872d"
+                viewBox="0 0 24 24"
+                class="calendar"
+                id="calendarIcon"
+              >
+                <path
+                  d="M19 4h-2V2h-2v2H9V2H7v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2M5 20V8h14V6v14z"
+                ></path>
+              </svg>
+              <p class="booking-title">Reserve Your Ride</p>
               <!-- hidden inputs -->
               <input type="hidden" name="pickup_date" id="pickup-date" />
               <input type="hidden" name="dropoff_date" id="dropoff-date" />
