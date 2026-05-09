@@ -8,6 +8,8 @@
 
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/fleet.css' %}" />
+    <link rel="stylesheet" href="{% static 'myapp/css/cardetails.css' %}" />
+
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
@@ -31,9 +33,8 @@
           <a
             href="{% url 'home' %}"
             class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+            >Home</a
           >
-            Home
-          </a>
         </li>
         <li>
           <a
@@ -42,20 +43,8 @@
             >Our Fleet</a
           >
         </li>
-        <li>
-          <a
-            href="{% url 'home' %}#services"
-            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
-            >Services</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'home' %}#about"
-            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-            >About us</a
-          >
-        </li>
+        <li><a href="{% url 'home' %}#services">Services</a></li>
+        <li><a href="{% url 'home' %}#about">About us</a></li>
         <li>
           <a
             href="{% url 'contact' %}"
@@ -74,129 +63,256 @@
 
       <div class="profile">
         {% if user.is_authenticated %}
-
         <a
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
         >
           {{ user.first_name|default:user.username }}'s Dashboard ▼
         </a>
-
-        <!-- LOGOUT BUTTON -->
         <form method="POST" action="{% url 'logout' %}" style="display: inline">
           {% csrf_token %}
           <button class="btn logout" type="submit">Logout</button>
         </form>
-
         {% else %}
-
         <a href="{% url 'auth' %}" class="btn">Login / Register</a>
-
         {% endif %}
       </div>
     </nav>
-    <div class="whatsapp-icon">
-      <img src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}" />
-    </div>
 
-    <div class="header finisher-header">
-      <div class="title">
-        <span
-          ><hr />
-          BOOK NOW
-          <hr
-        /></span>
-        <h1>BOOK YOUR<span> CAR NOW</span></h1>
-      </div>
-      {% if error %}
-      <div class="error-box">{{ error.0 }}</div>
-      {% endif %}
-      <h1>{{ car.name }}</h1>
-      <img src="{{ car.image.url }}" width="400" />
-
-      <p><strong>Brand:</strong> {{ car.brand }}</p>
-      <p><strong>Type:</strong> {{ car.car_type }}</p>
-      <p><strong>Transmission:</strong> {{ car.transmission }}</p>
-      <p><strong>Fuel:</strong> {{ car.fuel_type }}</p>
-      <p><strong>Passengers:</strong> {{ car.passengers }}</p>
-      <p><strong>Price:</strong> {{ car.price_per_day }} MAD/day</p>
-      <p><strong>Description:</strong> {{ car.description }}</p>
-      <p><strong>Year:</strong> {{ car.year }}</p>
-      <p><strong>Mileage:</strong> {{ car.mileage }} km</p>
-
-      <hr />
-
-      <h3>Features</h3>
-      <ul>
-        <li>Air Conditioning: {{ car.air_conditioning }}</li>
-        <li>Bluetooth: {{ car.bluetooth }}</li>
-        <li>GPS: {{ car.gps }}</li>
-      </ul>
-
-      <hr />
-
-      <form method="POST">
-        {% csrf_token %}
-        <input
-          type="text"
-          id="date-range"
-          name="date_range"
-          placeholder="Select dates"
-        />
-        <div class="price-preview">
-          <p id="days">0 days</p>
-          <p id="total">0 MAD</p>
+    <!-- HERO / DETAIL SECTION -->
+    <section class="hero">
+      <div class="hero__gallery">
+        <div class="hero__main-img-wrap">
+          <img
+            id="mainImg"
+            src="{{ car.image.url }}"
+            alt="{{ car.name }} main"
+            class="hero__main-img"
+          />
+          <div class="hero__badge">
+            {% if car.available %}Available{% else %}Unavailable{% endif %}
+          </div>
         </div>
-        <button type="submit">Continue to Book</button>
-      </form>
 
-      <a href="{% url 'fleet' %}">
-        <button type="button">Go back to fleet</button>
-      </a>
-    </div>
+        <!-- Thumbnails: show extra images if your Car model has them,
+             otherwise fall back to just the main image repeated -->
+        <div class="hero__thumbs" id="thumbs">
+          <img
+            src="{{ car.image.url }}"
+            alt="thumb 1"
+            class="thumb active"
+            data-src="{{ car.image.url }}"
+          />
+          {% for img in car.images.all %}
+          <img
+            src="{{ img.image.url }}"
+            alt="thumb"
+            class="thumb"
+            data-src="{{ img.image.url }}"
+          />
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="hero__info">
+        <p class="hero__category">{{ car.car_type }}</p>
+        <h1 class="hero__title">
+          {{ car.brand }}<br /><span>{{ car.name }}</span>
+        </h1>
+        <div class="hero__price">
+          {{ car.price_per_day }}<span class="hero__currency">MAD</span
+          ><span class="hero__per">/day</span>
+        </div>
+
+        <ul class="specs">
+          <li class="spec">
+            <span class="spec__icon">◈</span>
+            <span class="spec__label">Year</span>
+            <span class="spec__val">{{ car.year }}</span>
+          </li>
+          <li class="spec">
+            <span class="spec__icon">⇄</span>
+            <span class="spec__label">Transmission</span>
+            <span class="spec__val">{{ car.transmission }}</span>
+          </li>
+          <li class="spec">
+            <span class="spec__icon">◉</span>
+            <span class="spec__label">Fuel</span>
+            <span class="spec__val">{{ car.fuel_type }}</span>
+          </li>
+          <li class="spec">
+            <span class="spec__icon">⊕</span>
+            <span class="spec__label">Seats</span>
+            <span class="spec__val">{{ car.passengers }}</span>
+          </li>
+        </ul>
+
+        <p class="hero__desc">{{ car.description }}</p>
+
+        <!-- BOOKING FORM -->
+        {% if error %}
+        <div class="error-box">{{ error.0 }}</div>
+        {% endif %}
+
+        <form method="POST" class="booking">
+          {% csrf_token %}
+          <div class="booking__fields">
+            <div class="booking__field">
+              <label for="date-range">Pick-up & Drop-off Dates</label>
+              <input
+                type="text"
+                id="date-range"
+                name="date_range"
+                placeholder="Select dates"
+                autocomplete="off"
+              />
+            </div>
+            <div class="booking__field booking__field--total">
+              <label>Total Price</label>
+              <span id="totalPrice" class="booking__total-val">
+                <span id="days">— days</span> &nbsp;
+                <span id="total">— MAD</span>
+              </span>
+            </div>
+          </div>
+          <button class="btn-book" type="submit" id="bookBtn">
+            <span>BOOK NOW</span>
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </button>
+        </form>
+
+        <a href="{% url 'fleet' %}" class="btn-back">← Back to Fleet</a>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="reviews">
+      <div class="section-label">Reviews</div>
+      <h2 class="section-title">Clients <em>Satisfaction</em></h2>
+
+      <div class="reviews__track" id="reviewsTrack">
+        <div class="review-card">
+          <div class="review-card__top">
+            <div class="review-card__avatar">AH</div>
+            <div>
+              <div class="review-card__name">Ahmed Gowâa</div>
+              <div class="review-card__stars">★★★★★</div>
+            </div>
+          </div>
+          <p class="review-card__text">
+            Absolutely flawless experience. The car was spotless, handled
+            beautifully on mountain roads, and pickup was effortless. Will rent
+            again without hesitation.
+          </p>
+        </div>
+        <div class="review-card">
+          <div class="review-card__top">
+            <div class="review-card__avatar">SL</div>
+            <div>
+              <div class="review-card__name">Sara Lahlou</div>
+              <div class="review-card__stars">★★★★★</div>
+            </div>
+          </div>
+          <p class="review-card__text">
+            Best rental agency in the city. The car felt brand new, fuel was
+            topped up, and the staff were incredibly professional. Highly
+            recommend.
+          </p>
+        </div>
+        <div class="review-card">
+          <div class="review-card__top">
+            <div class="review-card__avatar">KM</div>
+            <div>
+              <div class="review-card__name">Karim Mrani</div>
+              <div class="review-card__stars">★★★★☆</div>
+            </div>
+          </div>
+          <p class="review-card__text">
+            Great car and smooth booking process. The dashboard is very
+            intuitive. Only minor feedback: parking directions at pickup could
+            be clearer.
+          </p>
+        </div>
+      </div>
+
+      <div class="reviews__controls">
+        <button class="rev-btn" id="revPrev">←</button>
+        <button class="rev-btn" id="revNext">→</button>
+      </div>
+    </section>
+
+    <!-- YOU MAY LIKE -->
+    <section class="related">
+      <div class="section-label">Cars</div>
+      <h2 class="section-title">You May <em>Like</em></h2>
+
+      <div class="related__grid">
+        {% for related_car in related_cars %}
+        <a href="{% url 'car_detail' related_car.id %}" class="car-card">
+          <div class="car-card__img-wrap">
+            <img
+              src="{{ related_car.image.url }}"
+              alt="{{ related_car.name }}"
+            />
+            <div class="car-card__tag">
+              {{ related_car.price_per_day }} MAD/day
+            </div>
+          </div>
+          <div class="car-card__info">
+            <span class="car-card__name">{{ related_car.name }}</span>
+            <span class="car-card__sub"
+              >{{ related_car.year }} · {{ related_car.transmission }} · {{
+              related_car.fuel_type }}</span
+            >
+          </div>
+        </a>
+        {% empty %}
+        <!-- Fallback static cards if no related cars passed from view -->
+        <div class="car-card">
+          <div class="car-card__img-wrap">
+            <img
+              src="https://images.unsplash.com/photo-1617469767011-8b6f2b41b7d9?w=400&q=70"
+              alt="Similar car"
+            />
+            <div class="car-card__tag">Browse Fleet</div>
+          </div>
+          <div class="car-card__info">
+            <span class="car-card__name">Explore More</span>
+            <span class="car-card__sub"
+              ><a href="{% url 'fleet' %}">View full fleet →</a></span
+            >
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- FOOTER -->
     <footer class="footer">
       <div class="footer__main">
         <div class="footer__brand">
           <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
-          <p>
-            Lorem Ipsum has been the industry's standard dummy text ever since
-            the 1500.
-          </p>
+          <p>Premium car rentals across Morocco.</p>
         </div>
 
         <div class="footer__col">
           <h4>Quick Links</h4>
           <ul>
-            <li>
-              <a
-                href="{% url 'home' %}"
-                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                >Home</a
-              >
-            </li>
-            <li>
-              <a
-                href="{% url 'fleet' %}#services"
-                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
-                >Our Fleet</a
-              >
-            </li>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
-            <li>
-              <a
-                href="{% url 'contact' %}"
-                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-                >Contact</a
-              >
-            </li>
-            <li>
-              <a
-                href="{% url 'faq' %}"
-                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
-                >FAQS</a
-              >
-            </li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'faq' %}">FAQs</a></li>
           </ul>
         </div>
 
@@ -286,48 +402,94 @@
       </div>
     </footer>
 
-    <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
+    <!-- Scripts -->
     <script>
       const pricePerDay = {{ car.price_per_day }};
+      const disabled_dates = {{ disabled_dates|safe }};
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <script>
-            const disabled_dates = {{ disabled_dates|safe }};
+      // ── Flatpickr date range ──────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#date-range", {
+          mode: "range",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          disable: disabled_dates,
+          showMonths: 2,
 
-            document.addEventListener("DOMContentLoaded", function () {
-             flatpickr("#date-range", {
-        mode: "range",
-        dateFormat: "Y-m-d",
-        minDate: "today",
-        disable: disabled_dates,
-        showMonths: 2,
+          onReady: function (_, __, instance) {
+            if (!instance.calendarContainer.querySelector(".calendar-note")) {
+              const note = document.createElement("div");
+              note.className = "calendar-note";
+              note.innerHTML = "! Unavailable dates appear in gray";
+              instance.calendarContainer.appendChild(note);
+            }
+          },
 
-        onReady: function (_, __, instance) {
-          if (!instance.calendarContainer.querySelector(".calendar-note")) {
-            const note = document.createElement("div");
-            note.className = "calendar-note";
-            note.innerHTML = "! Unavailable dates appear in gray";
-            instance.calendarContainer.appendChild(note);
-          }
-        },
+          onChange: function (selectedDates) {
+            if (selectedDates.length === 2) {
+              const diffTime = selectedDates[1] - selectedDates[0];
+              const days = Math.max(
+                1,
+                Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+              );
+              const total = days * pricePerDay;
+              document.getElementById("days").innerText = days + " days";
+              document.getElementById("total").innerText = total + " MAD";
+            }
+          },
+        });
 
-        onChange: function(selectedDates) {
-          if (selectedDates.length === 2) {
-            const start = selectedDates[0];
-            const end = selectedDates[1];
+        // ── Thumbnail gallery switcher ──────────────────────────────────
+        const thumbs = document.querySelectorAll(".thumb");
+        const mainImg = document.getElementById("mainImg");
 
-            const diffTime = end - start;
-             const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        thumbs.forEach((thumb) => {
+          thumb.addEventListener("click", () => {
+            mainImg.src = thumb.dataset.src;
+            thumbs.forEach((t) => t.classList.remove("active"));
+            thumb.classList.add("active");
+          });
+        });
 
-            const total = days * pricePerDay;
+        // ── Reviews carousel ───────────────────────────────────────────
+        const track = document.getElementById("reviewsTrack");
+        const cards = track.querySelectorAll(".review-card");
+        let current = 0;
 
-            document.getElementById("days").innerText = days + " days";
-            document.getElementById("total").innerText = total + " MAD";
+        function showCard(index) {
+          cards.forEach((c, i) => {
+            c.style.display = i === index ? "flex" : "none";
+          });
+        }
+
+        // Init — show all on wider screens, one-at-a-time on mobile
+        function initReviews() {
+          if (window.innerWidth >= 768) {
+            cards.forEach((c) => (c.style.display = "flex"));
+          } else {
+            showCard(current);
           }
         }
+
+        document.getElementById("revPrev").addEventListener("click", () => {
+          current = (current - 1 + cards.length) % cards.length;
+          if (window.innerWidth < 768) showCard(current);
+        });
+
+        document.getElementById("revNext").addEventListener("click", () => {
+          current = (current + 1) % cards.length;
+          if (window.innerWidth < 768) showCard(current);
+        });
+
+        initReviews();
+        window.addEventListener("resize", initReviews);
       });
-            });
     </script>
+
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>
 </html>

@@ -113,8 +113,9 @@
           <div class="book-now">
             <div class="dates">
               <input
-                type="date"
+                type="text"
                 id="date-range"
+                name="date_range"
                 placeholder="Select dates"
                 class="date-picker"
               />
@@ -783,11 +784,8 @@
 
           onChange: function (selectedDates) {
             if (selectedDates.length === 2) {
-              const pickup = selectedDates[0].toISOString().split("T")[0];
-              const dropoff = selectedDates[1].toISOString().split("T")[0];
-
-              document.getElementById("pickup-date").value = pickup;
-              document.getElementById("dropoff-date").value = dropoff;
+              const start = selectedDates[0];
+              const end = selectedDates[1];
             }
           },
         });

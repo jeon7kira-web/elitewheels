@@ -137,10 +137,6 @@ const icon = document.getElementById("calendarIcon");
 const dateInput = document.getElementById("date-range");
 
 icon.addEventListener("click", () => {
-    if (dateInput.showPicker) {
-        dateInput.showPicker();
-    } else {
-        dateInput.focus();
-        dateInput.click();
-    }
+  dateInput.showPicker();
+  dateInput.focus();
 });
