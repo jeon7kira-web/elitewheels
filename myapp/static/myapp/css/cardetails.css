@@ -662,3 +662,35 @@ img {
     grid-template-columns: 1fr;
   }
 }
+.car-features {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.feature {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #151515;
+  border: 1px solid #2a2a2a;
+  color: #999;
+  font-size: 14px;
+}
+
+.feature.active {
+  color: #fff;
+  border-color: #c8a95b;
+}
+
+.booking-driver {
+  margin-top: 20px;
+}
+
+.driver-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  cursor: pointer;
+}

@@ -126,8 +126,10 @@
       <select id="filter-brand">
         <option value="">All Brands</option>
         {% for brand in brands %}
-          <option value="{{ brand }}">{{ brand }}</option>
-        {% endfor %}
+  <option value="{{ brand.name }}">
+    {{ brand.name }}
+  </option>
+{% endfor %}
       </select>
     </div>
 
@@ -180,23 +182,68 @@
 
   {% for car in cars %}
   <div class="car-card"
-       data-brand="{{ car.brand }}"
+       data-brand="{{ car.brand.name }}"
        data-type="{{ car.car_type }}"
        data-trans="{{ car.transmission }}"
        data-price="{{ car.price_per_day }}">
 
     <div class="car-img-wrap">
-      <img src="{{ car.image.url }}" alt="{{ car.name }}">
+      {% if car.status == "maintenance" %}
+<div class="status-badge maintenance">
+  Under Maintenance
+</div>
+{% elif car.status == "reserved" %}
+<div class="status-badge reserved">
+  Reserved
+</div>
+{% elif car.status == "rented" %}
+<div class="status-badge rented">
+  Rented
+</div>
+{% endif %}
+{% if user.is_authenticated %}
+<a
+  href="{% url 'toggle_favorite' car.id %}"
+  class="favorite-btn"
+>
+  ♥
+</a>
+{% endif %}
+      {% if car.image %}
+<img src="{{ car.image.url }}" alt="{{ car.name }}">
+{% else %}
+<img src="{% static 'myapp/imgs/default-car.jpg' %}" alt="No image">
+{% endif %}
       <div class="badge">{{ car.car_type }}</div>
-      <div class="price-tag">${{ car.price_per_day }}/day</div>
+      <div class="price-tag">{{ car.price_per_day }} MAD/day</div>
     </div>
 
     <div class="car-info">
       <div class="car-name">{{ car.name }}</div>
-      <div class="car-brand-label">{{ car.brand }}</div>
+      <div class="car-brand-label">{{ car.brand.name }}</div>
+      {% with reviews=car.reviews.all %}
+<div class="car-rating">
+
+  {% if reviews %}
+    ⭐
+    {{ car.reviews.all|length }}
+    review{{ car.reviews.all|length|pluralize }}
+  {% else %}
+    No reviews yet
+  {% endif %}
+
+</div>
+{% endwith %}
 
       <!-- 🔥 NEW SPECS ROW -->
       <div class="car-specs">
+        <div class="car-features">
+  {% for feature in car.features.all|slice:":3" %}
+    <span class="feature-pill">
+      {{ feature.name }}
+    </span>
+  {% endfor %}
+</div>
         <span>{{ car.transmission }}</span>
         <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
 fill="currentColor" viewBox="0 0 24 24" class="car-icon">
@@ -208,7 +255,21 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
 </svg>{{ car.fuel_type }}</span>
       </div>
 
-      <a  href="{% url 'cardetails' car.id %}"><button class="btn-book">Book Now</button></a>
+      {% if car.status == "available" %}
+
+<a href="{% url 'cardetails' car.id %}">
+  <button class="btn-book">
+    Book Now
+  </button>
+</a>
+
+{% else %}
+
+<button class="btn-book disabled-btn" disabled>
+  Unavailable
+</button>
+
+{% endif %}
     </div>
 
   </div>

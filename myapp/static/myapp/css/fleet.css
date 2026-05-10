@@ -462,3 +462,65 @@ body {
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   background-color: #0a0a0a;
 }
+.status-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.status-badge.maintenance {
+  background: #ff4444;
+  color: white;
+}
+
+.status-badge.reserved {
+  background: orange;
+  color: white;
+}
+
+.status-badge.rented {
+  background: #6366f1;
+  color: white;
+}
+
+.feature-pill {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.1);
+  padding: 5px 10px;
+  border-radius: 30px;
+  font-size: 12px;
+}
+
+.car-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+  z-index: 5;
+}
+
+.disabled-btn {
+  opacity: .5;
+  cursor: not-allowed;
+}
