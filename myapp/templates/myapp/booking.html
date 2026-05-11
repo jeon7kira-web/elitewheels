@@ -104,7 +104,7 @@
         /></span>
         <h1>BOOK YOUR<span>CAR NOW</span></h1>
       </div>
-      
+
       <form
         id="booking-form"
         method="POST"
@@ -230,7 +230,7 @@
         <div class="summary-card" id="summary-card">
           <div class="card-header">
             <h2>Booking Summary</h2>
-            <p type="button" id="close-summary">X</p>
+            <p id="close-summary">X</p>
           </div>
 
           <!-- CAR IMAGE -->
@@ -279,7 +279,7 @@
             </div>
             <div class="line-item">
               <span class="label">Total Days:</span>
-              <span class="value">{{ total_days }}</span>
+              <span class="value">{{ total_days|default:"-" }}</span>
             </div>
             <div
               class="line-item extra"
@@ -291,14 +291,16 @@
             </div>
             <div class="line-item">
               <span class="label">Total Price:</span>
-              <span class="value" id="sum-total">{{ total_price }} MAD</span>
+              <span class="value" id="sum-total"
+                >{{ total_price|default:"-" }} MAD</span
+              >
             </div>
 
             <div class="divider"></div>
 
             <!-- ACTIONS -->
             <div class="actions">
-              <button type="button" class="btn-back" id="close-summary">
+              <button type="button" class="btn-back" id="close-summary-btn">
                 Back
               </button>
               <button type="submit" form="booking-form" class="btn-continue">
@@ -309,396 +311,6 @@
         </div>
       </div>
     </div>
-
-    {% comment %}
-    <form id="booking-form" method="POST">
-      {% csrf_token %}
-
-      <div class="cards">
-        <!-- PERSONAL INFO -->
-        <div class="card">
-          <h2>Personal Information</h2>
-
-          <div class="row">
-            <div class="field">
-              <label>First Name</label>
-              <input type="text" name="first_name" id="fname" required />
-            </div>
-
-            <div class="field">
-              <label>Last Name</label>
-              <input type="text" name="last_name" id="lname" required />
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Email</label>
-            <input type="email" name="email" id="email" required />
-          </div>
-
-          <div class="field">
-            <label>Phone</label>
-            <input type="tel" name="phone" id="phone" required />
-          </div>
-
-          <label>
-            <input type="checkbox" name="with_driver" id="extra-driver" />
-            Add additional Driver
-          </label>
-        </div>
-
-        <!-- PAYMENT (UI ONLY, NOT STORED YET) -->
-        <div class="card">
-          <h2>Payment Information</h2>
-
-          <input type="text" id="card-number" placeholder="Card Number" />
-          <input type="text" id="expiry" placeholder="MM/YY" />
-          <input type="text" id="cvv" placeholder="CVV" />
-          <input type="text" id="cardholder" placeholder="Full Name" />
-
-          <div class="actions">
-            <button type="button" class="btn-continue" id="summary-btn">
-              Continue
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-    <div class="summary-overlay" id="summary-overlay">
-      <div class="summary-card">
-        <div class="card-header">
-          <h2>Booking Summary</h2>
-        </div>
-
-        <img src="{{ car.image.url }}" class="car-image" />
-
-        <div class="card-body">
-          <div class="car-title">{{ car.name }}</div>
-          <div class="car-category">{{ car.car_type }}</div>
-
-          <div class="line-item">
-            <span>Full Name:</span>
-            <span id="sum-name"></span>
-          </div>
-
-          <div class="line-item">
-            <span>Email:</span>
-            <span id="sum-email"></span>
-          </div>
-
-          <div class="line-item">
-            <span>Phone:</span>
-            <span id="sum-phone"></span>
-          </div>
-
-          <div class="line-item">
-            <span>Pickup:</span>
-            <span id="sum-pickup"></span>
-          </div>
-
-          <div class="line-item">
-            <span>Dropoff:</span>
-            <span id="sum-dropoff"></span>
-          </div>
-
-          <div class="line-item">
-            <span>Total:</span>
-            <span id="sum-total"></span>
-          </div>
-
-          <div class="actions">
-            <button type="button" class="btn-back" id="close-summary">
-              Back
-            </button>
-
-            <!-- REAL SUBMIT -->
-            <button type="submit" form="booking-form" class="btn-continue">
-              Confirm Booking
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% endcomment %} {% comment %}
-    <body>
-      <!-- NAVBAR (keep yours as-is) -->
-      <nav class="navbar">
-        <!-- your navbar unchanged -->
-      </nav>
-
-      <div class="header finisher-header">
-        <div class="title">
-          <span
-            ><hr />
-            BOOK
-            <hr
-          /></span>
-          <h1>BOOK YOUR <span>CAR NOW</span></h1>
-        </div>
-
-        <form method="POST">
-          {% csrf_token %}
-
-          <div class="cards">
-            <!-- LEFT CARD -->
-            <div class="card">
-              <h2>Personal Information</h2>
-
-              <div class="row">
-                <div class="field">
-                  <label>First Name:</label>
-                  <input
-                    type="text"
-                    name="first_name"
-                    value="{{ user.first_name }}"
-                    required
-                  />
-                </div>
-
-                <div class="field">
-                  <label>Last Name:</label>
-                  <input
-                    type="text"
-                    name="last_name"
-                    value="{{ user.last_name }}"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Email:</label>
-                <input
-                  type="email"
-                  name="email"
-                  value="{{ user.email }}"
-                  required
-                />
-              </div>
-
-              <div class="field">
-                <label>Phone:</label>
-                <input type="tel" name="phone" placeholder="Enter phone" />
-              </div>
-
-              <label class="checkbox-wrap">
-                <input type="checkbox" name="with_driver" id="extra-driver" />
-                <span>Add additional Driver (+50 MAD/Day)</span>
-              </label>
-            </div>
-
-            <!-- RIGHT CARD -->
-            <div class="card">
-              <h2>Payment Information</h2>
-
-              <div class="field">
-                <label>Card Number:</label>
-                <input type="text" placeholder="1234 5678 9012 3456" />
-              </div>
-
-              <div class="row">
-                <div class="field">
-                  <label>Pickup Date:</label>
-                  <input type="date" name="pickup_date" required />
-                </div>
-
-                <div class="field">
-                  <label>Dropoff Date:</label>
-                  <input type="date" name="dropoff_date" required />
-                </div>
-              </div>
-
-              <div class="field">
-                <label>Car</label>
-                <div class="input-wrap">
-                  <strong>{{ car.name }}</strong>
-                </div>
-              </div>
-
-              <div class="actions">
-                <a href="{% url 'cardetails' car.id %}">
-                  <button type="button" class="btn-back">Back</button>
-                </a>
-
-                <button type="submit" class="btn-continue">
-                  Confirm Booking
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-
-        <!-- SUMMARY (optional UI only) -->
-        <div class="summary-overlay" id="summary-overlay">
-          <div class="summary-card">
-            <div class="card-header">
-              <h2>Booking Summary</h2>
-            </div>
-
-            <img class="car-image" src="{{ car.image.url }}" />
-
-            <div class="card-body">
-              <div class="car-title">{{ car.name }}</div>
-              <div class="car-category">{{ car.car_type }}</div>
-
-              <div class="divider"></div>
-
-              <div class="line-item">
-                <span class="label">Daily Rent</span>
-                <span class="value">{{ car.price_per_day }} MAD</span>
-              </div>
-
-              <div class="line-item">
-                <span class="label">Total</span>
-                <span class="value">Calculated after submit</span>
-              </div>
-
-              <div class="actions">
-                <button type="button" class="btn-back" id="close-summary">
-                  Back
-                </button>
-
-                <button type="submit" class="btn-continue">
-                  Confirm Booking
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </body>
-    {% endcomment %}
-    <!-- <footer class="footer">
-      <div class="footer__main">
-        <div class="footer__brand">
-          <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
-          <p>
-            Lorem Ipsum has been the industry's standard dummy text ever since
-            the 1500.
-          </p>
-        </div>
-
-        <div class="footer__col">
-          <h4>Quick Links</h4>
-          <ul>
-            <li>
-              <a
-                href="{% url 'home' %}"
-                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                >Home</a
-              >
-            </li>
-            <li>
-              <a
-                href="{% url 'fleet' %}#services"
-                class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}"
-                >Our Fleet</a
-              >
-            </li>
-            <li><a href="{% url 'home' %}#services">Services</a></li>
-            <li><a href="{% url 'home' %}#about">About Us</a></li>
-            <li>
-              <a
-                href="{% url 'contact' %}"
-                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-                >Contact</a
-              >
-            </li>
-            <li>
-              <a
-                href="{% url 'faq' %}"
-                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
-                >FAQS</a
-              >
-            </li>
-          </ul>
-        </div>
-
-        <div class="footer__col">
-          <h4>Contact</h4>
-          <ul class="footer__contact">
-            <li>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.18 2.18 2 2 0 012.18 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.18 6.18l1.27-1.52a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"
-                />
-              </svg>
-              +2126 123 467 89
-            </li>
-            <li>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path
-                  d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                />
-                <polyline points="22,6 12,13 2,6" />
-              </svg>
-              carrental@gmail.com
-            </li>
-            <li>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                <circle cx="12" cy="10" r="3" />
-              </svg>
-              123 Gueliz, Marrakech
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="footer__social">
-        <a href="#" aria-label="X">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-            />
-          </svg>
-        </a>
-        <a href="#" aria-label="Instagram">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <rect x="2" y="2" width="20" height="20" rx="5" />
-            <circle cx="12" cy="12" r="4" />
-            <circle
-              cx="17.5"
-              cy="6.5"
-              r="1"
-              fill="currentColor"
-              stroke="none"
-            />
-          </svg>
-        </a>
-        <a href="#" aria-label="Facebook">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path
-              d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"
-            />
-          </svg>
-        </a>
-      </div>
-
-      <div class="footer__bottom">
-        <p>© 2026 EliteWheels. All rights reserved.</p>
-      </div>
-    </footer> -->
 
     <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
     <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>

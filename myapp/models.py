@@ -1,8 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.db.models import Q
 from django.utils import timezone
 
@@ -20,18 +18,6 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
-
-
-@receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'profile'):
-        instance.profile.save()
 
 
 # =========================================================
@@ -65,7 +51,6 @@ class Feature(models.Model):
 # =========================================================
 class Location(models.Model):
     city = models.CharField(max_length=100)
-
     address = models.TextField()
 
     def __str__(self):
@@ -93,11 +78,8 @@ class Car(models.Model):
     )
 
     car_type = models.CharField(max_length=50)
-
     transmission = models.CharField(max_length=20)
-
     passengers = models.IntegerField()
-
     fuel_type = models.CharField(max_length=20)
 
     image = models.ImageField(upload_to='cars/')
@@ -109,20 +91,10 @@ class Car(models.Model):
 
     description = models.TextField(blank=True)
 
-    year = models.IntegerField(
-        null=True,
-        blank=True
-    )
+    year = models.IntegerField(null=True, blank=True)
+    mileage = models.IntegerField(null=True, blank=True)
 
-    mileage = models.IntegerField(
-        null=True,
-        blank=True
-    )
-
-    features = models.ManyToManyField(
-        Feature,
-        blank=True
-    )
+    features = models.ManyToManyField(Feature, blank=True)
 
     status = models.CharField(
         max_length=20,
@@ -130,9 +102,9 @@ class Car(models.Model):
         default='available'
     )
 
-    available = models.BooleanField(default=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
+
+    # ❌ FIXED: removed DB field conflict, kept ONLY property logic
     @property
     def available(self):
         today = timezone.now().date()
@@ -146,7 +118,7 @@ class Car(models.Model):
         return not overlapping.exists()
 
     def __str__(self):
-        return f"{self.brand} {self.name}"
+        return f"{self.brand.name} {self.name}"
 
 
 # =========================================================
@@ -170,13 +142,9 @@ class CarImage(models.Model):
 # =========================================================
 class Chauffeur(models.Model):
     name = models.CharField(max_length=100)
-
     phone = models.CharField(max_length=20)
-
     license_number = models.CharField(max_length=50)
-
     is_available = models.BooleanField(default=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -196,17 +164,8 @@ class Booking(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
-
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name='bookings'
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='bookings')
 
     pickup_location = models.ForeignKey(
         Location,
@@ -225,7 +184,6 @@ class Booking(models.Model):
     )
 
     pickup_date = models.DateField()
-
     dropoff_date = models.DateField()
 
     with_driver = models.BooleanField(default=False)
@@ -250,30 +208,16 @@ class Booking(models.Model):
         blank=True
     )
 
-    invoice_pdf = models.FileField(
-        upload_to='invoices/',
-        blank=True,
-        null=True
-    )
-
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # -------------------------------------
-    # DURATION
-    # -------------------------------------
+    # duration
     @property
     def duration(self):
-        return max(
-            1,
-            (self.dropoff_date - self.pickup_date).days
-        )
+        return max(1, (self.dropoff_date - self.pickup_date).days)
 
-    # -------------------------------------
-    # AUTO STATUS
-    # -------------------------------------
+    # auto status
     @property
     def status_auto(self):
-
         today = timezone.now().date()
 
         if self.status == "cancelled":
@@ -290,15 +234,9 @@ class Booking(models.Model):
 
         return "pending"
 
-    # -------------------------------------
-    # VALIDATION
-    # -------------------------------------
     def clean(self):
-
         if self.pickup_date >= self.dropoff_date:
-            raise ValidationError(
-                "Dropoff date must be after pickup date."
-            )
+            raise ValidationError("Dropoff date must be after pickup date.")
 
         overlapping = Booking.objects.filter(
             car=self.car,
@@ -312,22 +250,12 @@ class Booking(models.Model):
             overlapping = overlapping.exclude(pk=self.pk)
 
         if overlapping.exists():
-            raise ValidationError(
-                "This car is already booked for these dates."
-            )
+            raise ValidationError("This car is already booked for these dates.")
 
-    # -------------------------------------
-    # SAVE
-    # -------------------------------------
     def save(self, *args, **kwargs):
-
         self.full_clean()
 
-        days = max(
-            1,
-            (self.dropoff_date - self.pickup_date).days
-        )
-
+        days = max(1, (self.dropoff_date - self.pickup_date).days)
         self.total_price = days * self.car.price_per_day
 
         if self.with_driver:
@@ -340,46 +268,11 @@ class Booking(models.Model):
 
 
 # =========================================================
-# REVIEW
-# =========================================================
-class Review(models.Model):
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name='reviews'
-    )
-
-    rating = models.IntegerField()
-
-    comment = models.TextField()
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.car.name}"
-
-
-# =========================================================
 # FAVORITE
 # =========================================================
 class Favorite(models.Model):
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE
-    )
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -393,38 +286,11 @@ class Favorite(models.Model):
 # PAYMENT
 # =========================================================
 class Payment(models.Model):
-
-    PAYMENT_STATUS = [
-        ('pending', 'Pending'),
-        ('paid', 'Paid'),
-        ('failed', 'Failed'),
-        ('refunded', 'Refunded'),
-    ]
-
-    booking = models.OneToOneField(
-        Booking,
-        on_delete=models.CASCADE,
-        related_name='payment'
-    )
-
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_method = models.CharField(max_length=50)
-
-    transaction_id = models.CharField(
-        max_length=100,
-        blank=True
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=PAYMENT_STATUS,
-        default='pending'
-    )
-
+    transaction_id = models.CharField(max_length=100, blank=True)
+    status = models.CharField(max_length=20, default='pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -435,16 +301,9 @@ class Payment(models.Model):
 # PROMO CODE
 # =========================================================
 class PromoCode(models.Model):
-
-    code = models.CharField(
-        max_length=20,
-        unique=True
-    )
-
+    code = models.CharField(max_length=20, unique=True)
     discount_percent = models.IntegerField()
-
     active = models.BooleanField(default=True)
-
     expires_at = models.DateTimeField()
 
     def __str__(self):
@@ -455,18 +314,10 @@ class PromoCode(models.Model):
 # NOTIFICATION
 # =========================================================
 class Notification(models.Model):
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-
     message = models.TextField()
-
     is_read = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -477,32 +328,23 @@ class Notification(models.Model):
 # MAINTENANCE
 # =========================================================
 class Maintenance(models.Model):
-
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name='maintenances'
-    )
-
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='maintenances')
     title = models.CharField(max_length=100)
-
     description = models.TextField()
-
-    cost = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
+    cost = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.car.name} - {self.title}"
-    
+
+
+# =========================================================
+# REVIEW
+# =========================================================
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    car = models.ForeignKey(Car, on_delete=models.CASCADE)
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')
     rating = models.IntegerField()
     comment = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

@@ -148,19 +148,6 @@
         </ul>
 
         <p class="hero__desc">{{ car.description }}</p>
-        <div class="car-features">
-          <div class="feature {% if car.air_conditioning %}active{% endif %}">
-            ❄ Air Conditioning
-          </div>
-
-          <div class="feature {% if car.bluetooth %}active{% endif %}">
-            📶 Bluetooth
-          </div>
-
-          <div class="feature {% if car.gps %}active{% endif %}">
-            📍 GPS Navigation
-          </div>
-        </div>
 
         <!-- BOOKING FORM -->
         {% if error %}
@@ -187,12 +174,6 @@
                 <span id="total">— MAD</span>
               </span>
             </div>
-          </div>
-          <div class="booking-driver">
-            <label class="driver-checkbox">
-              <input type="checkbox" id="withDriver" name="with_driver" />
-              <span>Add Professional Chauffeur (+50 MAD/day)</span>
-            </label>
           </div>
           <button class="btn-book" type="submit" id="bookBtn">
             <span>BOOK NOW</span>
@@ -276,7 +257,7 @@
 
       <div class="related__grid">
         {% for related_car in related_cars %}
-        <a href="{% url 'cardetails' related_car.id %}" class="car-card">
+        <a href="{% url 'car_detail' related_car.id %}" class="car-card">
           <div class="car-card__img-wrap">
             <img
               src="{{ related_car.image.url }}"
@@ -430,103 +411,83 @@
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-            // ── Flatpickr date range ──────────────────────────────────────────
-            document.addEventListener("DOMContentLoaded", function () {
-              flatpickr("#date-range", {
-                mode: "range",
-                dateFormat: "Y-m-d",
-                minDate: "today",
-                disable: disabled_dates,
-                showMonths: 2,
+      // ── Flatpickr date range ──────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", function () {
+        flatpickr("#date-range", {
+          mode: "range",
+          dateFormat: "Y-m-d",
+          minDate: "today",
+          disable: disabled_dates,
+          showMonths: 2,
 
-                onReady: function (_, __, instance) {
-                  if (!instance.calendarContainer.querySelector(".calendar-note")) {
-                    const note = document.createElement("div");
-                    note.className = "calendar-note";
-                    note.innerHTML = "! Unavailable dates appear in gray";
-                    instance.calendarContainer.appendChild(note);
-                  }
-                },
+          onReady: function (_, __, instance) {
+            if (!instance.calendarContainer.querySelector(".calendar-note")) {
+              const note = document.createElement("div");
+              note.className = "calendar-note";
+              note.innerHTML = "! Unavailable dates appear in gray";
+              instance.calendarContainer.appendChild(note);
+            }
+          },
 
-               const driverCheckbox = document.getElementById("withDriver");
+          onChange: function (selectedDates) {
+            if (selectedDates.length === 2) {
+              const diffTime = selectedDates[1] - selectedDates[0];
+              const days = Math.max(
+                1,
+                Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+              );
+              const total = days * pricePerDay;
+              document.getElementById("days").innerText = days + " days";
+              document.getElementById("total").innerText = total + " MAD";
+            }
+          },
+        });
 
-      function calculateTotal(selectedDates) {
-        if (selectedDates.length === 2) {
-          const diffTime = selectedDates[1] - selectedDates[0];
+        // ── Thumbnail gallery switcher ──────────────────────────────────
+        const thumbs = document.querySelectorAll(".thumb");
+        const mainImg = document.getElementById("mainImg");
 
-          const days = Math.max(
-            1,
-            Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
-          );
+        thumbs.forEach((thumb) => {
+          thumb.addEventListener("click", () => {
+            mainImg.src = thumb.dataset.src;
+            thumbs.forEach((t) => t.classList.remove("active"));
+            thumb.classList.add("active");
+          });
+        });
 
-          let total = days * pricePerDay;
+        // ── Reviews carousel ───────────────────────────────────────────
+        const track = document.getElementById("reviewsTrack");
+        const cards = track.querySelectorAll(".review-card");
+        let current = 0;
 
-          if (driverCheckbox && driverCheckbox.checked) {
-            total += days * 50;
+        function showCard(index) {
+          cards.forEach((c, i) => {
+            c.style.display = i === index ? "flex" : "none";
+          });
+        }
+
+        // Init — show all on wider screens, one-at-a-time on mobile
+        function initReviews() {
+          if (window.innerWidth >= 768) {
+            cards.forEach((c) => (c.style.display = "flex"));
+          } else {
+            showCard(current);
           }
-
-          document.getElementById("days").innerText =
-            days + " days";
-
-          document.getElementById("total").innerText =
-            total + " MAD";
         }
-      }
 
-      driverCheckbox?.addEventListener("change", () => {
-        const fp = document.querySelector("#date-range")._flatpickr;
+        document.getElementById("revPrev").addEventListener("click", () => {
+          current = (current - 1 + cards.length) % cards.length;
+          if (window.innerWidth < 768) showCard(current);
+        });
 
-        if (fp.selectedDates.length === 2) {
-          calculateTotal(fp.selectedDates);
-        }
+        document.getElementById("revNext").addEventListener("click", () => {
+          current = (current + 1) % cards.length;
+          if (window.innerWidth < 768) showCard(current);
+        });
+
+        initReviews();
+        window.addEventListener("resize", initReviews);
       });
-              });
-
-              // ── Thumbnail gallery switcher ──────────────────────────────────
-              const thumbs = document.querySelectorAll(".thumb");
-              const mainImg = document.getElementById("mainImg");
-
-              thumbs.forEach((thumb) => {
-                thumb.addEventListener("click", () => {
-                  mainImg.src = thumb.dataset.src;
-                  thumbs.forEach((t) => t.classList.remove("active"));
-                  thumb.classList.add("active");
-                });
-              });
-
-              // ── Reviews carousel ───────────────────────────────────────────
-              const track = document.getElementById("reviewsTrack");
-              const cards = track.querySelectorAll(".review-card");
-              let current = 0;
-
-              function showCard(index) {
-                cards.forEach((c, i) => {
-                  c.style.display = i === index ? "flex" : "none";
-                });
-              }
-
-              // Init — show all on wider screens, one-at-a-time on mobile
-              function initReviews() {
-                if (window.innerWidth >= 768) {
-                  cards.forEach((c) => (c.style.display = "flex"));
-                } else {
-                  showCard(current);
-                }
-              }
-
-              document.getElementById("revPrev").addEventListener("click", () => {
-                current = (current - 1 + cards.length) % cards.length;
-                if (window.innerWidth < 768) showCard(current);
-              });
-
-              document.getElementById("revNext").addEventListener("click", () => {
-                current = (current + 1) % cards.length;
-                if (window.innerWidth < 768) showCard(current);
-              });
-
-              initReviews();
-              window.addEventListener("resize", initReviews);
-            });
     </script>
 
     <script src="{% static 'myapp/js/fleet.js' %}"></script>

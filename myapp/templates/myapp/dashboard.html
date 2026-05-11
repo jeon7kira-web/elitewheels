@@ -8,7 +8,6 @@
 
     <link rel="stylesheet" href="{% static 'myapp/css/dashboard.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
-
     <link
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
@@ -23,7 +22,6 @@
           <h1>Elite<span>Wheels</span></h1>
           <p>Luxury Car Rentals</p>
         </div>
-
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
           <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
@@ -32,7 +30,6 @@
           <li><a href="{% url 'contact' %}">Contact</a></li>
           <li><a href="{% url 'faq' %}">FAQs</a></li>
         </ul>
-
         <div class="profile">
           {% if user.is_authenticated %}
           <a
@@ -68,8 +65,8 @@
             <div class="value">{{ active_bookings|length }}</div>
           </div>
           <div class="stat-card">
-            <div class="label">Pending</div>
-            <div class="value">{{ groups.pending|length }}</div>
+            <div class="label">Confirmed</div>
+            <div class="value">{{ groups.confirmed|length }}</div>
           </div>
           <div class="stat-card">
             <div class="label">Completed</div>
@@ -77,7 +74,7 @@
           </div>
           <div class="stat-card">
             <div class="label">Total spent</div>
-            <div class="value">{{ total_spent|default:"—" }} MAD</div>
+            <div class="value">{{ total_spent|default:"0" }} MAD</div>
           </div>
         </section>
 
@@ -90,11 +87,16 @@
 
         <!-- TAB CONTENT -->
         <div class="tab-content">
-          <!--  PROFILE TAB  -->
+          <!-- ═══════════════ PROFILE TAB ═══════════════ -->
           <section id="profile" class="tab-section active">
             <div class="form-card">
               <h2>Profile information</h2>
-              <form method="POST" enctype="multipart/form-data">
+              <!-- FIX: single form, correct POST target -->
+              <form
+                method="POST"
+                action="{% url 'dashboard' %}"
+                enctype="multipart/form-data"
+              >
                 {% csrf_token %}
                 <div class="grid-2">
                   <input
@@ -122,18 +124,17 @@
                   value="{{ profile.phone }}"
                   placeholder="Phone"
                 />
-                <button class="btn-primary" name="update_profile">
+                <button class="btn-primary" name="update_profile" value="1">
                   Save changes
                 </button>
               </form>
             </div>
           </section>
 
-          <!--  BOOKINGS TAB  -->
+          <!-- ═══════════════ BOOKINGS TAB ═══════════════ -->
           <section id="bookings" class="tab-section">
             <div class="section-header">
               <h2>Your bookings</h2>
-              <!-- SEARCH BAR (new) -->
               <div class="search-bar">
                 <input
                   type="text"
@@ -237,6 +238,13 @@
                             class="link-details"
                             >View details →</a
                           >
+                          <!-- Cancel available on confirmed too -->
+                          <button
+                            class="btn-cancel"
+                            onclick="cancelBooking({{ booking.id }}, this)"
+                          >
+                            Cancel
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -289,13 +297,13 @@
                             class="link-details"
                             >View details →</a
                           >
-                          <!-- CANCEL BUTTON (new) — wire up cancel URL in Django -->
-                          <a
-                            href="{% url 'cancel_booking' booking.id %}"
+                          <!-- FIX: cancel via JS/fetch POST instead of bare GET link -->
+                          <button
                             class="btn-cancel"
-                            onclick="return confirm('Cancel this booking?');"
-                            >Cancel</a
+                            onclick="cancelBooking({{ booking.id }}, this)"
                           >
+                            Cancel
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -411,11 +419,14 @@
               </div>
             </div>
           </section>
+          <!-- /bookings tab -->
 
+          <!-- ═══════════════ SETTINGS TAB ═══════════════ -->
+          <!-- FIX: removed nested <form> — logout is now its own separate form -->
           <section id="settings" class="tab-section">
             <div class="form-card">
               <h2>Change password</h2>
-              <form method="POST">
+              <form method="POST" action="{% url 'dashboard' %}">
                 {% csrf_token %}
                 <input
                   type="password"
@@ -427,30 +438,33 @@
                   name="new_password"
                   placeholder="New password"
                 />
-
                 <input
                   type="password"
                   name="confirm_password"
                   placeholder="Confirm password"
                 />
-
-                <button class="btn-primary" name="change_password">
+                <button class="btn-primary" name="change_password" value="1">
                   Update password
                 </button>
-                <form
-                  method="POST"
-                  action="{% url 'logout' %}"
-                  style="display: inline"
-                >
-                  {% csrf_token %}
-                  <button class="btn logout" type="submit">Logout</button>
-                </form>
+              </form>
+
+              <!-- Logout — separate form, NOT nested -->
+              <form
+                method="POST"
+                action="{% url 'logout' %}"
+                style="margin-top: 1rem"
+              >
+                {% csrf_token %}
+                <button class="btn logout" type="submit">Logout</button>
               </form>
             </div>
           </section>
         </div>
+        <!-- /tab-content -->
       </div>
+      <!-- /dashboard -->
     </div>
+    <!-- /finisher-header -->
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -502,6 +516,7 @@
     </script>
 
     <script>
+      // ── Toast auto-dismiss ─────────────────────────────────────
       document.querySelectorAll(".toast").forEach((toast) => {
         setTimeout(() => {
           toast.style.opacity = "0";
@@ -510,6 +525,7 @@
         }, 4000);
       });
 
+      // ── Tab switching ──────────────────────────────────────────
       document.querySelectorAll(".tab").forEach((tab) => {
         tab.addEventListener("click", () => {
           document
@@ -523,24 +539,61 @@
         });
       });
 
+      // ── Booking group toggle ───────────────────────────────────
       function toggleGroup(header) {
         header.closest(".booking-group").classList.toggle("open");
       }
 
+      // ── Booking search filter ──────────────────────────────────
       function filterBookings(query) {
         const q = query.toLowerCase().trim();
         document.querySelectorAll(".booking-card").forEach((card) => {
           const name = (card.dataset.name || "").toLowerCase();
           const dates = (card.dataset.dates || "").toLowerCase();
-          const match = !q || name.includes(q) || dates.includes(q);
-          card.style.display = match ? "" : "none";
+          card.style.display =
+            !q || name.includes(q) || dates.includes(q) ? "" : "none";
         });
-
         document.querySelectorAll(".booking-group").forEach((group) => {
           const cards = group.querySelectorAll(".booking-card");
           const visible = [...cards].some((c) => c.style.display !== "none");
           group.style.display = cards.length === 0 || visible ? "" : "none";
         });
+      }
+
+      // ── Cancel booking via AJAX POST (FIX: was a plain GET <a>) ──
+      function cancelBooking(bookingId, btn) {
+        if (!confirm("Are you sure you want to cancel this booking?")) return;
+
+        const csrfToken = document.querySelector(
+          "[name=csrfmiddlewaretoken]",
+        ).value;
+
+        fetch(`/cancel-booking/${bookingId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": csrfToken,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              // Move card visually to cancelled section without full reload
+              const card = btn.closest(".booking-card");
+              card.querySelector(".badge").textContent = "Cancelled";
+              card.querySelector(".badge").className = "badge cancelled";
+              card.className = "booking-card cancelled";
+
+              // Remove cancel button
+              btn.remove();
+
+              // Update count badges
+              location.reload(); // simplest reliable approach
+            } else {
+              alert(data.error || "Could not cancel booking.");
+            }
+          })
+          .catch(() => alert("Network error. Please try again."));
       }
     </script>
 

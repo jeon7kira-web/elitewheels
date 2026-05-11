@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>Our Fleet — EliteWheels</title>
 
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/fleet.css' %}" />
@@ -25,15 +25,13 @@
         <h1>Elite<span>Wheels</span></h1>
         <p>Luxury Car Rentals</p>
       </div>
-
       <ul>
         <li>
           <a
             href="{% url 'home' %}"
             class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+            >Home</a
           >
-            Home
-          </a>
         </li>
         <li>
           <a
@@ -42,20 +40,8 @@
             >Our Fleet</a
           >
         </li>
-        <li>
-          <a
-            href="{% url 'home' %}#services"
-            class="{% if request.resolver_match.url_name == '#' %}active{% endif %}"
-            >Services</a
-          >
-        </li>
-        <li>
-          <a
-            href="{% url 'home' %}#about"
-            class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}"
-            >About us</a
-          >
-        </li>
+        <li><a href="{% url 'home' %}#services">Services</a></li>
+        <li><a href="{% url 'home' %}#about">About us</a></li>
         <li>
           <a
             href="{% url 'contact' %}"
@@ -71,223 +57,229 @@
           >
         </li>
       </ul>
-
       <div class="profile">
         {% if user.is_authenticated %}
-
         <a
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
         >
           {{ user.first_name|default:user.username }}'s Dashboard ▼
         </a>
-
-        <!-- LOGOUT BUTTON -->
         <form method="POST" action="{% url 'logout' %}" style="display: inline">
           {% csrf_token %}
           <button class="btn logout" type="submit">Logout</button>
         </form>
-
         {% else %}
-
         <a href="{% url 'auth' %}" class="btn">Login / Register</a>
-
         {% endif %}
       </div>
     </nav>
+
     <div class="whatsapp-icon">
       <img
         src="{% static 'myapp/imgs/whatsapp-svgrepo-com.svg' %}"
+        alt="WhatsApp"
       />
     </div>
+
     <div class="header finisher-header">
-        <div class="title">
-      <span
-        ><hr />
-        OUR FLEET
-        <hr
-      /></span>
-      <h1>CHOOSE THE <span>PERFECT CAR</span> FOR YOUR JOURNEY</h1>
-    </div>
-
-
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-
-    <div class="filter-icon">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-      </svg> Filter Cars
-    </div>
-
-    <!-- BRAND -->
-    <div class="filter-group">
-      <div class="filter-label">Brand</div>
-      <select id="filter-brand">
-        <option value="">All Brands</option>
-        {% for brand in brands %}
-  <option value="{{ brand.name }}">
-    {{ brand.name }}
-  </option>
-{% endfor %}
-      </select>
-    </div>
-
-    <!-- TYPE -->
-    <div class="filter-group">
-      <div class="filter-label">Type</div>
-      <select id="filter-type">
-        <option value="">All Types</option>
-        {% for type in types %}
-          <option value="{{ type }}">{{ type }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <!-- TRANSMISSION -->
-    <div class="filter-group">
-      <div class="filter-label">Transmission</div>
-      <select id="filter-trans">
-        <option value="">All Types</option>
-        {% for trans in transmissions %}
-          <option value="{{ trans }}">{{ trans }}</option>
-        {% endfor %}
-      </select>
-    </div>
-
-    <!-- PRICE  -->
-    <div class="filter-group">
-      <div class="filter-label">Price</div>
-      <select id="filter-price">
-        <option value="">All Prices</option>
-        <option value="0-200">Under $200</option>
-        <option value="200-400">$200–$400</option>
-        <option value="400-700">$400–$700</option>
-        <option value="700-9999">$700+</option>
-      </select>
-    </div>
-
-  </div>
-
-  <!-- RESULTS COUNT -->
-  <div class="results-count">
-    Showing <span id="count">{{ cars|length }}</span> vehicles
-  </div>
-
-  {% if not cars %}
-  <span>No cars available for selected dates.</span>
-  {% endif %}
-    <!-- Cars Card -->
-  <div class="cars-grid" id="cars-grid">
-
-  {% for car in cars %}
-  <div class="car-card"
-       data-brand="{{ car.brand.name }}"
-       data-type="{{ car.car_type }}"
-       data-trans="{{ car.transmission }}"
-       data-price="{{ car.price_per_day }}">
-
-    <div class="car-img-wrap">
-      {% if car.status == "maintenance" %}
-<div class="status-badge maintenance">
-  Under Maintenance
-</div>
-{% elif car.status == "reserved" %}
-<div class="status-badge reserved">
-  Reserved
-</div>
-{% elif car.status == "rented" %}
-<div class="status-badge rented">
-  Rented
-</div>
-{% endif %}
-{% if user.is_authenticated %}
-<a
-  href="{% url 'toggle_favorite' car.id %}"
-  class="favorite-btn"
->
-  ♥
-</a>
-{% endif %}
-      {% if car.image %}
-<img src="{{ car.image.url }}" alt="{{ car.name }}">
-{% else %}
-<img src="{% static 'myapp/imgs/default-car.jpg' %}" alt="No image">
-{% endif %}
-      <div class="badge">{{ car.car_type }}</div>
-      <div class="price-tag">{{ car.price_per_day }} MAD/day</div>
-    </div>
-
-    <div class="car-info">
-      <div class="car-name">{{ car.name }}</div>
-      <div class="car-brand-label">{{ car.brand.name }}</div>
-      {% with reviews=car.reviews.all %}
-<div class="car-rating">
-
-  {% if reviews %}
-    ⭐
-    {{ car.reviews.all|length }}
-    review{{ car.reviews.all|length|pluralize }}
-  {% else %}
-    No reviews yet
-  {% endif %}
-
-</div>
-{% endwith %}
-
-      <!-- 🔥 NEW SPECS ROW -->
-      <div class="car-specs">
-        <div class="car-features">
-  {% for feature in car.features.all|slice:":3" %}
-    <span class="feature-pill">
-      {{ feature.name }}
-    </span>
-  {% endfor %}
-</div>
-        <span>{{ car.transmission }}</span>
-        <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-fill="currentColor" viewBox="0 0 24 24" class="car-icon">
-<path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5m0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1m6-7h4c2.76 0 5 2.24 5 5H5c0-2.76 2.24-5 5-5"></path>
-</svg>{{ car.passengers }} </span>
-        <span><svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24"  
-fill="currentColor" viewBox="0 0 24 24" class="car-icon">
-<path d="m16.62 3.22-1.25 1.56 3.87 3.1c.48.38.75.95.75 1.56V18c0 .55-.45 1-1 1s-1-.45-1-1v-3c0-1.65-1.35-3-3-3h-1V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-5h1c.55 0 1 .45 1 1v3c0 1.65 1.35 3 3 3s3-1.35 3-3V9.44c0-1.22-.55-2.36-1.5-3.12l-3.87-3.1ZM12 5v4H4V5zM4 19v-8h8v8z"></path>
-</svg>{{ car.fuel_type }}</span>
+      <div class="title">
+        <span
+          ><hr />
+          OUR FLEET
+          <hr
+        /></span>
+        <h1>CHOOSE THE <span>PERFECT CAR</span> FOR YOUR JOURNEY</h1>
       </div>
 
-      {% if car.status == "available" %}
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-icon">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+          Filter Cars
+        </div>
 
-<a href="{% url 'cardetails' car.id %}">
-  <button class="btn-book">
-    Book Now
-  </button>
-</a>
+        <!-- BRAND — FIX: now uses 'brands' queryset passed from view -->
+        <div class="filter-group">
+          <div class="filter-label">Brand</div>
+          <select id="filter-brand">
+            <option value="">All Brands</option>
+            {% for brand in brands %}
+            <option value="{{ brand.name }}">{{ brand.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-{% else %}
+        <!-- TYPE -->
+        <div class="filter-group">
+          <div class="filter-label">Type</div>
+          <select id="filter-type">
+            <option value="">All Types</option>
+            {% for type in types %}
+            <option value="{{ type }}">{{ type }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-<button class="btn-book disabled-btn" disabled>
-  Unavailable
-</button>
+        <!-- TRANSMISSION -->
+        <div class="filter-group">
+          <div class="filter-label">Transmission</div>
+          <select id="filter-trans">
+            <option value="">All Types</option>
+            {% for trans in transmissions %}
+            <option value="{{ trans }}">{{ trans }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-{% endif %}
+        <!-- PRICE -->
+        <div class="filter-group">
+          <div class="filter-label">Price</div>
+          <select id="filter-price">
+            <option value="">All Prices</option>
+            <option value="0-200">Under 200 MAD</option>
+            <option value="200-400">200–400 MAD</option>
+            <option value="400-700">400–700 MAD</option>
+            <option value="700-9999">700+ MAD</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- RESULTS COUNT -->
+      <div class="results-count">
+        Showing <span id="count">{{ cars|length }}</span> vehicles
+      </div>
+
+      {% if not cars %}
+      <p style="text-align: center; color: #aaa">
+        No cars available for the selected dates.
+      </p>
+      {% endif %}
+
+      <!-- CARS GRID -->
+      <div class="cars-grid" id="cars-grid">
+        {% for car in cars %}
+        <div
+          class="car-card"
+          data-brand="{{ car.brand.name }}"
+          data-type="{{ car.car_type }}"
+          data-trans="{{ car.transmission }}"
+          data-price="{{ car.price_per_day }}"
+        >
+          <div class="car-img-wrap">
+            {% if car.status == "maintenance" %}
+            <div class="status-badge maintenance">Under Maintenance</div>
+            {% elif car.status == "reserved" %}
+            <div class="status-badge reserved">Reserved</div>
+            {% elif car.status == "rented" %}
+            <div class="status-badge rented">Rented</div>
+            {% endif %} {% if user.is_authenticated %}
+            <a
+              href="{% url 'toggle_favorite' car.id %}"
+              class="favorite-btn"
+              title="Toggle Favorite"
+              >♥</a
+            >
+            {% endif %} {% if car.image %}
+            <img src="{{ car.image.url }}" alt="{{ car.name }}" />
+            {% else %}
+            <img
+              src="{% static 'myapp/imgs/default-car.jpg' %}"
+              alt="No image"
+            />
+            {% endif %}
+
+            <div class="badge">{{ car.car_type }}</div>
+            <div class="price-tag">{{ car.price_per_day }} MAD/day</div>
+          </div>
+
+          <div class="car-info">
+            <div class="car-name">{{ car.name }}</div>
+            <div class="car-brand-label">{{ car.brand.name }}</div>
+
+            {% with reviews=car.reviews.all %}
+            <div class="car-rating">
+              {% if reviews %} ⭐ {{ reviews|length }} review{{
+              reviews|length|pluralize }} {% else %} No reviews yet {% endif %}
+            </div>
+            {% endwith %}
+
+            <div class="car-specs">
+              <div class="car-features">
+                {% for feature in car.features.all|slice:":3" %}
+                <span class="feature-pill">{{ feature.name }}</span>
+                {% endfor %}
+              </div>
+              <span>{{ car.transmission }}</span>
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  class="car-icon"
+                >
+                  <path
+                    d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5m0-8c1.65 0 3 1.35 3 3s-1.35 3-3 3-3-1.35-3-3 1.35-3 3-3M4 22h16c.55 0 1-.45 1-1v-1c0-3.86-3.14-7-7-7h-4c-3.86 0-7 3.14-7 7v1c0 .55.45 1 1 1m6-7h4c2.76 0 5 2.24 5 5H5c0-2.76 2.24-5 5-5"
+                  />
+                </svg>
+                {{ car.passengers }}
+              </span>
+              <span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                  class="car-icon"
+                >
+                  <path
+                    d="m16.62 3.22-1.25 1.56 3.87 3.1c.48.38.75.95.75 1.56V18c0 .55-.45 1-1 1s-1-.45-1-1v-3c0-1.65-1.35-3-3-3h-1V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2v-5h1c.55 0 1 .45 1 1v3c0 1.65 1.35 3 3 3s3-1.35 3-3V9.44c0-1.22-.55-2.36-1.5-3.12l-3.87-3.1ZM12 5v4H4V5zM4 19v-8h8v8z"
+                  />
+                </svg>
+                {{ car.fuel_type }}
+              </span>
+            </div>
+
+            {% if car.status == "available" %}
+            <a href="{% url 'cardetails' car.id %}">
+              <button class="btn-book">Book Now</button>
+            </a>
+            {% else %}
+            <button class="btn-book disabled-btn" disabled>Unavailable</button>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- NO RESULTS (JS-controlled) -->
+      <div
+        id="no-results"
+        style="display: none; text-align: center; padding: 2rem"
+      >
+        <strong>No Vehicles Found</strong>
+        <p>Try adjusting your filters.</p>
+      </div>
+    </div>
+    <!-- /header finisher-header -->
+
+    <div class="see-all">
+      <span>Discover More &gt;&gt;&gt;</span>
     </div>
 
-  </div>
-  {% endfor %}
-
-</div>  
-
-  <!-- NO RESULTS -->
-  <div id="no-results" style="display:none;">
-    <strong>No Vehicles Found</strong>
-    Try adjusting your filters
-  </div>
-
-</div>
-<div class="see-all">
-    <span>Discover More  &gt;&gt;&gt;</span>
-</div>
-    </div>
+    <!-- FOOTER -->
     <footer class="footer">
       <div class="footer__main">
         <div class="footer__brand">
@@ -297,37 +289,17 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
             the 1500.
           </p>
         </div>
-
         <div class="footer__col">
           <h4>Quick Links</h4>
           <ul>
-            <li>
-              <a
-                href="{% url 'home' %}"
-                class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-                >Home</a
-              >
-            </li>
-            <li><a href="{% url 'fleet' %}#services"  class="{% if request.resolver_match.url_name == 'fleet' %}active{% endif %}">Our Fleet</a></li>
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
             <li><a href="{% url 'home' %}#services">Services</a></li>
             <li><a href="{% url 'home' %}#about">About Us</a></li>
-            <li>
-              <a
-                href="{% url 'contact' %}"
-                class="{% if request.resolver_match.url_name == 'contact' %}active{% endif %}"
-                >Contact</a
-              >
-            </li>
-            <li>
-              <a
-                href="{% url 'faq' %}"
-                class="{% if request.resolver_match.url_name == 'faq' %}active{% endif %}"
-                >FAQS</a
-              >
-            </li>
+            <li><a href="{% url 'contact' %}">Contact</a></li>
+            <li><a href="{% url 'faq' %}">FAQs</a></li>
           </ul>
         </div>
-
         <div class="footer__col">
           <h4>Contact</h4>
           <ul class="footer__contact">
@@ -373,7 +345,6 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
           </ul>
         </div>
       </div>
-
       <div class="footer__social">
         <a href="#" aria-label="X">
           <svg viewBox="0 0 24 24" fill="currentColor">
@@ -408,47 +379,27 @@ fill="currentColor" viewBox="0 0 24 24" class="car-icon">
           </svg>
         </a>
       </div>
-
       <div class="footer__bottom">
         <p>© 2026 EliteWheels. All rights reserved.</p>
       </div>
     </footer>
 
-    <!-- 🔥 FINISHER SCRIPT (MUST BE BEFORE CLOSING BODY) -->
     <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
-
     <script>
       new FinisherHeader({
         count: 100,
-        size: {
-          min: 1,
-          max: 8,
-          pulse: 0.1,
-        },
-        speed: {
-          x: {
-            min: 0,
-            max: 0.4,
-          },
-          y: {
-            min: 0,
-            max: 0.6,
-          },
-        },
+        size: { min: 1, max: 8, pulse: 0.1 },
+        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.6 } },
         colors: {
           background: "#0a0a0a",
           particles: ["#a8872d", "#6366f1", "black"],
         },
         blending: "overlay",
-        opacity: {
-          center: 1,
-          edge: 0.05,
-        },
+        opacity: { center: 1, edge: 0.05 },
         skew: 0,
         shapes: ["c", "t", "s"],
       });
     </script>
-  
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>
 </html>

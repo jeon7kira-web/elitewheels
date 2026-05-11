@@ -90,10 +90,18 @@ window.addEventListener("load", () => {
 document.addEventListener("DOMContentLoaded", () => {
   const openBtn = document.getElementById("summary-btn");
   const overlay = document.getElementById("summary-overlay");
-  const closeBtn = document.getElementById("close-summary");
+
+  const closeBtn = document.getElementById("close-summary-btn");
+  const closeX = document.getElementById("close-summary");
+
   const driverCheckbox = document.getElementById("extra-driver");
 
-  openBtn.addEventListener("click", () => {
+  function closeModal() {
+    overlay.classList.remove("active");
+    document.body.style.overflow = "auto";
+  }
+
+  function openModal() {
     const fname = document.getElementById("fname").value;
     const lname = document.getElementById("lname").value;
     const email = document.getElementById("email").value;
@@ -108,29 +116,26 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("sum-name").textContent = fname + " " + lname;
     document.getElementById("sum-email").textContent = email;
     document.getElementById("sum-phone").textContent = phone;
+
     document.getElementById("sum-driver-row").style.display = withDriver
       ? "flex"
       : "none";
 
-    // update total price with driver cost
     const driverCost = withDriver ? 50 * totalDays : 0;
+
     document.getElementById("sum-total").textContent =
       (basePrice + driverCost).toFixed(2) + " MAD";
 
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
-  });
+  }
 
-  closeBtn.addEventListener("click", () => {
-    overlay.classList.remove("active");
-    document.body.style.overflow = "auto";
-  });
+  if (openBtn) openBtn.addEventListener("click", openModal);
+  if (closeBtn) closeBtn.addEventListener("click", closeModal);
+  if (closeX) closeX.addEventListener("click", closeModal);
 
-  overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove("active");
-      document.body.style.overflow = "auto";
-    }
+  overlay?.addEventListener("click", (e) => {
+    if (e.target === overlay) closeModal();
   });
 });
 const icon = document.getElementById("calendarIcon");
