@@ -5,13 +5,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Booking Detail — EliteWheels</title>
+
     <link rel="stylesheet" href="{% static 'myapp/css/home.css' %}" />
     <link rel="stylesheet" href="{% static 'myapp/css/dashboard.css' %}" />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
   </head>
+
   <body>
     <div class="finisher-header">
       <!-- NAVBAR -->
@@ -20,6 +23,7 @@
           <h1>Elite<span>Wheels</span></h1>
           <p>Luxury Car Rentals</p>
         </div>
+
         <ul>
           <li><a href="{% url 'home' %}">Home</a></li>
           <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
@@ -28,143 +32,221 @@
           <li><a href="{% url 'contact' %}">Contact</a></li>
           <li><a href="{% url 'faq' %}">FAQs</a></li>
         </ul>
+
         <div class="profile">
           {% if user.is_authenticated %}
-          <a href="{% url 'dashboard' %}">{{ user.first_name|default:user.username }}'s Dashboard ▼</a>
-          <form method="POST" action="{% url 'logout' %}" style="display:inline">
-            {% csrf_token %}
-            <button class="btn logout" type="submit">Logout</button>
-          </form>
-          {% else %}
-          <a href="{% url 'auth' %}" class="btn">Login / Register</a>
+          <a href="{% url 'dashboard' %}">
+            {{ user.first_name|default:user.username }}'s Dashboard ▼
+          </a>
           {% endif %}
         </div>
       </nav>
 
-      <!-- DETAIL CARD -->
-      <div class="dashboard" style="padding-top: 6rem;">
-        <div class="form-card" style="max-width: 720px; margin: 0 auto;">
+      <!-- ===================== -->
+      <!-- TIMELINE (SAFE LOGIC) -->
+      <!-- ===================== -->
 
-          <a href="{% url 'dashboard' %}" class="link-details" style="display:inline-block; margin-bottom:1.5rem;">
+      {% if booking.status_auto == "cancelled" %}
+
+      <div class="cancelled-box">
+        <div class="cancel-icon">✕</div>
+        <div>
+          <h3>Booking Cancelled</h3>
+          <p>This reservation has been cancelled.</p>
+        </div>
+      </div>
+
+      {% else %}
+
+      <div class="booking-timeline">
+        <!-- CONFIRMED -->
+        <div
+          class="timeline-step {% if booking.status_auto != 'pending' %}active{% endif %}"
+        >
+          <div class="circle">
+            {% if booking.status_auto != 'pending' %}✓{% else %}1{% endif %}
+          </div>
+          <span>Confirmed</span>
+          <small>{{ booking.created_at|date:"d M Y" }}</small>
+        </div>
+
+        <div
+          class="line {% if booking.status_auto == 'active' or booking.status_auto == 'completed' %}active-line{% endif %}"
+        ></div>
+
+        <!-- ACTIVE -->
+        <div
+          class="timeline-step {% if booking.status_auto == 'active' or booking.status_auto == 'completed' %}active{% endif %}"
+        >
+          <div class="circle">
+            {% if booking.status_auto == 'completed' %}✓ {% elif
+            booking.status_auto == 'active' %}● {% else %}2{% endif %}
+          </div>
+          <span>Active</span>
+          <small>{{ booking.pickup_date|date:"d M Y" }}</small>
+        </div>
+
+        <div
+          class="line {% if booking.status_auto == 'completed' %}active-line{% endif %}"
+        ></div>
+
+        <!-- COMPLETED -->
+        <div
+          class="timeline-step {% if booking.status_auto == 'completed' %}active{% endif %}"
+        >
+          <div class="circle">
+            {% if booking.status_auto == 'completed' %}✓{% else %}3{% endif %}
+          </div>
+          <span>Completed</span>
+          <small>{{ booking.dropoff_date|date:"d M Y" }}</small>
+        </div>
+      </div>
+
+      {% endif %}
+
+      <!-- ===================== -->
+      <!-- DETAIL CARD -->
+      <!-- ===================== -->
+
+      <div class="dashboard" style="padding-top: 6rem">
+        <div class="form-card" style="max-width: 720px; margin: 0 auto">
+          <a href="{% url 'dashboard' %}" class="link-details">
             ← Back to Dashboard
           </a>
 
           <h2>Booking #{{ booking.id }}</h2>
 
-          <div style="display:flex; gap:2rem; flex-wrap:wrap; margin-top:1.5rem;">
+          <div
+            style="
+              display: flex;
+              gap: 2rem;
+              flex-wrap: wrap;
+              margin-top: 1.5rem;
+            "
+          >
             {% if booking.car.image %}
-            <img src="{{ booking.car.image.url }}"
-                 alt="{{ booking.car.name }}"
-                 style="width:260px; border-radius:12px; object-fit:cover;" />
+            <img
+              src="{{ booking.car.image.url }}"
+              style="width: 260px; border-radius: 12px; object-fit: cover"
+            />
             {% endif %}
 
-            <div style="flex:1; min-width:220px;">
-              <h3 style="margin:0 0 .5rem;">{{ booking.car.brand.name }} {{ booking.car.name }}</h3>
+            <div style="flex: 1; min-width: 220px">
+              <h3>{{ booking.car.brand.name }} {{ booking.car.name }}</h3>
 
-              <table style="width:100%; border-collapse:collapse; font-size:.95rem;">
+              <table
+                style="
+                  width: 100%;
+                  border-collapse: collapse;
+                  font-size: 0.95rem;
+                  gap: 20px;
+                "
+              >
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">Status</td>
-                  <td><span class="badge {{ booking.status_auto }}">{{ booking.status_auto|capfirst }}</span></td>
+                  <td style="color: #aaa">Status</td>
+                  <td>
+                    <span class="dbadge {{ booking.status_auto }}"
+                      >{{ booking.status_auto|capfirst }}</span
+                    >
+                  </td>
                 </tr>
+
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">Pickup date</td>
+                  <td style="color: #aaa">Pickup</td>
                   <td>{{ booking.pickup_date }}</td>
                 </tr>
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">Dropoff date</td>
+                  <td style="color: #aaa">Dropoff</td>
                   <td>{{ booking.dropoff_date }}</td>
                 </tr>
+
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">Duration</td>
-                  <td>{{ booking.duration }} day{{ booking.duration|pluralize }}</td>
+                  <td style="color: #aaa">Duration</td>
+                  <td>
+                    {{ booking.duration }} day{{ booking.duration|pluralize }}
+                  </td>
                 </tr>
+
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">With driver</td>
-                  <td>{% if booking.with_driver %}Yes{% else %}No{% endif %}</td>
+                  <td style="color: #aaa">Driver</td>
+                  <td>
+                    {% if booking.with_driver %}Yes{% else %}No{% endif %}
+                  </td>
                 </tr>
+
                 <tr>
-                  <td style="padding:.4rem 0; color:#aaa;">Total price</td>
-                  <td><strong>{{ booking.total_price|default:"—" }} MAD</strong></td>
+                  <td style="color: #aaa">Total</td>
+                  <td><strong>{{ booking.total_price }} MAD</strong></td>
                 </tr>
               </table>
 
-              {% if booking.status_auto == "pending" or booking.status_auto == "confirmed" %}
-              <form method="POST"
-                    action="{% url 'cancel_booking' booking.id %}"
-                    id="cancel-form"
-                    style="margin-top:1.5rem;">
+              <!-- CANCEL SAFE -->
+              {% if booking.status == "pending" or booking.status == "confirmed" %}
+              <form
+                method="POST"
+                action="{% url 'cancel_booking' booking.id %}"
+                id="cancel-form"
+              >
                 {% csrf_token %}
-                <button type="button"
-                        class="btn-cancel"
-                        onclick="submitCancel()">
+                <button
+                  type="button"
+                  class="btn-cancel"
+                  onclick="submitCancel()"
+                >
                   Cancel Booking
                 </button>
               </form>
+
               {% endif %}
             </div>
           </div>
-
+          <a href="{% url 'download_receipt' booking.id %}">
+            Download Receipt
+          </a>
         </div>
       </div>
-    </div><!-- /finisher-header -->
+    </div>
 
-    <!-- FOOTER -->
-    <footer class="footer">
-      <div class="footer__main">
-        <div class="footer__brand">
-          <h2 class="footer__logo">Elite<span>Wheels.</span></h2>
-          <p>Lorem Ipsum has been the industry's standard dummy text.</p>
-        </div>
-        <div class="footer__col">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="{% url 'home' %}">Home</a></li>
-            <li><a href="{% url 'fleet' %}">Our Fleet</a></li>
-            <li><a href="{% url 'contact' %}">Contact</a></li>
-            <li><a href="{% url 'faq' %}">FAQs</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer__bottom">
-        <p>© 2026 EliteWheels. All rights reserved.</p>
-      </div>
-    </footer>
-
-    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
     <script>
-      new FinisherHeader({
-        count: 90,
-        size: { min: 1, max: 8, pulse: 0.1 },
-        speed: { x: { min: 0, max: 0.3 }, y: { min: 0, max: 0.5 } },
-        colors: {
-          background: "#0a0a0a",
-          particles: ["#a8872d", "#c9a84c", "#ffffff"],
-        },
-        blending: "overlay",
-        opacity: { center: 0.8, edge: 0.02 },
-        skew: 0,
-        shapes: ["c", "s"],
-      });
-
       function submitCancel() {
-        if (!confirm("Are you sure you want to cancel this booking?")) return;
+        if (!confirm("Are you sure?")) return;
+
         const form = document.getElementById("cancel-form");
-        const csrfToken = form.querySelector("[name=csrfmiddlewaretoken]").value;
+        const csrf = form.querySelector("[name=csrfmiddlewaretoken]").value;
 
         fetch(form.action, {
           method: "POST",
-          headers: { "X-CSRFToken": csrfToken, "Content-Type": "application/json" },
+          headers: {
+            "X-CSRFToken": csrf,
+            "Content-Type": "application/json",
+          },
         })
           .then((r) => r.json())
           .then((data) => {
             if (data.success) {
               window.location.href = "{% url 'dashboard' %}";
             } else {
-              alert(data.error || "Could not cancel booking.");
+              alert(data.error);
             }
           })
-          .catch(() => alert("Network error. Please try again."));
+          .catch(() => alert("Network error"));
       }
+    </script>
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: { min: 1, max: 8, pulse: 0.1 },
+        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.6 } },
+        colors: {
+          background: "#0a0a0a",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: { center: 1, edge: 0.05 },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
     </script>
   </body>
 </html>

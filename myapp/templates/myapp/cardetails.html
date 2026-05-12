@@ -21,6 +21,7 @@
   </head>
 
   <body>
+    <div class="header finisher-header">
     <!-- NAVBAR -->
     <nav class="navbar">
       <div class="logo">
@@ -489,7 +490,22 @@
         window.addEventListener("resize", initReviews);
       });
     </script>
-
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: { min: 1, max: 8, pulse: 0.1 },
+        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.6 } },
+        colors: {
+          background: "#0a0a0a",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: { center: 1, edge: 0.05 },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
+    </script>
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>
 </html>

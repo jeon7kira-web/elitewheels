@@ -3,9 +3,13 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.db.models import Q
+from reportlab.lib.colors import HexColor
 from django.http import JsonResponse
 from datetime import date, timedelta
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 import json
 
 from .models import Profile, Car, Booking, Review, Favorite, Brand
@@ -319,19 +323,33 @@ def dashboard_view(request):
 # =========================================================
 @login_required
 def cancel_booking(request, booking_id):
-    if request.method == "POST":
-        booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
-        if booking.status_auto in ("active", "completed"):
-            return JsonResponse({"success": False, "error": "Cannot cancel this booking."}, status=400)
+    if request.method != "POST":
+        return JsonResponse(
+            {"success": False, "error": "Invalid method."},
+            status=400
+        )
 
-        booking.status = "cancelled"
-        booking.save()
+    booking = get_object_or_404(
+        Booking,
+        id=booking_id,
+        user=request.user
+    )
 
-        return JsonResponse({"success": True, "new_status": "cancelled"})
+    # ❗ IMPORTANT: use real DB field, not status_auto
+    if booking.status in ("active", "completed", "cancelled"):
+        return JsonResponse(
+            {"success": False, "error": "Cannot cancel this booking."},
+            status=400
+        )
 
-    return JsonResponse({"success": False, "error": "Invalid method."}, status=400)
+    booking.status = "cancelled"
+    booking.save()
 
+    return JsonResponse({
+        "success": True,
+        "new_status": booking.status
+    })
 
 # =========================================================
 # REVIEW
@@ -377,3 +395,253 @@ def toggle_favorite(request, car_id):
         Favorite.objects.create(user=request.user, car=car)
 
     return redirect("cardetails", car_id=car.id)
+
+def download_receipt(request, booking_id):
+
+    booking = get_object_or_404(
+        Booking,
+        id=booking_id,
+        user=request.user
+    )
+
+    customer_name = (
+        booking.user.get_full_name()
+        if booking.user.get_full_name()
+        else booking.user.username
+    )
+
+    chauffeur_name = (
+        str(booking.chauffeur)
+        if booking.chauffeur
+        else "No Chauffeur"
+    )
+
+    response = HttpResponse(content_type='application/pdf')
+
+    response['Content-Disposition'] = (
+        f'attachment; filename="EliteWheels_Receipt_{booking.id}.pdf"'
+    )
+
+    # =========================================
+    # PDF SETUP
+    # =========================================
+    p = canvas.Canvas(response, pagesize=A4)
+
+    width, height = A4
+
+    # =========================================
+    # COLORS
+    # =========================================
+    gold = HexColor("#C8A45D")
+    dark = HexColor("#111111")
+    gray = HexColor("#666666")
+    light = HexColor("#F7F7F7")
+    white = HexColor("#FFFFFF")
+
+    # =========================================
+    # HEADER
+    # =========================================
+    p.setFillColor(dark)
+    p.rect(0, height - 120, width, 120, fill=1, stroke=0)
+
+    # Logo / Brand
+    p.setFillColor(gold)
+    p.setFont("Helvetica-Bold", 30)
+    p.drawCentredString(width / 2, height - 60, "EliteWheels")
+
+    p.setFont("Helvetica", 13)
+    p.drawCentredString(
+        width / 2,
+        height - 85,
+        "Luxury Car Rental Receipt"
+    )
+
+    # =========================================
+    # WATERMARK
+    # =========================================
+    p.saveState()
+
+    p.setFont("Helvetica-Bold", 60)
+    p.setFillColor(HexColor("#F1F1F1"))
+
+    p.translate(width / 2, height / 2)
+    p.rotate(45)
+
+    p.drawCentredString(0, 0, "ELITEWHEELS")
+
+    p.restoreState()
+
+    # =========================================
+    # START POSITION
+    # =========================================
+    y = height - 170
+
+    # =========================================
+    # HELPER FUNCTION
+    # =========================================
+    def draw_section(title, data, y_position):
+
+        # Section card
+        p.setFillColor(light)
+        p.roundRect(
+            40,
+            y_position - 25,
+            width - 80,
+            35,
+            8,
+            fill=1,
+            stroke=0
+        )
+
+        # Section title
+        p.setFillColor(gold)
+        p.setFont("Helvetica-Bold", 16)
+        p.drawString(55, y_position - 5, title)
+
+        y_position -= 50
+
+        # Section content
+        p.setFont("Helvetica", 12)
+
+        for label, value in data:
+
+            p.setFillColor(gray)
+            p.drawString(60, y_position, str(label))
+
+            p.setFillColor(dark)
+            p.drawRightString(
+                width - 60,
+                y_position,
+                str(value)
+            )
+
+            y_position -= 25
+
+        # Divider line
+        p.setStrokeColor(gold)
+        p.setLineWidth(1)
+
+        p.line(
+            50,
+            y_position + 5,
+            width - 50,
+            y_position + 5
+        )
+
+        return y_position - 25
+
+    # =========================================
+    # RECEIPT INFO
+    # =========================================
+    receipt_info = [
+        ("Receipt #", f"EW-{booking.id}"),
+        ("Booking Status", booking.status_auto.title()),
+        (
+            "Created At",
+            booking.created_at.strftime("%d %B %Y")
+        ),
+        ("Invoice Type", "Luxury Rental"),
+    ]
+
+    y = draw_section(
+        "Receipt Information",
+        receipt_info,
+        y
+    )
+
+    # =========================================
+    # CUSTOMER INFO
+    # =========================================
+    customer_info = [
+        ("Customer", customer_name),
+        ("Email", booking.user.email),
+    ]
+
+    y = draw_section(
+        "Customer Details",
+        customer_info,
+        y
+    )
+
+    # =========================================
+    # BOOKING INFO
+    # =========================================
+    booking_info = [
+        ("Car", booking.car.name),
+        ("Pickup Date", booking.pickup_date),
+        ("Dropoff Date", booking.dropoff_date),
+        ("Duration", f"{booking.duration} day(s)"),
+        (
+            "Pickup Location",
+            booking.pickup_location or "Not specified"
+        ),
+        (
+            "Dropoff Location",
+            booking.dropoff_location or "Not specified"
+        ),
+        (
+            "Driver Included",
+            "Yes" if booking.with_driver else "No"
+        ),
+        ("Chauffeur", chauffeur_name),
+    ]
+
+    y = draw_section(
+        "Booking Details",
+        booking_info,
+        y
+    )
+
+    # =========================================
+    # TOTAL BOX
+    # =========================================
+    y -= 10
+
+    p.setFillColor(dark)
+
+    p.roundRect(
+        50,
+        y - 55,
+        width - 100,
+        75,
+        12,
+        fill=1,
+        stroke=0
+    )
+
+    p.setFillColor(gold)
+
+    p.setFont("Helvetica-Bold", 16)
+    p.drawString(70, y - 10, "TOTAL AMOUNT")
+
+    p.setFont("Helvetica-Bold", 28)
+
+    p.drawRightString(
+        width - 70,
+        y - 10,
+        f"${booking.total_price:,.2f}"
+    )
+
+    # =========================================
+    # FOOTER
+    # =========================================
+    p.setFillColor(gray)
+
+    p.setFont("Helvetica-Oblique", 11)
+
+    p.drawCentredString(
+        width / 2,
+        70,
+        "Thank you for choosing EliteWheels."
+    )
+
+    p.drawCentredString(
+        width / 2,
+        50,
+        "Experience Luxury. Drive Excellence."
+    )
+
+    p.showPage()
+    p.save()
+
+    return response

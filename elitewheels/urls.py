@@ -40,8 +40,7 @@ urlpatterns = [
         views.booking_detail,
         name='booking_detail'
     ),
-
-    # ================= REVIEWS / FAVORITES =================
+    path('receipt/<int:booking_id>/',views.download_receipt,name='download_receipt'),    # ================= REVIEWS / FAVORITES =================
     path('review/<int:car_id>/', views.add_review, name='add_review'),
     path('favorite/<int:car_id>/', views.toggle_favorite, name='toggle_favorite'),
 
