@@ -558,42 +558,36 @@
           <button class="reviews__arrow reviews__arrow--left">&#10094;</button>
 
           <div class="reviews__track" id="reviewsTrack">
+            {% for review in reviews %}
+            <div class="reviews__card {% if forloop.first %}active{% endif %}">
+              <div class="reviews__card-header">
+                <h3>
+                  {{ review.user.first_name|default:review.user.username|upper }}
+                </h3>
+
+                <div class="reviews__stars">
+                  {% for i in "12345" %} {% if forloop.counter <= review.rating %}
+                  ★
+                  {% else %}☆{% endif %} {% endfor %}
+                </div>
+              </div>
+
+              <p>{{ review.comment }}</p>
+              <span class="review-date">
+                {{ review.created_at|date:"M d, Y" }}
+              </span>
+            </div>
+            {% empty %}
+
             <div class="reviews__card active">
               <div class="reviews__card-header">
-                <h3>AHMED GOMÂA</h3>
-                <div class="reviews__stars">★★★★★</div>
+                <h3>NO REVIEWS YET</h3>
+                <div class="reviews__stars">☆☆☆☆☆</div>
               </div>
-              <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only.
-              </p>
+              <p>Be the first to share your experience.</p>
             </div>
-            <div class="reviews__card">
-              <div class="reviews__card-header">
-                <h3>SARAH MILLER</h3>
-                <div class="reviews__stars">★★★★★</div>
-              </div>
-              <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only.
-              </p>
-            </div>
-            <div class="reviews__card">
-              <div class="reviews__card-header">
-                <h3>JOHN CARTER</h3>
-                <div class="reviews__stars">★★★★☆</div>
-              </div>
-              <p>
-                Lorem Ipsum has been the industry's standard dummy text ever
-                since the 1500s, when an unknown printer took a galley of type
-                and scrambled it to make a type specimen book. It has survived
-                not only.
-              </p>
-            </div>
+
+            {% endfor %}
           </div>
 
           <button class="reviews__arrow reviews__arrow--right">&#10095;</button>

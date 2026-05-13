@@ -206,10 +206,14 @@
             <div class="car-name">{{ car.name }}</div>
             <div class="car-brand-label">{{ car.brand.name }}</div>
 
-            {% with reviews=car.reviews.all %}
+           {% with reviews=car.reviews.all %}
             <div class="car-rating">
-              {% if reviews %} ⭐ {{ reviews|length }} review{{
-              reviews|length|pluralize }} {% else %} No reviews yet {% endif %}
+              {% if reviews %}
+                ⭐ {{ car.average_rating|floatformat:1 }}
+                ({{ reviews|length }} review{{ reviews|length|pluralize }})
+              {% else %}
+                No reviews yet
+              {% endif %}
             </div>
             {% endwith %}
 

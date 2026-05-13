@@ -1035,7 +1035,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   padding: 80px 40px;
   text-align: center;
 }
+.reviews__track {
+  display: flex;
+  transition: transform 0.5s ease;
+}
 
+.reviews__card {
+  min-width: 100%;
+}
 .reviews__slider-wrapper {
   display: flex;
   align-items: center;
@@ -1108,6 +1115,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 16px;
   color: #a8872d;
   cursor: pointer;
+  z-index: 55;
   flex-shrink: 4;
   transition:
     border-color 0.2s,
@@ -1116,12 +1124,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .reviews__arrow--left {
   position: relative;
   left: 35px;
-  z-index: 6;
+  z-index: 66;
 }
 .reviews__arrow--right {
   position: relative;
   right: 35px;
-  z-index: 6;
+  z-index: 66;
 }
 
 .reviews__arrow:hover {
@@ -1179,6 +1187,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   color: #a8872d;
   font-size: 20px;
   letter-spacing: 2px;
+}
+.review-date {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-top: 2px;
 }
 
 .reviews__card p {

@@ -15,12 +15,15 @@ import json
 from .models import Profile, Car, Booking, Review, Favorite, Brand
 
 
-# =========================================================
-# STATIC PAGES
-# =========================================================
-def home(request):
-    return render(request, 'myapp/home.html')
 
+# STATIC PAGES
+
+def home(request):
+    reviews = Review.objects.select_related("user", "car").order_by("-created_at")[:10]
+
+    return render(request, "myapp/home.html", {
+        "reviews": reviews,
+    })
 def auth_view(request):
     return render(request, 'myapp/auth.html')
 
@@ -34,9 +37,9 @@ def about_view(request):
     return render(request, 'myapp/about.html')
 
 
-# =========================================================
+
 # REGISTER
-# =========================================================
+
 def register_view(request):
     if request.method == 'POST':
         full_name  = request.POST.get('full_name', '').strip()
@@ -72,9 +75,9 @@ def register_view(request):
     return redirect('home')
 
 
-# =========================================================
+
 # LOGIN / LOGOUT
-# =========================================================
+
 def login_view(request):
     if request.method == 'POST':
         email    = request.POST.get('email', '').strip()
@@ -96,9 +99,9 @@ def logout_view(request):
     return redirect('home')
 
 
-# =========================================================
+
 # FLEET
-# =========================================================
+
 def fleet(request):
     pickup  = request.GET.get("pickup_date")
     dropoff = request.GET.get("dropoff_date")
@@ -130,9 +133,9 @@ def fleet(request):
     })
 
 
-# =========================================================
+
 # CAR DETAILS
-# =========================================================
+
 def car_details(request, car_id):
     car = get_object_or_404(
         Car.objects.select_related('brand').prefetch_related(
@@ -170,9 +173,9 @@ def car_details(request, car_id):
     })
 
 
-# =========================================================
+
 # BOOK CAR
-# =========================================================
+
 @login_required(login_url='/auth/')
 def book_car(request, car_id):
     car = Car.objects.get(id=car_id)
@@ -221,26 +224,26 @@ def book_car(request, car_id):
     })
 
 
-# =========================================================
+
 # CONFIRMATION
-# =========================================================
+
 def confirmation_view(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id)
     return render(request, "myapp/confirmation.html", {"booking": booking})
 
 
-# =========================================================
+
 # BOOKING DETAIL  ← FIX: was missing entirely
-# =========================================================
+
 @login_required(login_url='/auth/')
 def booking_detail(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     return render(request, "myapp/booking_detail.html", {"booking": booking})
 
 
-# =========================================================
+
 # DASHBOARD
-# =========================================================
+
 @login_required(login_url='/auth/')
 def dashboard_view(request):
     user = request.user
@@ -308,19 +311,21 @@ def dashboard_view(request):
             groups[status_key].append(b)
         if b.total_price and b.status_auto != "cancelled":
             total_spent += b.total_price
-
+    reviews = Review.objects.filter(user=request.user)
+    reviewed_car_ids = reviews.values_list("car_id", flat=True)
     return render(request, "myapp/dashboard.html", {
         "profile":           profile,
         "groups":            groups,
         "active_bookings":   groups["active"],
         "completed_bookings":groups["completed"],
         "total_spent":       total_spent,
+        "reviewed_car_ids": reviewed_car_ids,
     })
 
 
-# =========================================================
+
 # CANCEL BOOKING
-# =========================================================
+
 @login_required
 def cancel_booking(request, booking_id):
 
@@ -351,39 +356,62 @@ def cancel_booking(request, booking_id):
         "new_status": booking.status
     })
 
-# =========================================================
+
 # REVIEW
-# =========================================================
+
 @login_required(login_url='/auth/')
 def add_review(request, car_id):
     car = get_object_or_404(Car, id=car_id)
 
+    # Check if user completed a booking
+    completed_booking = Booking.objects.filter(
+    user=request.user,
+    car=car
+)
+
+    completed_booking = any(
+        booking.status_auto == "completed"
+        for booking in completed_booking
+    )
+
+    if not completed_booking:
+        messages.error(request, "You can only review cars you have completed booking.")
+        return redirect("cardetails", car_id=car.id)
+
     if request.method == "POST":
+
         if Review.objects.filter(user=request.user, car=car).exists():
             messages.error(request, "You have already reviewed this car.")
             return redirect("cardetails", car_id=car.id)
 
-        rating  = request.POST.get("rating")
+        rating = request.POST.get("rating")
         comment = request.POST.get("comment", "").strip()
 
         if not rating or not comment:
             messages.error(request, "Rating and comment are required.")
             return redirect("cardetails", car_id=car.id)
 
+        rating = int(rating)
+
+        if rating < 1 or rating > 5:
+            messages.error(request, "Invalid rating.")
+            return redirect("cardetails", car_id=car.id)
+
         Review.objects.create(
             user=request.user,
             car=car,
-            rating=int(rating),
+            rating=rating,
             comment=comment,
         )
+        
+
         messages.success(request, "Review submitted successfully.")
 
-    return redirect("cardetails", car_id=car.id)
+    return redirect("dashboard", car_id=car.id)
 
 
-# =========================================================
 # FAVORITE
-# =========================================================
+
 @login_required
 def toggle_favorite(request, car_id):
     car = get_object_or_404(Car, id=car_id)

@@ -79,8 +79,8 @@
           class="timeline-step {% if booking.status_auto == 'active' or booking.status_auto == 'completed' %}active{% endif %}"
         >
           <div class="circle">
-            {% if booking.status_auto == 'completed' %}✓ {% elif
-            booking.status_auto == 'active' %}● {% else %}2{% endif %}
+            {% if booking.status_auto == 'completed' %}✓ {% elif booking.status_auto == 'active' %}
+            ● {% else %}2{% endif %}
           </div>
           <span>Active</span>
           <small>{{ booking.pickup_date|date:"d M Y" }}</small>

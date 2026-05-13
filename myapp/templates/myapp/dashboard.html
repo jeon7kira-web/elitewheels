@@ -406,8 +406,20 @@
                           <a
                             href="{% url 'booking_detail' booking.id %}"
                             class="link-details"
-                            >View details →</a
                           >
+                            View details →
+                          </a>
+
+                          {% if booking.car.id not in reviewed_car_ids %}
+                          <button
+                            class="leave-review-btn"
+                            onclick="openReviewModal('{{ booking.car.id }}', '{{ booking.car.name }}')"
+                          >
+                            Leave Review
+                          </button>
+                          {% else %}
+                          <span class="reviewed-text">Reviewed ✓</span>
+                          {% endif %}
                         </div>
                       </div>
                     </div>
@@ -464,10 +476,66 @@
       </div>
       <!-- /dashboard -->
     </div>
+    <div id="reviewModal" class="review-modal">
+      <div class="review-modal-content">
+        <button class="close-modal" onclick="closeReviewModal()">
+          &times;
+        </button>
+
+        <h2 id="reviewCarName">Leave a Review</h2>
+
+        <form id="reviewForm" method="POST">
+          {% csrf_token %}
+
+          <label>Rating</label>
+          <select name="rating" required>
+            <option value="">Choose rating</option>
+            <option value="1">1 ⭐</option>
+            <option value="2">2 ⭐</option>
+            <option value="3">3 ⭐</option>
+            <option value="4">4 ⭐</option>
+            <option value="5">5 ⭐</option>
+          </select>
+
+          <label>Comment</label>
+          <textarea
+            name="comment"
+            rows="5"
+            placeholder="Write your experience..."
+            required
+          ></textarea>
+
+          <button type="submit" class="submit-review-btn">Submit Review</button>
+        </form>
+      </div>
+    </div>
     <!-- /finisher-header -->
+    <script>
+      function openReviewModal(carId, carName) {
+        const modal = document.getElementById("reviewModal");
+        const form = document.getElementById("reviewForm");
 
+        document.getElementById("reviewCarName").innerText =
+          `Review ${carName}`;
+
+        form.action = `/car/${carId}/review/`;
+
+        modal.classList.add("active");
+      }
+
+      function closeReviewModal() {
+        document.getElementById("reviewModal").classList.remove("active");
+      }
+
+      window.addEventListener("click", function (e) {
+        const modal = document.getElementById("reviewModal");
+
+        if (e.target === modal) {
+          closeReviewModal();
+        }
+      });
+    </script>
     <!-- FOOTER -->
-
 
     <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
     <script>

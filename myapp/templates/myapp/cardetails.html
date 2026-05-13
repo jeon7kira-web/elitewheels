@@ -165,7 +165,7 @@
                 id="date-range"
                 name="date_range"
                 placeholder="Select dates"
-                autocomplete="off"
+                class="date-picker"
               />
             </div>
             <div class="booking__field booking__field--total">
@@ -196,61 +196,75 @@
     </section>
 
     <!-- REVIEWS -->
-    <section class="reviews">
-      <div class="section-label">Reviews</div>
-      <h2 class="section-title">Clients <em>Satisfaction</em></h2>
+    <div class="title">
+        <span
+          ><hr />
+          REVIEWS
+          <hr
+        /></span>
+        <h1>CLIENTS <span>SATISFACTION</span></h1>
+      </div>
+      <section class="reviews">
+  <div class="reviews__slider-wrapper">
 
-      <div class="reviews__track" id="reviewsTrack">
-        <div class="review-card">
-          <div class="review-card__top">
-            <div class="review-card__avatar">AH</div>
-            <div>
-              <div class="review-card__name">Ahmed Gowâa</div>
-              <div class="review-card__stars">★★★★★</div>
-            </div>
-          </div>
-          <p class="review-card__text">
-            Absolutely flawless experience. The car was spotless, handled
-            beautifully on mountain roads, and pickup was effortless. Will rent
-            again without hesitation.
-          </p>
+    <div class="reviews__deco reviews__deco--left">
+      <div class="deco-sq deco-sq--1"></div>
+      <div class="deco-sq deco-sq--2"></div>
+      <div class="deco-sq deco-sq--3"></div>
+    </div>
+
+    <button class="reviews__arrow reviews__arrow--left">&#10094;</button>
+
+    <div class="reviews__track" id="reviewsTrack">
+
+      {% for review in car.reviews.all %}
+      <div class="reviews__card {% if forloop.first %}active{% endif %}">
+        <div class="reviews__card-header">
+
+  <div>
+    <h3>
+      {{ review.user.first_name|default:review.user.username|upper }}
+    </h3>
+
+    <span class="review-date">
+      {{ review.created_at|date:"M d, Y" }}
+    </span>
+  </div>
+
+  <div class="reviews__stars">
+    {% for i in "12345" %}
+      {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+    {% endfor %}
+  </div>
+
+</div>
+
+        <p>{{ review.comment }}</p>
+      </div>
+      {% empty %}
+
+      <div class="reviews__card active">
+        <div class="reviews__card-header">
+          <h3>NO REVIEWS YET</h3>
+          <div class="reviews__stars">☆☆☆☆☆</div>
         </div>
-        <div class="review-card">
-          <div class="review-card__top">
-            <div class="review-card__avatar">SL</div>
-            <div>
-              <div class="review-card__name">Sara Lahlou</div>
-              <div class="review-card__stars">★★★★★</div>
-            </div>
-          </div>
-          <p class="review-card__text">
-            Best rental agency in the city. The car felt brand new, fuel was
-            topped up, and the staff were incredibly professional. Highly
-            recommend.
-          </p>
-        </div>
-        <div class="review-card">
-          <div class="review-card__top">
-            <div class="review-card__avatar">KM</div>
-            <div>
-              <div class="review-card__name">Karim Mrani</div>
-              <div class="review-card__stars">★★★★☆</div>
-            </div>
-          </div>
-          <p class="review-card__text">
-            Great car and smooth booking process. The dashboard is very
-            intuitive. Only minor feedback: parking directions at pickup could
-            be clearer.
-          </p>
-        </div>
+        <p>Be the first to share your experience with this car.</p>
       </div>
 
-      <div class="reviews__controls">
-        <button class="rev-btn" id="revPrev">←</button>
-        <button class="rev-btn" id="revNext">→</button>
-      </div>
-    </section>
+      {% endfor %}
 
+    </div>
+
+    <button class="reviews__arrow reviews__arrow--right">&#10095;</button>
+
+    <div class="reviews__deco reviews__deco--right">
+      <div class="deco-sq deco-sq--1"></div>
+      <div class="deco-sq deco-sq--2"></div>
+      <div class="deco-sq deco-sq--3"></div>
+    </div>
+
+  </div>
+</section>
     <!-- YOU MAY LIKE -->
     <section class="related">
       <div class="section-label">Cars</div>
@@ -402,7 +416,7 @@
         <p>© 2026 EliteWheels. All rights reserved.</p>
       </div>
     </footer>
-
+    
     <!-- Scripts -->
     <script>
       const pricePerDay = {{ car.price_per_day }};
@@ -457,16 +471,7 @@
         });
 
         // ── Reviews carousel ───────────────────────────────────────────
-        const track = document.getElementById("reviewsTrack");
-        const cards = track.querySelectorAll(".review-card");
-        let current = 0;
-
-        function showCard(index) {
-          cards.forEach((c, i) => {
-            c.style.display = i === index ? "flex" : "none";
-          });
-        }
-
+        
         // Init — show all on wider screens, one-at-a-time on mobile
         function initReviews() {
           if (window.innerWidth >= 768) {
@@ -506,6 +511,6 @@
         shapes: ["c", "t", "s"],
       });
     </script>
-    <script src="{% static 'myapp/js/fleet.js' %}"></script>
+    <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
 </html>

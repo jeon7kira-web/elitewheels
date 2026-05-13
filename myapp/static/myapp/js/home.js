@@ -19,39 +19,46 @@ if (carcontainer) {
 }
 
 // Reviews slider
-const reviewCards = document.querySelectorAll(".reviews__card");
-let reviewCurrent = 0;
+document.addEventListener("DOMContentLoaded", () => {
+  const reviewCards = document.querySelectorAll(".reviews__card");
+  let reviewCurrent = 0;
 
-function changeSlide(dir) {
-  if (!reviewCards.length) return;
-  reviewCards[reviewCurrent].classList.remove("active");
-  reviewCurrent =
-    (reviewCurrent + dir + reviewCards.length) % reviewCards.length;
-  reviewCards[reviewCurrent].classList.add("active");
-}
+  function changeSlide(dir) {
+    if (!reviewCards.length) return;
 
-if (reviewCards.length) {
-  setInterval(() => changeSlide(1), 3500);
-}
+    reviewCards[reviewCurrent].classList.remove("active");
 
-document
-  .querySelector(".reviews__arrow--left")
-  ?.addEventListener("click", () => changeSlide(-1));
-document
-  .querySelector(".reviews__arrow--right")
-  ?.addEventListener("click", () => changeSlide(1));
+    reviewCurrent =
+      (reviewCurrent + dir + reviewCards.length) % reviewCards.length;
 
-document.querySelectorAll(".faq__question").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const item = btn.closest(".faq__item");
-    const isOpen = item.classList.contains("open");
-    document
-      .querySelectorAll(".faq__item")
-      .forEach((i) => i.classList.remove("open"));
-    if (!isOpen) item.classList.add("open");
+    reviewCards[reviewCurrent].classList.add("active");
+  }
+
+  if (reviewCards.length > 1) {
+    setInterval(() => changeSlide(1), 3500);
+  }
+
+  document
+    .querySelector(".reviews__arrow--left")
+    ?.addEventListener("click", () => changeSlide(-1));
+
+  document
+    .querySelector(".reviews__arrow--right")
+    ?.addEventListener("click", () => changeSlide(1));
+
+  document.querySelectorAll(".faq__question").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const item = btn.closest(".faq__item");
+      const isOpen = item.classList.contains("open");
+
+      document
+        .querySelectorAll(".faq__item")
+        .forEach((i) => i.classList.remove("open"));
+
+      if (!isOpen) item.classList.add("open");
+    });
   });
 });
-
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", function (e) {
     const targetId = this.getAttribute("href");

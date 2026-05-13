@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.db.models import Q
+from django.db.models import Q,Avg
 from django.utils import timezone
+
 
 
 # =========================================================
@@ -101,7 +102,9 @@ class Car(models.Model):
         choices=STATUS_CHOICES,
         default='available'
     )
-
+    @property
+    def average_rating(self):
+        return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
     created_at = models.DateTimeField(auto_now_add=True)
 
     # ❌ FIXED: removed DB field conflict, kept ONLY property logic

@@ -33,6 +33,7 @@ urlpatterns = [
         views.cancel_booking,
         name='cancel_booking'
     ),
+    path('car/<int:car_id>/review/', views.add_review, name='add_review'),
 
     # MUST EXIST (you were missing logic before)
     path(

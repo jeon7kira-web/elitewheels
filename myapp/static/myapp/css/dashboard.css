@@ -776,3 +776,141 @@ input[type="password"]:focus {
     margin: 0;
   }
 }
+.review-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition: 0.3s ease;
+  z-index: 9999;
+
+  backdrop-filter: blur(6px);
+}
+
+.review-modal.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.review-modal-content {
+  width: 90%;
+  max-width: 520px;
+
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  border-radius: 24px;
+  padding: 32px;
+
+  position: relative;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  animation: modalPop 0.25s ease;
+}
+
+@keyframes modalPop {
+  from {
+    transform: scale(0.92) translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.review-modal-content h2 {
+  margin-bottom: 24px;
+  color: white;
+}
+
+.review-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-modal label {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.review-modal textarea,
+.review-modal select {
+  width: 100%;
+
+  background: #1a1a1a;
+  color: white;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+
+  padding: 14px;
+  font-size: 15px;
+
+  outline: none;
+}
+
+.review-modal textarea:focus,
+.review-modal select:focus {
+  border-color: #a8872d;
+}
+
+.submit-review-btn {
+  background: #a8872d;
+  color: black;
+
+  border: none;
+  border-radius: 14px;
+
+  padding: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.submit-review-btn:hover {
+  transform: translateY(-2px);
+}
+
+.close-modal {
+  position: absolute;
+  top: 15px;
+  right: 18px;
+
+  background: none;
+  border: none;
+
+  color: white;
+  font-size: 30px;
+
+  cursor: pointer;
+}
+
+.leave-review-btn {
+  background: #a8872d;
+  color: black;
+
+  border: none;
+  border-radius: 10px;
+
+  padding: 10px 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.reviewed-text {
+  color: #64d38a;
+  font-weight: 600;
+}
