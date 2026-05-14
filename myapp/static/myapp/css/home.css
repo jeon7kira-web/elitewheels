@@ -1394,3 +1394,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   pointer-events: none;
   opacity: 0.5;
 }
+.review-car-name {
+  display: inline-block;
+  margin-top: 10px;
+  color: #c8a95b;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.review-car-name:hover {
+  color: #fff;
+}

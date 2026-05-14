@@ -82,6 +82,7 @@
         <div class="tabs">
           <button class="tab active" data-tab="profile">Profile</button>
           <button class="tab" data-tab="bookings">Bookings</button>
+          <button class="tab" data-tab="favorites">Favorites</button>
           <button class="tab" data-tab="settings">Settings</button>
         </div>
 
@@ -433,6 +434,43 @@
           </section>
           <!-- /bookings tab -->
 
+          <!-- ═══════════════ FAVORITES TAB ═══════════════ -->
+          <section id="favorites" class="tab-section">
+            <div class="section-header">
+              <h2>Your favorite cars ❤️</h2>
+            </div>
+
+            <div class="stat-card">
+              <div class="label">Favorites</div>
+              <div class="value">{{ favorite_cars|length }}</div>
+            </div>
+
+            <div class="booking-grid">
+              {% for car in favorite_cars %}
+              <div class="booking-card">
+                <img src="{{ car.image.url }}" />
+
+                <div class="card-info">
+                  <h3>{{ car.name }}</h3>
+
+                  <div class="card-actions">
+                    <a href="{% url 'cardetails' car.id %}">View →</a>
+
+                    <button
+                      class="btn-cancel"
+                      onclick="toggleFavorite({{ car.id }}, this)"
+                    >
+                      Remove ❤️
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <p class="empty-state">No favorite cars yet</p>
+              {% endfor %}
+            </div>
+          </section>
+
           <!-- ═══════════════ SETTINGS TAB ═══════════════ -->
           <!-- FIX: removed nested <form> — logout is now its own separate form -->
           <section id="settings" class="tab-section">
@@ -635,7 +673,25 @@
           .catch(() => alert("Network error. Please try again."));
       }
     </script>
-
+    <script>
+      function toggleFavorite(carId, btn) {
+        fetch(`/favorite/${carId}/`, {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")
+              .value,
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              // remove card instantly
+              btn.closest(".booking-card").remove();
+            }
+          })
+          .catch(() => alert("Error updating favorite"));
+      }
+    </script>
     <script src="{% static 'myapp/js/script.js' %}"></script>
   </body>
 </html>

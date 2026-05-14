@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.http import HttpResponse
 from django.db.models import Q
 from reportlab.lib.colors import HexColor
@@ -106,7 +107,12 @@ def fleet(request):
     pickup  = request.GET.get("pickup_date")
     dropoff = request.GET.get("dropoff_date")
 
-    cars = Car.objects.select_related('brand').prefetch_related('features', 'reviews')
+    cars = Car.objects.select_related(
+        'brand'
+    ).prefetch_related(
+        'features',
+        'reviews'
+    )
 
     if pickup and dropoff:
         try:
@@ -120,18 +126,30 @@ def fleet(request):
             ).values_list("car_id", flat=True)
 
             cars = cars.exclude(id__in=booked)
+
         except ValueError:
             pickup = dropoff = None
 
-    return render(request, "myapp/ourfleet.html", {
-        "cars":          cars,
-        "brands":        Brand.objects.all(),                                           # FIX: was missing
-        "types":         Car.objects.values_list('car_type', flat=True).distinct(),
-        "transmissions": Car.objects.values_list('transmission', flat=True).distinct(),
-        "pickup_date":   pickup,
-        "dropoff_date":  dropoff,
-    })
+    favorite_ids = set(
+        Favorite.objects.filter(user=request.user)
+        .values_list("car_id", flat=True)
+)
 
+    return render(request, "myapp/ourfleet.html", {
+        "cars": cars,
+        "favorite_ids": favorite_ids,
+        "brands": Brand.objects.all(),
+        "types": Car.objects.values_list(
+            'car_type',
+            flat=True
+        ).distinct(),
+        "transmissions": Car.objects.values_list(
+            'transmission',
+            flat=True
+        ).distinct(),
+        "pickup_date": pickup,
+        "dropoff_date": dropoff,
+    })  
 
 
 # CAR DETAILS
@@ -157,7 +175,10 @@ def car_details(request, car_id):
             current += timedelta(days=1)
 
     related_cars = Car.objects.filter(brand=car.brand).exclude(id=car.id)[:3]
-
+    favorite_ids = set(
+        Favorite.objects.filter(user=request.user)
+        .values_list("car_id", flat=True)
+)
     if request.method == "POST":
         date_range = request.POST.get("date_range", "")
         if " to " in date_range:
@@ -168,6 +189,7 @@ def car_details(request, car_id):
 
     return render(request, "myapp/cardetails.html", {
         "car":            car,
+        "favorite_ids": favorite_ids,
         "disabled_dates": json.dumps(disabled_dates),
         "related_cars":   related_cars,
     })
@@ -304,7 +326,10 @@ def dashboard_view(request):
     }
 
     total_spent = 0
+    favorites = Favorite.objects.filter(user=request.user).select_related("car", "car__brand")
 
+    favorite_cars = Car.objects.filter(favorite__user=request.user)
+    favorite_ids = list(favorites.values_list("car_id", flat=True))
     for b in all_bookings:
         status_key = b.status_auto                      # FIX: use property correctly
         if status_key in groups:
@@ -319,6 +344,8 @@ def dashboard_view(request):
         "active_bookings":   groups["active"],
         "completed_bookings":groups["completed"],
         "total_spent":       total_spent,
+        "favorite_cars": favorite_cars,
+        "favorite_ids": favorite_ids,
         "reviewed_car_ids": reviewed_car_ids,
     })
 
@@ -413,16 +440,41 @@ def add_review(request, car_id):
 # FAVORITE
 
 @login_required
+@require_POST
 def toggle_favorite(request, car_id):
     car = get_object_or_404(Car, id=car_id)
-    fav = Favorite.objects.filter(user=request.user, car=car)
 
-    if fav.exists():
-        fav.delete()
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        car=car
+    )
+
+    if not created:
+        favorite.delete()
+        liked = False
     else:
-        Favorite.objects.create(user=request.user, car=car)
+        liked = True
 
-    return redirect("cardetails", car_id=car.id)
+    return JsonResponse({
+        "success": True,
+        "liked": liked,
+        "car_id": car_id
+    })
+
+@login_required
+def favorites_list(request):
+    cars = (
+    Car.objects
+    .filter(favorite__user=request.user)
+    .select_related("brand")
+    .prefetch_related("images")
+    .order_by("-favorite__id")
+    .distinct()
+)
+
+    return render(request, "myapp/dashboard.html", {
+        "cars": cars
+    })
 
 def download_receipt(request, booking_id):
 
@@ -673,3 +725,4 @@ def download_receipt(request, booking_id):
     p.save()
 
     return response
+

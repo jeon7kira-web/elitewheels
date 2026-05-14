@@ -566,10 +566,14 @@
                 </h3>
 
                 <div class="reviews__stars">
-                  {% for i in "12345" %} {% if forloop.counter <= review.rating %}
-                  ★
-                  {% else %}☆{% endif %} {% endfor %}
+                  {% for i in "12345" %} {% if forloop.counter <= review.rating %} ★ {% else %}☆{% endif %} {% endfor %}
                 </div>
+                <a
+                  href="{% url 'cardetails' review.car.id %}"
+                  class="review-car-name"
+                >
+                  {{ review.car.name }}
+                </a>
               </div>
 
               <p>{{ review.comment }}</p>

@@ -489,8 +489,8 @@ body {
 }
 
 .feature-pill {
-  background: rgba(255,255,255,.08);
-  border: 1px solid rgba(255,255,255,.1);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 5px 10px;
   border-radius: 30px;
   font-size: 12px;
@@ -505,22 +505,26 @@ body {
 
 .favorite-btn {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  background: rgba(0,0,0,.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.274);
+  border: none;
   color: white;
-  text-decoration: none;
-  backdrop-filter: blur(10px);
-  z-index: 5;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+  transition: 0.2s;
+  z-index: 888;
 }
 
-.disabled-btn {
-  opacity: .5;
-  cursor: not-allowed;
+.favorite-btn.active {
+  color: #a8872d;
+  transform: scale(1.15);
+  background: rgba(0, 0, 0, 0.425);
+}
+
+.favorite-btn:hover {
+  transform: scale(1.2);
 }

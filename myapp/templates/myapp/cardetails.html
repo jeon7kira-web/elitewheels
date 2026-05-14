@@ -120,6 +120,12 @@
         <h1 class="hero__title">
           {{ car.brand }}<br /><span>{{ car.name }}</span>
         </h1>
+      <button
+  class="favorite-btn {% if car.id in favorite_ids %}active{% endif %}"
+  onclick="toggleFavorite({{ car.id }}, this)"
+>
+  ♥
+</button>
         <div class="hero__price">
           {{ car.price_per_day }}<span class="hero__currency">MAD</span
           ><span class="hero__per">/day</span>
@@ -510,6 +516,41 @@
         skew: 0,
         shapes: ["c", "t", "s"],
       });
+    </script>
+     <script>
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      function toggleFavorite(carId, btn) {
+        fetch("{% url 'toggle_favorite' 0 %}".replace("0", carId), {
+          method: "POST",
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+
+            if (data.success) {
+              btn.classList.toggle("active", data.liked);
+            }
+          });
+      }
     </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
