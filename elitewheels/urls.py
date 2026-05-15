@@ -47,6 +47,7 @@ urlpatterns = [
     path('faq/', views.faq_view, name='faq'),
     path('contact/', views.contact_view, name='contact'),
     path('about/', views.about_view, name='about'),
+    path('favorites/', views.dashboard_view, name='favorites'),
 
     # ================= PASSWORD RESET =================
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),

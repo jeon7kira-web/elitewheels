@@ -51,3 +51,9 @@ brandFilter.addEventListener("change", filterCars);
 typeFilter.addEventListener("change", filterCars);
 transFilter.addEventListener("change", filterCars);
 priceFilter.addEventListener("change", filterCars);
+
+const savedTab = localStorage.getItem("activeTab");
+if (savedTab) {
+  localStorage.removeItem("activeTab");
+  document.querySelector(`.tab[data-tab="${savedTab}"]`)?.click();
+}
