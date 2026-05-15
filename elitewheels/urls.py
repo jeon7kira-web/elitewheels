@@ -43,9 +43,7 @@ urlpatterns = [
     ),
     path('receipt/<int:booking_id>/',views.download_receipt,name='download_receipt'),    # ================= REVIEWS / FAVORITES =================
     path('review/<int:car_id>/', views.add_review, name='add_review'),
-    path("favorite/<int:car_id>/", views.toggle_favorite, name="toggle_favorite"),  
-    path("favorites/", views.favorites_list, name="favorites"),
-    # ================= STATIC PAGES =================
+    path("favorite/<int:car_id>/", views.toggle_favorite, name="toggle_favorite"),    # ================= STATIC PAGES =================
     path('faq/', views.faq_view, name='faq'),
     path('contact/', views.contact_view, name='contact'),
     path('about/', views.about_view, name='about'),

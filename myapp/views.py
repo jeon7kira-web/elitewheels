@@ -271,7 +271,6 @@ def dashboard_view(request):
     user = request.user
     profile, _ = Profile.objects.get_or_create(user=user)
 
-    # ── Profile update ────────────────────────────────────
     if request.method == "POST" and "update_profile" in request.POST:
         user.first_name = request.POST.get("first_name", "").strip()
         user.last_name  = request.POST.get("last_name",  "").strip()
@@ -286,15 +285,12 @@ def dashboard_view(request):
 
         user.save()
         profile.phone = request.POST.get("phone", "").strip()
-
         if request.FILES.get("license"):
             profile.license = request.FILES["license"]
-
         profile.save()
         messages.success(request, "Profile updated successfully.")
         return redirect("dashboard")
 
-    # ── Password change ───────────────────────────────────
     if request.method == "POST" and "change_password" in request.POST:
         old_pw  = request.POST.get("old_password", "")
         new_pw  = request.POST.get("new_password", "")
@@ -309,12 +305,10 @@ def dashboard_view(request):
         else:
             user.set_password(new_pw)
             user.save()
-            update_session_auth_hash(request, user)   # keep user logged in
+            update_session_auth_hash(request, user)
             messages.success(request, "Password updated successfully.")
-
         return redirect("dashboard")
 
-    # ── Build booking groups using status_auto ────────────
     all_bookings = Booking.objects.filter(user=user).select_related('car')
 
     groups = {
@@ -326,29 +320,56 @@ def dashboard_view(request):
     }
 
     total_spent = 0
-    favorites = Favorite.objects.filter(user=request.user).select_related("car", "car__brand")
-
-    favorite_cars = Car.objects.filter(favorite__user=request.user)
-    favorite_ids = list(favorites.values_list("car_id", flat=True))
     for b in all_bookings:
-        status_key = b.status_auto                      # FIX: use property correctly
+        status_key = b.status_auto
         if status_key in groups:
             groups[status_key].append(b)
-        if b.total_price and b.status_auto != "cancelled":
+        if b.total_price and status_key != "cancelled":
             total_spent += b.total_price
-    reviews = Review.objects.filter(user=request.user)
-    reviewed_car_ids = reviews.values_list("car_id", flat=True)
-    return render(request, "myapp/dashboard.html", {
-        "profile":           profile,
-        "groups":            groups,
-        "active_bookings":   groups["active"],
-        "completed_bookings":groups["completed"],
-        "total_spent":       total_spent,
-        "favorite_cars": favorite_cars,
-        "favorite_ids": favorite_ids,
-        "reviewed_car_ids": reviewed_car_ids,
-    })
 
+    favorite_cars = (
+        Car.objects
+        .filter(favorited_by__user=request.user)
+        .select_related("brand")
+        .distinct()
+    )
+    favorite_ids = list(favorite_cars.values_list("id", flat=True))
+
+    reviewed_car_ids = Review.objects.filter(
+        user=request.user
+    ).values_list("car_id", flat=True)
+
+    return render(request, "myapp/dashboard.html", {
+        "profile":            profile,
+        "groups":             groups,
+        "active_bookings":    groups["active"],
+        "completed_bookings": groups["completed"],
+        "total_spent":        total_spent,
+        "favorite_cars":      favorite_cars,
+        "favorite_ids":       favorite_ids,
+        "reviewed_car_ids":   reviewed_car_ids,
+    })
+@login_required
+@require_POST
+def toggle_favorite(request, car_id):
+    car = get_object_or_404(Car, id=car_id)
+
+    favorite, created = Favorite.objects.get_or_create(
+        user=request.user,
+        car=car
+    )
+
+    if not created:
+        favorite.delete()
+        liked = False
+    else:
+        liked = True
+
+    return JsonResponse({
+        "success": True,
+        "liked": liked,
+        "car_id": car_id
+    })
 
 
 # CANCEL BOOKING
@@ -439,42 +460,7 @@ def add_review(request, car_id):
 
 # FAVORITE
 
-@login_required
-@require_POST
-def toggle_favorite(request, car_id):
-    car = get_object_or_404(Car, id=car_id)
 
-    favorite, created = Favorite.objects.get_or_create(
-        user=request.user,
-        car=car
-    )
-
-    if not created:
-        favorite.delete()
-        liked = False
-    else:
-        liked = True
-
-    return JsonResponse({
-        "success": True,
-        "liked": liked,
-        "car_id": car_id
-    })
-
-@login_required
-def favorites_list(request):
-    cars = (
-    Car.objects
-    .filter(favorite__user=request.user)
-    .select_related("brand")
-    .prefetch_related("images")
-    .order_by("-favorite__id")
-    .distinct()
-)
-
-    return render(request, "myapp/dashboard.html", {
-        "cars": cars
-    })
 
 def download_receipt(request, booking_id):
 

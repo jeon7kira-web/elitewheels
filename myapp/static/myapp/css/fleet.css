@@ -507,24 +507,36 @@ body {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.274);
-  border: none;
-  color: white;
-  font-size: 20px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 18px;
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   cursor: pointer;
-  transition: 0.2s;
+  transition: color 0.2s, transform 0.2s, background 0.2s, border-color 0.2s;
   z-index: 888;
-}
-
-.favorite-btn.active {
-  color: #a8872d;
-  transform: scale(1.15);
-  background: rgba(0, 0, 0, 0.425);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(6px);
 }
 
 .favorite-btn:hover {
-  transform: scale(1.2);
+  background: rgba(0, 0, 0, 0.75);
+  border-color: rgba(201, 168, 76, 0.3);
+  color: rgba(201, 168, 76, 0.7);
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.15);
+  border-color: rgba(201, 168, 76, 0.4);
+}
+
+.favorite-btn.active:hover {
+  transform: scale(1.1);
+  background: rgba(201, 168, 76, 0.2);
 }
