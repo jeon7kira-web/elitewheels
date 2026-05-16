@@ -470,13 +470,13 @@
                     <a href="{% url 'cardetails' car.id %}" class="link-details"
                       >View →</a
                     >
-                     <button
-              type="button"
-              class="favorite-btn {% if car.id in favorite_ids %}active{% endif %}"
-              onclick="toggleFavorite({{ car.id }}, this)"
-            >
-              ♥
-            </button>
+                    <button
+                      type="button"
+                      class="favorite-btn {% if car.id in favorite_ids %}active{% endif %}"
+                      onclick="toggleFavorite({{ car.id }}, this)"
+                    >
+                      ♥
+                    </button>
                   </div>
                 </div>
               </div>
@@ -687,6 +687,51 @@
           })
           .catch(() => alert("Network error. Please try again."));
       }
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        function openTab(tabId) {
+          document.querySelectorAll(".tab-section").forEach((section) => {
+            section.style.display = "none";
+          });
+
+          document.querySelectorAll(".tab").forEach((btn) => {
+            btn.classList.remove("active");
+          });
+
+          const target = document.getElementById(tabId);
+
+          if (target) {
+            target.style.display = "block";
+          }
+
+          const activeBtn = document.querySelector(`.tab[data-tab="${tabId}"]`);
+
+          if (activeBtn) {
+            activeBtn.classList.add("active");
+          }
+        }
+
+        // Open from URL hash
+        const hash = window.location.hash.replace("#", "");
+
+        if (hash) {
+          openTab(hash);
+        } else {
+          openTab("profile");
+        }
+
+        // Manual tab clicks
+        document.querySelectorAll(".tab").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const tabId = btn.dataset.tab;
+
+            openTab(tabId);
+
+            history.replaceState(null, null, "#" + tabId);
+          });
+        });
+      });
     </script>
     <script>
       function getCookie(name) {

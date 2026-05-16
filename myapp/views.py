@@ -10,6 +10,7 @@ from reportlab.lib.colors import HexColor
 from django.http import JsonResponse
 from datetime import date, timedelta
 from reportlab.pdfgen import canvas
+from django.db.models import Count
 from reportlab.lib.pagesizes import A4
 import json
 
@@ -21,18 +22,35 @@ from .models import Profile, Car, Booking, Review, Favorite, Brand
 
 def home(request):
     reviews = Review.objects.select_related("user", "car").order_by("-created_at")[:10]
-
+    favorites_count = Favorite.objects.filter(user=request.user).count()
+    types = Car.objects.values_list("car_type", flat=True).distinct()
+    featured_cars = Car.objects.annotate(
+    bookings_count=Count(
+        "bookings",
+        filter=Q(bookings__status="confirmed")
+    )
+).order_by("-bookings_count")[:4]
     return render(request, "myapp/home.html", {
         "reviews": reviews,
+        "favorites_count": favorites_count,
+        "types":types,
+        "featured_cars": featured_cars,
     })
 def auth_view(request):
     return render(request, 'myapp/auth.html')
 
 def faq_view(request):
-    return render(request, 'myapp/faq.html')
+    favorites_count = Favorite.objects.filter(user=request.user).count()
+
+    return render(request, "myapp/faq.html",{
+       "favorites_count":favorites_count,           
+    })
 
 def contact_view(request):
-    return render(request, 'myapp/contact.html')
+    favorites_count = Favorite.objects.filter(user=request.user).count()
+    return render(request, "myapp/contact.html",{
+       "favorites_count":favorites_count,   
+    })
 
 def about_view(request):
     return render(request, 'myapp/about.html')
@@ -106,17 +124,19 @@ def logout_view(request):
 def fleet(request):
     pickup  = request.GET.get("pickup_date")
     dropoff = request.GET.get("dropoff_date")
+    car_type = request.GET.get("type")
 
-    cars = Car.objects.select_related(
-        'brand'
-    ).prefetch_related(
-        'features',
-        'reviews'
+    cars = Car.objects.select_related('brand').prefetch_related('features', 'reviews')
+
+    favorites_count = Favorite.objects.filter(user=request.user).count()
+    favorite_ids = set(
+        Favorite.objects.filter(user=request.user)
+        .values_list("car_id", flat=True)
     )
 
     if pickup and dropoff:
         try:
-            pickup_date  = date.fromisoformat(pickup)
+            pickup_date = date.fromisoformat(pickup)
             dropoff_date = date.fromisoformat(dropoff)
 
             booked = Booking.objects.filter(
@@ -128,30 +148,21 @@ def fleet(request):
             cars = cars.exclude(id__in=booked)
 
         except ValueError:
-            pickup = dropoff = None
+            pass
 
-    favorite_ids = set(
-        Favorite.objects.filter(user=request.user)
-        .values_list("car_id", flat=True)
-)
+    if car_type:
+        cars = cars.filter(car_type__iexact=car_type)
 
     return render(request, "myapp/ourfleet.html", {
         "cars": cars,
+        "favorites_count": favorites_count,
         "favorite_ids": favorite_ids,
         "brands": Brand.objects.all(),
-        "types": Car.objects.values_list(
-            'car_type',
-            flat=True
-        ).distinct(),
-        "transmissions": Car.objects.values_list(
-            'transmission',
-            flat=True
-        ).distinct(),
+        "types": Car.objects.values_list('car_type', flat=True).distinct(),
+        "transmissions": Car.objects.values_list('transmission', flat=True).distinct(),
         "pickup_date": pickup,
         "dropoff_date": dropoff,
-    })  
-
-
+    })
 # CAR DETAILS
 
 def car_details(request, car_id):
@@ -389,7 +400,6 @@ def cancel_booking(request, booking_id):
         user=request.user
     )
 
-    # ❗ IMPORTANT: use real DB field, not status_auto
     if booking.status in ("active", "completed", "cancelled"):
         return JsonResponse(
             {"success": False, "error": "Cannot cancel this booking."},

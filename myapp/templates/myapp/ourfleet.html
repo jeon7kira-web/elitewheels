@@ -61,19 +61,15 @@
             >FAQs</a
           >
         </li>
-
-        {% if user.is_authenticated %}
-        <li>
-          <a href="{% url 'dashboard' %}#favorites" 
-            onclick="localStorage.setItem('activeTab', 'favorites')">
-            ❤️ Favorites
-          </a>
-        </li>
-        {% endif %}
       </ul>
 
       <div class="profile">
         {% if user.is_authenticated %}
+
+        <a href="{% url 'dashboard' %}#favorites" class="fav-link">
+          ♥ <span id="favorites-count">{{ favorites_count }}</span>
+        </a>
+
         <a
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
@@ -421,39 +417,55 @@
     <script>
       function getCookie(name) {
         let cookieValue = null;
+
         if (document.cookie && document.cookie !== "") {
           const cookies = document.cookie.split(";");
+
           for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
+
             if (cookie.substring(0, name.length + 1) === name + "=") {
               cookieValue = decodeURIComponent(
                 cookie.substring(name.length + 1),
               );
+
               break;
             }
           }
         }
+
         return cookieValue;
       }
+
       function toggleFavorite(carId, btn) {
         fetch("{% url 'toggle_favorite' 0 %}".replace("0", carId), {
           method: "POST",
+
           headers: {
             "X-CSRFToken": getCookie("csrftoken"),
             "X-Requested-With": "XMLHttpRequest",
           },
         })
           .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
 
+          .then((data) => {
             if (data.success) {
               btn.classList.toggle("active", data.liked);
+
+              // update counter
+              const counter = document.getElementById("favorites-count");
+
+              let current = parseInt(counter.textContent);
+
+              if (data.liked) {
+                counter.textContent = current + 1;
+              } else {
+                counter.textContent = current - 1;
+              }
             }
           });
       }
     </script>
-    
     <script src="{% static 'myapp/js/fleet.js' %}"></script>
   </body>
 </html>

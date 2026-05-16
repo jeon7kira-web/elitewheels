@@ -37,7 +37,7 @@ function filterCars() {
       }
     }
 
-    car.style.display = show ? "block" : "none";
+    car.classList.toggle("hidden", !show);
 
     if (show) visibleCount++;
   });

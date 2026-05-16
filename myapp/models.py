@@ -1,14 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
-from django.db.models import Q,Avg
+from django.db.models import Q,Avg, Count
 from django.utils import timezone
 
 
 
-# =========================================================
 # PROFILE
-# =========================================================
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
@@ -21,9 +19,7 @@ class Profile(models.Model):
         return self.user.username
 
 
-# =========================================================
 # BRAND
-# =========================================================
 class Brand(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -37,9 +33,7 @@ class Brand(models.Model):
         return self.name
 
 
-# =========================================================
 # FEATURE
-# =========================================================
 class Feature(models.Model):
     name = models.CharField(max_length=50, unique=True)
 
@@ -47,9 +41,7 @@ class Feature(models.Model):
         return self.name
 
 
-# =========================================================
 # LOCATION
-# =========================================================
 class Location(models.Model):
     city = models.CharField(max_length=100)
     address = models.TextField()
@@ -58,9 +50,7 @@ class Location(models.Model):
         return f"{self.city} - {self.address}"
 
 
-# =========================================================
 # CAR
-# =========================================================
 class Car(models.Model):
 
     STATUS_CHOICES = [
@@ -107,7 +97,6 @@ class Car(models.Model):
         return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # ❌ FIXED: removed DB field conflict, kept ONLY property logic
     @property
     def available(self):
         today = timezone.now().date()
@@ -124,9 +113,7 @@ class Car(models.Model):
         return f"{self.brand.name} {self.name}"
 
 
-# =========================================================
 # CAR IMAGES
-# =========================================================
 class CarImage(models.Model):
     car = models.ForeignKey(
         Car,
@@ -140,9 +127,7 @@ class CarImage(models.Model):
         return f"{self.car.name} Image"
 
 
-# =========================================================
 # CHAUFFEUR
-# =========================================================
 class Chauffeur(models.Model):
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20)
@@ -154,9 +139,7 @@ class Chauffeur(models.Model):
         return self.name
 
 
-# =========================================================
 # BOOKING
-# =========================================================
 class Booking(models.Model):
 
     STATUS_CHOICES = [
@@ -168,8 +151,7 @@ class Booking(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
-    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='bookings')
-
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings")
     pickup_location = models.ForeignKey(
         Location,
         on_delete=models.SET_NULL,
@@ -270,9 +252,7 @@ class Booking(models.Model):
         return f"{self.user.username} - {self.car.name}"
 
 
-# =========================================================
 # FAVORITE
-# =========================================================
 class Favorite(models.Model):
     user = models.ForeignKey(
         User,
@@ -284,9 +264,7 @@ class Favorite(models.Model):
         on_delete=models.CASCADE,
         related_name="favorited_by"
     )
-# =========================================================
 # PAYMENT
-# =========================================================
 class Payment(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -299,9 +277,7 @@ class Payment(models.Model):
         return f"Payment #{self.id} - {self.booking.user.username}"
 
 
-# =========================================================
 # PROMO CODE
-# =========================================================
 class PromoCode(models.Model):
     code = models.CharField(max_length=20, unique=True)
     discount_percent = models.IntegerField()
@@ -312,9 +288,7 @@ class PromoCode(models.Model):
         return self.code
 
 
-# =========================================================
 # NOTIFICATION
-# =========================================================
 class Notification(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
@@ -326,9 +300,7 @@ class Notification(models.Model):
         return self.title
 
 
-# =========================================================
 # MAINTENANCE
-# =========================================================
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='maintenances')
     title = models.CharField(max_length=100)
@@ -341,9 +313,7 @@ class Maintenance(models.Model):
         return f"{self.car.name} - {self.title}"
 
 
-# =========================================================
 # REVIEW
-# =========================================================
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reviews')

@@ -53,7 +53,9 @@
 
       <div class="profile">
         {% if user.is_authenticated %}
-
+        <a href="{% url 'dashboard' %}#favorites" class="fav-link">
+          ♥ <span id="favorites-count">{{ favorites_count }}</span>
+        </a>
         <a
           href="{% url 'dashboard' %}"
           class="{% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
@@ -274,39 +276,55 @@
       </div>
 
       <div class="car-style">
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/sedan-style.png' %}" alt="" />
-          <h2>SEDAN</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/suv-style.png' %}" alt="" />
-          <h2>SUV</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/sports-style.png' %}" alt="" />
-          <h2>SPORTS</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/supercar-style.png' %}" alt="" />
-          <h2>SUPERCAR</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/hypercar-style.png' %}" alt="" />
-          <h2>HYPERCAR</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/gt-style.png' %}" alt="" />
-          <h2>GT</h2>
-        </div>
-        <div class="style-card">
-          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-          <h2>ELECTRIC</h2>
-        </div>
-      </div>
-      <div class="see-all">
-        <span>See All &gt;&gt;&gt;</span>
+        {% for type in types %}
+
+        <a href="{% url 'fleet' %}?type={{ type }}" class="style-card">
+          {% if type|lower == "sedan" %}
+          <img src="{% static 'myapp/imgs/sedan-style.png' %}" alt="Sedan" />
+
+          {% elif type|lower == "suv" %}
+          <img src="{% static 'myapp/imgs/suv-style.png' %}" alt="SUV" />
+
+          {% elif type|lower == "sports" %}
+          <img src="{% static 'myapp/imgs/sports-style.png' %}" alt="Sports" />
+
+          {% elif type|lower == "supercar" %}
+          <img
+            src="{% static 'myapp/imgs/supercar-style.png' %}"
+            alt="Supercar"
+          />
+
+          {% elif type|lower == "hypercar" %}
+          <img
+            src="{% static 'myapp/imgs/hypercar-style.png' %}"
+            alt="Hypercar"
+          />
+
+          {% elif type|lower == "gt" %}
+          <img src="{% static 'myapp/imgs/gt-style.png' %}" alt="GT" />
+
+          {% elif type|lower == "electric" %}
+          <img
+            src="{% static 'myapp/imgs/electric-style.png' %}"
+            alt="Electric"
+          />
+
+          {% else %}
+          <img
+            src="{% static 'myapp/imgs/default-style.png' %}"
+            alt="Default"
+          />
+          {% endif %}
+
+          <h2>{{ type|upper }}</h2>
+        </a>
+
+        {% endfor %}
       </div>
 
+      <div class="see-all">
+        <a href="{% url 'fleet' %}"><span>See All &gt;&gt;&gt;</span></a>
+      </div>
       <div class="title">
         <span
           ><hr />
@@ -316,101 +334,36 @@
         <h1>FEATURED <span>CARS</span></h1>
       </div>
       <div class="featured-cars">
+        {% for car in featured_cars %}
         <div class="ft-cars-card">
-          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-          <h1>MERCEDES GT-603 S</h1>
-          <span>SPORTS</span>
+          <!-- 🔥 RANK BADGE -->
+          {% if forloop.counter == 1 %}
+          <div class="rank-badge gold">🔥 1st</div>
+          {% elif forloop.counter == 2 %}
+          <div class="rank-badge silver">🔥 2nd</div>
+          {% elif forloop.counter == 3 %}
+          <div class="rank-badge bronze">🔥 3rd</div>
+          {% endif %} {% if car.image %}
+          <img src="{{ car.image.url }}" alt="{{ car.name }}" />
+          {% endif %}
+
+          <h1>{{ car.name }}</h1>
+          <span>{{ car.car_type }}</span>
+
           <div class="car-details">
-            <span
-              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/gear.svg' %}"
-                alt=""
-              />MANUEL</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-                alt=""
-              />GASOLINE</span
-            >
+            <span>👤 {{ car.passengers }}</span>
+            <span>⚙️ {{ car.transmission }}</span>
+            <span>⛽ {{ car.fuel_type }}</span>
           </div>
-          <button href="ourfleet.html">MORE DETAILS</button>
+
+          <a href="{% url 'cardetails' car.id %}">
+            <button>MORE DETAILS</button>
+          </a>
         </div>
-        <div class="ft-cars-card">
-          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-          <h1>MERCEDES GT-603 S</h1>
-          <span>SPORTS</span>
-          <div class="car-details">
-            <span
-              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/gear.svg' %}"
-                alt=""
-              />MANUEL</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-                alt=""
-              />GASOLINE</span
-            >
-          </div>
-          <button href="ourfleet.html">MORE DETAILS</button>
-        </div>
-        <div class="ft-cars-card">
-          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-          <h1>MERCEDES GT-603 S</h1>
-          <span>SPORTS</span>
-          <div class="car-details">
-            <span
-              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/gear.svg' %}"
-                alt=""
-              />MANUEL</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-                alt=""
-              />GASOLINE</span
-            >
-          </div>
-          <button href="ourfleet.html">MORE DETAILS</button>
-        </div>
-        <div class="ft-cars-card">
-          <img src="{% static 'myapp/imgs/electric-style.png' %}" alt="" />
-          <h1>MERCEDES GT-603 S</h1>
-          <span>SPORTS</span>
-          <div class="car-details">
-            <span
-              ><img src="{% static 'myapp/imgs/user.svg' %}" alt="" /> 4</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/gear.svg' %}"
-                alt=""
-              />MANUEL</span
-            >
-            <span
-              ><img
-                src="{% static 'myapp/imgs/petrol-pump.svg' %}"
-                alt=""
-              />GASOLINE</span
-            >
-          </div>
-          <button href="ourfleet.html">MORE DETAILS</button>
-        </div>
+        {% endfor %}
       </div>
       <div class="see-all">
-        <span>See All Cars &gt;&gt;&gt;</span>
+        <a href="{% url 'fleet' %}"><span>See All Cars &gt;&gt;&gt;</span></a>
       </div>
       <div class="title" id="services">
         <span
@@ -562,11 +515,15 @@
             <div class="reviews__card {% if forloop.first %}active{% endif %}">
               <div class="reviews__card-header">
                 <h3>
-                  {{ review.user.first_name|default:review.user.username|upper }}
+                  {{ review.user.first_name|default:review.user.username|upper}}
                 </h3>
 
                 <div class="reviews__stars">
-                  {% for i in "12345" %} {% if forloop.counter <= review.rating %} ★ {% else %}☆{% endif %} {% endfor %}
+                  {% for i in "12345" %}
+                  {% if forloop.counter <= review.rating %} 
+                  ★ 
+                  {% else %}☆{% endif %} 
+                  {% endfor %}
                 </div>
                 <a
                   href="{% url 'cardetails' review.car.id %}"
@@ -788,6 +745,58 @@
           },
         });
       });
+    </script>
+    <script>
+      function getCookie(name) {
+        let cookieValue = null;
+
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+              cookieValue = decodeURIComponent(
+                cookie.substring(name.length + 1),
+              );
+
+              break;
+            }
+          }
+        }
+
+        return cookieValue;
+      }
+
+      function toggleFavorite(carId, btn) {
+        fetch("{% url 'toggle_favorite' 0 %}".replace("0", carId), {
+          method: "POST",
+
+          headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then((res) => res.json())
+
+          .then((data) => {
+            if (data.success) {
+              btn.classList.toggle("active", data.liked);
+
+              // update counter
+              const counter = document.getElementById("favorites-count");
+
+              let current = parseInt(counter.textContent);
+
+              if (data.liked) {
+                counter.textContent = current + 1;
+              } else {
+                counter.textContent = current - 1;
+              }
+            }
+          });
+      }
     </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
