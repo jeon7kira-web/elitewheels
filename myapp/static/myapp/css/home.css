@@ -1573,3 +1573,58 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     transform: translateX(120%);
   }
 }
+.price-tag {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  bottom: 135px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.336);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--gold-light);
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.1em;
+  padding: 4px 10px;
+}
+.discount-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.discount-bar .countdown {
+  font-weight: 400;
+  color: #f5d06f;
+}
+
+.discount-badge {
+  background: #c09938;
+  color: #ffffff !important;
+  padding: 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.discount-timer {
+  font-size: 12px;
+}
+.toast {
+  background: #111;
+  color: white;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.toast:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}

@@ -580,8 +580,8 @@ body {
   font-size: 13px;
 }
 .discount-badge {
-  background: #f5d06f;
-  color: #111;
+  background: #a8872d !important;
+  color: #fff !important;
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 11px;
@@ -589,7 +589,7 @@ body {
 }
 
 .discount-badge.inactive {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15);  
   color: #aaa;
   display: none;
 }

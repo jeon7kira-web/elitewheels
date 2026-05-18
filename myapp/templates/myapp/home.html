@@ -341,6 +341,21 @@
       <div class="featured-cars">
         {% for car in featured_cars %}
         <div class="ft-cars-card">
+          {% if car.is_discount_active %}
+          <div class="price-tag">
+            <!-- floating discount bar -->
+            <div class="discount-bar">
+              <span
+                class="countdown"
+                data-end="{{ car.discount_end|date:'c' }}"
+              >
+                --:--:--:--
+              </span>
+
+              <span class="discount-badge">-{{ car.discount_percent }}%</span>
+            </div>
+          </div>
+          {% endif %}
           <!-- 🔥 RANK BADGE -->
           {% if forloop.counter == 1 %}
           <div class="rank-badge gold">
@@ -838,24 +853,68 @@
           });
       }
     </script>
+    <script>
+      function formatTime(diff) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      function updateCountdowns() {
+        document.querySelectorAll(".countdown").forEach((el) => {
+          const end = el.dataset.end;
+
+          if (!end) {
+            el.innerText = "No offer";
+            return;
+          }
+
+          const endTime = new Date(end).getTime();
+          const diff = endTime - Date.now();
+
+          if (diff <= 0) {
+            el.innerText = "Expired";
+          } else {
+            el.innerText = formatTime(diff);
+          }
+        });
+      }
+
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
+    </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>
     <div id="toast-container"></div>
     <script>
       const notifications = [
         {
           title: "🔥 Most Booked",
-          message: "{% if top_car %}{{ top_car.name }}{% else %}No data yet{% endif %} is the most booked car this month."
+          message: "{% if top_car %}{{ top_car.name }}{% else %}No data yet{% endif %} is the most booked car this month.",
+          url: "{% if top_car and top_car.id %}{% url 'cardetails' top_car.id %}{% else %}#{% endif %}"
         },
 
         {
           title: "🚗 Available Cars",
-          message: "{{ available_cars }} cars ready for booking."
+          message: "{{ available_cars }} cars ready for booking.",
+          url: "{% url 'fleet' %}"
         },
+
+        {% if featured_cars %}
+          {
+            title: "🔥 Discount",
+            message: "{% for car in featured_cars %}{% if car.discount_percent and car.discount_percent > 0 %}{{ car.name }} is now {{ car.discount_percent }}% OFF!{% endif %}{% if not forloop.last %} · {% endif %}{% endfor %}",
+            url: "{% url 'fleet' %}"
+          },
+        {% endif %}
 
         {% for car in featured_cars %}
         {
           title: "🏆 Trending",
-          message: "{{ car.name }} has high demand this week."
+          message: "{{ car.name }} has high demand this week.",
+          url: "{% if car.id %}{% url 'cardetails' car.id %}{% else %}#{% endif %}"
         }{% if not forloop.last %},{% endif %}
         {% endfor %}
       ];
@@ -871,6 +930,14 @@
           <div class="toast-message">${notification.message}</div>
         `;
 
+        toast.style.cursor = "pointer";
+
+        toast.addEventListener("click", () => {
+          if (notification.url && notification.url !== "#") {
+            window.location.href = notification.url;
+          }
+        });
+
         container.appendChild(toast);
 
         setTimeout(() => {
@@ -878,12 +945,10 @@
         }, 5000);
       }
 
-      // show first instantly
       if (notifications.length > 0) {
         showToast(notifications[0]);
       }
 
-      // rotate
       setInterval(() => {
         if (notifications.length === 0) return;
 
@@ -891,7 +956,7 @@
           notifications[Math.floor(Math.random() * notifications.length)];
 
         showToast(random);
-      }, 10000);
+      }, 9000);
     </script>
   </body>
 </html>

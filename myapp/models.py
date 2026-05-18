@@ -1,20 +1,17 @@
 from django.contrib.auth.models import User
 from django.db import models
+from decimal import Decimal
 from django.core.exceptions import ValidationError
-from django.db.models import Q,Avg, Count
+from django.db.models import Q, Avg, Count
 from django.utils import timezone
 from django.core.validators import MaxValueValidator
-
-
 
 
 # PROFILE
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
     phone = models.CharField(max_length=20)
     license = models.FileField(upload_to='licenses/')
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -24,12 +21,7 @@ class Profile(models.Model):
 # BRAND
 class Brand(models.Model):
     name = models.CharField(max_length=50, unique=True)
-
-    logo = models.ImageField(
-        upload_to='brands/',
-        blank=True,
-        null=True
-    )
+    logo = models.ImageField(upload_to='brands/', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -52,6 +44,21 @@ class Location(models.Model):
         return f"{self.city} - {self.address}"
 
 
+# PROMO CODE
+class PromoCode(models.Model):
+    code = models.CharField(max_length=20, unique=True)
+    discount_percent = models.IntegerField()
+    active = models.BooleanField(default=True)
+    expires_at = models.DateTimeField()
+
+    @property
+    def is_valid(self):
+        return self.active and timezone.now() < self.expires_at
+
+    def __str__(self):
+        return self.code
+
+
 # CAR
 class Car(models.Model):
 
@@ -63,36 +70,23 @@ class Car(models.Model):
     ]
 
     name = models.CharField(max_length=100)
-
-    brand = models.ForeignKey(
-        Brand,
-        on_delete=models.CASCADE,
-        related_name='cars'
-    )
-
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='cars')
     car_type = models.CharField(max_length=50)
     transmission = models.CharField(max_length=20)
     passengers = models.IntegerField()
     fuel_type = models.CharField(max_length=20)
-
     image = models.ImageField(upload_to='cars/')
-
-    price_per_day = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-    discount_percent = models.PositiveIntegerField(
-    default=0,
-    validators=[MaxValueValidator(90)]
-)
-    discount_percent = models.PositiveIntegerField(
-    default=0,
-    validators=[MaxValueValidator(90)]
-)
-
+    price_per_day = models.DecimalField(max_digits=10, decimal_places=2)
+    discount_percent = models.PositiveIntegerField(default=0, validators=[MaxValueValidator(90)])
     discount_start = models.DateTimeField(null=True, blank=True)
     discount_end = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True)
+    year = models.IntegerField(null=True, blank=True)
+    mileage = models.IntegerField(null=True, blank=True)
+    features = models.ManyToManyField(Feature, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
+    created_at = models.DateTimeField(auto_now_add=True)
+
     @property
     def is_discount_active(self):
         if self.discount_percent <= 0:
@@ -101,55 +95,39 @@ class Car(models.Model):
             return False
         return timezone.now() < self.discount_end
 
-    year = models.IntegerField(null=True, blank=True)
-    mileage = models.IntegerField(null=True, blank=True)
-
-    features = models.ManyToManyField(Feature, blank=True)
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='available'
-    )
-    
     @property
-    def average_rating(self):
-        return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
-    created_at = models.DateTimeField(auto_now_add=True)
-    @property
+    def final_price(self):
+        if self.is_discount_active:
+            return self.price_per_day * Decimal(100 - self.discount_percent) / Decimal(100)
+        return self.price_per_day
+
     @property
     def savings_per_day(self):
         if self.is_discount_active:
             return self.price_per_day - self.final_price
         return 0
+
+    @property
+    def average_rating(self):
+        return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
+
     @property
     def available(self):
         today = timezone.now().date()
-
         overlapping = Booking.objects.filter(
             car=self,
             dropoff_date__gte=today,
             status__in=['pending', 'confirmed', 'active']
         )
-
         return not overlapping.exists()
-    @property
-    def final_price(self):
-        if self.is_discount_active:
-            return self.price_per_day * (100 - self.discount_percent) / 100
-        return self.price_per_day
+
     def __str__(self):
         return f"{self.brand.name} {self.name}"
 
 
 # CAR IMAGES
 class CarImage(models.Model):
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name='images'
-    )
-
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(upload_to='cars/gallery/')
 
     def __str__(self):
@@ -182,70 +160,46 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings")
     pickup_location = models.ForeignKey(
-        Location,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        Location, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='pickup_bookings'
     )
-
     dropoff_location = models.ForeignKey(
-        Location,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
+        Location, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='dropoff_bookings'
     )
-
     pickup_date = models.DateField()
     dropoff_date = models.DateField()
-
     with_driver = models.BooleanField(default=False)
-
     chauffeur = models.ForeignKey(
-        Chauffeur,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True
+        Chauffeur, on_delete=models.SET_NULL, null=True, blank=True
     )
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='pending'
+    # ── PromoCode link (new) ──────────────────────────────────────────────────
+    promo_code = models.ForeignKey(
+        PromoCode, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='bookings'
     )
+    # ─────────────────────────────────────────────────────────────────────────
 
-    total_price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        null=True,
-        blank=True
-    )
-
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # duration
     @property
     def duration(self):
         return max(1, (self.dropoff_date - self.pickup_date).days)
 
-    # auto status
     @property
     def status_auto(self):
         today = timezone.now().date()
-
         if self.status == "cancelled":
             return "cancelled"
-
         if today < self.pickup_date:
             return "confirmed"
-
         if self.pickup_date <= today <= self.dropoff_date:
             return "active"
-
         if today > self.dropoff_date:
             return "completed"
-
         return "pending"
 
     def clean(self):
@@ -259,44 +213,41 @@ class Booking(models.Model):
             Q(pickup_date__lt=self.dropoff_date) &
             Q(dropoff_date__gt=self.pickup_date)
         )
-
         if self.pk:
             overlapping = overlapping.exclude(pk=self.pk)
-
         if overlapping.exists():
             raise ValidationError("This car is already booked for these dates.")
+
+        # Validate promo code if provided
+        if self.promo_code and not self.promo_code.is_valid:
+            raise ValidationError("This promo code is expired or inactive.")
 
     def save(self, *args, **kwargs):
         self.full_clean()
 
         days = max(1, (self.dropoff_date - self.pickup_date).days)
-
-        daily_price = self.car.final_price  # includes discount logic
-
+        daily_price = self.car.final_price  # includes car discount logic
         self.total_price = days * daily_price
 
         if self.with_driver:
             self.total_price += days * 50
 
+        # Apply promo code discount on top
+        if self.promo_code and self.promo_code.is_valid:
+            self.total_price *= Decimal(100 - self.promo_code.discount_percent) / Decimal(100)
+
         super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.user.username} - {self.car.name}"
-    
 
 
 # FAVORITE
 class Favorite(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="favorites"
-    )
-    car = models.ForeignKey(
-        Car,
-        on_delete=models.CASCADE,
-        related_name="favorited_by"
-    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")
+    car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="favorited_by")
+
+
 # PAYMENT
 class Payment(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
@@ -310,30 +261,12 @@ class Payment(models.Model):
         return f"Payment #{self.id} - {self.booking.user.username}"
 
 
-# PROMO CODE
-class PromoCode(models.Model):
-    code = models.CharField(max_length=20, unique=True)
-    discount_percent = models.IntegerField()
-    active = models.BooleanField(default=True)
-    expires_at = models.DateTimeField()
-
-    def __str__(self):
-        return self.code
-
-
 # NOTIFICATION
 class Notification(models.Model):
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="notifications"
-    )
-
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notifications")
     title = models.CharField(max_length=200)
     message = models.TextField()
-
     is_read = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -341,6 +274,8 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.title}"
+
+
 # MAINTENANCE
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='maintenances')

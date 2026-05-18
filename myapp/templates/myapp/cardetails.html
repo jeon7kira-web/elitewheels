@@ -128,14 +128,14 @@
 </button>
         <div class="hero__price">
 
-      {% if car.is_discount_active %}
-            <div class="discount-bar">
-                    <span
-                      class="countdown"
-                      data-end="{{ car.discount_end|date:'c' }}"
-                    > 
-                      --:--:--:--
-                    </span>
+    {% if car.is_discount_active %}
+          <div class="discount-bar">
+                  <span
+                    class="countdown"
+                    data-end="{{ car.discount_end|date:'c' }}"
+                  > 
+                    --:--:--:--
+                  </span>
 
                 {% if car.is_discount_active %}
                 <span class="discount-badge">-{{ car.discount_percent }}%</span>

@@ -79,8 +79,8 @@
           class="timeline-step {% if booking.status_auto == 'active' or booking.status_auto == 'completed' %}active{% endif %}"
         >
           <div class="circle">
-            {% if booking.status_auto == 'completed' %}✓ {% elif booking.status_auto == 'active' %}
-            ● {% else %}2{% endif %}
+            {% if booking.status_auto == 'completed' %}✓ {% elif
+            booking.status_auto == 'active' %} ● {% else %}2{% endif %}
           </div>
           <span>Active</span>
           <small>{{ booking.pickup_date|date:"d M Y" }}</small>
@@ -175,8 +175,43 @@
                 </tr>
 
                 <tr>
+                  <td style="color: #aaa">Daily Rent</td>
+                  <td>
+                    {% if booking.car.discount_percent > 0 %}
+                    <del style="color: #999">
+                      {{ booking.car.price_per_day }} MAD
+                    </del>
+                    {% else %}
+                    <strong>{{ booking.car.price_per_day }} MAD</strong>
+                    {% endif %}
+                  </td>
+                </tr>
+
+                {% if booking.car.discount_percent > 0 %}
+                <tr>
+                  <td style="color: #aaa">Discount</td>
+                  <td>
+                    <span class="discount-badge">
+                      -{{ booking.car.discount_percent }}%
+                    </span>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td style="color: #aaa">New Daily Rent</td>
+                  <td>
+                    <strong>{{ booking.car.final_price }} MAD</strong>
+                  </td>
+                </tr>
+                {% endif %}
+
+                <tr>
                   <td style="color: #aaa">Total</td>
-                  <td><strong>{{ booking.total_price }} MAD</strong></td>
+                  <td>
+                    <strong>
+                      {{ booking.total_price|floatformat:2 }} MAD
+                    </strong>
+                  </td>
                 </tr>
               </table>
 
