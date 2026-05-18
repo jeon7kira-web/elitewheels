@@ -3,6 +3,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from django.db.models import Q,Avg, Count
 from django.utils import timezone
+from django.core.validators import MaxValueValidator
+
 
 
 
@@ -79,8 +81,25 @@ class Car(models.Model):
         max_digits=10,
         decimal_places=2
     )
+    discount_percent = models.PositiveIntegerField(
+    default=0,
+    validators=[MaxValueValidator(90)]
+)
+    discount_percent = models.PositiveIntegerField(
+    default=0,
+    validators=[MaxValueValidator(90)]
+)
 
+    discount_start = models.DateTimeField(null=True, blank=True)
+    discount_end = models.DateTimeField(null=True, blank=True)
     description = models.TextField(blank=True)
+    @property
+    def is_discount_active(self):
+        if self.discount_percent <= 0:
+            return False
+        if not self.discount_end:
+            return False
+        return timezone.now() < self.discount_end
 
     year = models.IntegerField(null=True, blank=True)
     mileage = models.IntegerField(null=True, blank=True)
@@ -92,11 +111,17 @@ class Car(models.Model):
         choices=STATUS_CHOICES,
         default='available'
     )
+    
     @property
     def average_rating(self):
         return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
     created_at = models.DateTimeField(auto_now_add=True)
-
+    @property
+    @property
+    def savings_per_day(self):
+        if self.is_discount_active:
+            return self.price_per_day - self.final_price
+        return 0
     @property
     def available(self):
         today = timezone.now().date()
@@ -108,7 +133,11 @@ class Car(models.Model):
         )
 
         return not overlapping.exists()
-
+    @property
+    def final_price(self):
+        if self.is_discount_active:
+            return self.price_per_day * (100 - self.discount_percent) / 100
+        return self.price_per_day
     def __str__(self):
         return f"{self.brand.name} {self.name}"
 
@@ -241,7 +270,10 @@ class Booking(models.Model):
         self.full_clean()
 
         days = max(1, (self.dropoff_date - self.pickup_date).days)
-        self.total_price = days * self.car.price_per_day
+
+        daily_price = self.car.final_price  # includes discount logic
+
+        self.total_price = days * daily_price
 
         if self.with_driver:
             self.total_price += days * 50
@@ -250,6 +282,7 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.car.name}"
+    
 
 
 # FAVORITE
@@ -290,16 +323,24 @@ class PromoCode(models.Model):
 
 # NOTIFICATION
 class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="notifications"
+    )
+
     title = models.CharField(max_length=200)
     message = models.TextField()
+
     is_read = models.BooleanField(default=False)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def __str__(self):
-        return self.title
-
-
+        return f"{self.user.username} - {self.title}"
 # MAINTENANCE
 class Maintenance(models.Model):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='maintenances')

@@ -21,7 +21,7 @@
   </head>
 
   <body>
-    <div class="header finisher-header">
+    
     <!-- NAVBAR -->
     <nav class="navbar">
       <div class="logo">
@@ -79,7 +79,7 @@
         {% endif %}
       </div>
     </nav>
-
+    <div class="header finisher-header">
     <!-- HERO / DETAIL SECTION -->
     <section class="hero">
       <div class="hero__gallery">
@@ -127,9 +127,45 @@
   ♥
 </button>
         <div class="hero__price">
-          {{ car.price_per_day }}<span class="hero__currency">MAD</span
-          ><span class="hero__per">/day</span>
-        </div>
+
+      {% if car.is_discount_active %}
+            <div class="discount-bar">
+                    <span
+                      class="countdown"
+                      data-end="{{ car.discount_end|date:'c' }}"
+                    > 
+                      --:--:--:--
+                    </span>
+
+                {% if car.is_discount_active %}
+                <span class="discount-badge">-{{ car.discount_percent }}%</span>
+                {% else %}
+                <span class="discount-badge inactive">No offer</span>
+                {% endif %}
+              </div>
+    <span class="old-price">
+      <del>{{ car.price_per_day }}</del>
+    </span>
+
+    {{ car.final_price }}
+
+    <span class="hero__currency">MAD</span>
+    <span class="hero__per">/day</span>
+
+    <span class="discount-badge">
+      -{{ car.discount_percent }}%
+    </span>
+
+  {% else %}
+
+    {{ car.price_per_day }}
+
+    <span class="hero__currency">MAD</span>
+    <span class="hero__per">/day</span>
+
+  {% endif %}
+
+</div>
 
         <ul class="specs">
           <li class="spec">
@@ -177,9 +213,12 @@
             <div class="booking__field booking__field--total">
               <label>Total Price</label>
               <span id="totalPrice" class="booking__total-val">
-                <span id="days">— days</span> &nbsp;
-                <span id="total">— MAD</span>
-              </span>
+  <span id="days">— days</span>
+  &nbsp;
+  <span id="oldTotal"></span>
+  &nbsp;
+  <span id="total">— MAD</span>
+&nbsp;
             </div>
           </div>
           <button class="btn-book" type="submit" id="bookBtn">
@@ -211,13 +250,13 @@
         <h1>CLIENTS <span>SATISFACTION</span></h1>
       </div>
       <section class="reviews">
-  <div class="reviews__slider-wrapper">
+      <div class="reviews__slider-wrapper">
 
-    <div class="reviews__deco reviews__deco--left">
-      <div class="deco-sq deco-sq--1"></div>
-      <div class="deco-sq deco-sq--2"></div>
-      <div class="deco-sq deco-sq--3"></div>
-    </div>
+      <div class="reviews__deco reviews__deco--left">
+        <div class="deco-sq deco-sq--1"></div>
+        <div class="deco-sq deco-sq--2"></div>
+        <div class="deco-sq deco-sq--3"></div>
+      </div>
 
     <button class="reviews__arrow reviews__arrow--left">&#10094;</button>
 
@@ -278,7 +317,7 @@
 
       <div class="related__grid">
         {% for related_car in related_cars %}
-        <a href="{% url 'car_detail' related_car.id %}" class="car-card">
+        <a href="{% url 'cardetails' related_car.id %}" class="car-card">
           <div class="car-card__img-wrap">
             <img
               src="{{ related_car.image.url }}"
@@ -290,9 +329,8 @@
           </div>
           <div class="car-card__info">
             <span class="car-card__name">{{ related_car.name }}</span>
-            <span class="car-card__sub"
-              >{{ related_car.year }} · {{ related_car.transmission }} · {{
-              related_car.fuel_type }}</span
+            <span class="car-card__sub">
+              {{ related_car.year }} · {{ related_car.transmission }} · {{ related_car.fuel_type }}</span
             >
           </div>
         </a>
@@ -425,7 +463,10 @@
     
     <!-- Scripts -->
     <script>
-      const pricePerDay = {{ car.price_per_day }};
+      const basePrice = {{ car.price_per_day }};
+      const pricePerDay = {{ car.final_price }};
+      const discount = {{ car.discount_percent }};
+      const total = days * pricePerDay;
       const disabled_dates = {{ disabled_dates|safe }};
     </script>
 
@@ -451,17 +492,27 @@
           },
 
           onChange: function (selectedDates) {
-            if (selectedDates.length === 2) {
-              const diffTime = selectedDates[1] - selectedDates[0];
-              const days = Math.max(
-                1,
-                Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
-              );
-              const total = days * pricePerDay;
-              document.getElementById("days").innerText = days + " days";
-              document.getElementById("total").innerText = total + " MAD";
-            }
-          },
+  if (selectedDates.length === 2) {
+    const diffTime = selectedDates[1] - selectedDates[0];
+
+    const days = Math.max(
+      1,
+      Math.ceil(diffTime / (1000 * 60 * 60 * 24)),
+    );
+
+    const total = days * pricePerDay;
+    const oldTotal = days * basePrice;
+
+    document.getElementById("days").innerText = days + " days";
+
+    document.getElementById("total").innerText =
+      total + " MAD";
+
+    // show old price too
+    document.getElementById("oldTotal").innerHTML =
+      `<del>${oldTotal} MAD</del>`;
+  }
+}
         });
 
         // ── Thumbnail gallery switcher ──────────────────────────────────
@@ -551,6 +602,55 @@
             }
           });
       }
+    </script>
+    <script>
+      function formatTime(diff) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      function updateCountdowns() {
+        document.querySelectorAll(".countdown").forEach((el) => {
+          const end = el.dataset.end;
+
+          if (!end) {
+            el.innerText = "No offer";
+            return;
+          }
+
+          const endTime = new Date(end).getTime();
+          const diff = endTime - Date.now();
+
+          if (diff <= 0) {
+            el.innerText = "Expired";
+          } else {
+            el.innerText = formatTime(diff);
+          }
+        });
+      }
+
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
+    </script>
+    <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
+    <script>
+      new FinisherHeader({
+        count: 100,
+        size: { min: 1, max: 8, pulse: 0.1 },
+        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.6 } },
+        colors: {
+          background: "#0a0a0a",
+          particles: ["#a8872d", "#6366f1", "black"],
+        },
+        blending: "overlay",
+        opacity: { center: 1, edge: 0.05 },
+        skew: 0,
+        shapes: ["c", "t", "s"],
+      });
     </script>
     <script>
       function getCookie(name) {

@@ -212,7 +212,36 @@
             {% endif %}
 
             <div class="badge">{{ car.car_type }}</div>
-            <div class="price-tag">{{ car.price_per_day }} MAD/day</div>
+            <div class="price-tag">
+              <!-- floating discount bar -->
+              <div class="discount-bar">
+                <span
+                  class="countdown"
+                  data-end="{{ car.discount_end|date:'c' }}"
+                >
+                  --:--:--:--
+                </span>
+
+                {% if car.is_discount_active %}
+                <span class="discount-badge">-{{ car.discount_percent }}%</span>
+                {% else %}
+                <span class="discount-badge inactive">No offer</span>
+                {% endif %}
+              </div>
+
+              <!-- price row always same -->
+              <div class="price-row">
+                {% if car.is_discount_active %}
+                <span class="old-price">
+                  <del>{{ car.price_per_day }} MAD/day</del>
+                </span>
+                {% endif %}
+
+                <span class="new-price">
+                  {{ car.final_price|floatformat:2 }} MAD/day
+                </span>
+              </div>
+            </div>
           </div>
 
           <div class="car-info">
@@ -398,6 +427,39 @@
       </div>
     </footer>
 
+    <script>
+      function formatTime(diff) {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / (1000 * 60)) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
+
+      function updateCountdowns() {
+        document.querySelectorAll(".countdown").forEach((el) => {
+          const end = el.dataset.end;
+
+          if (!end) {
+            el.innerText = "No offer";
+            return;
+          }
+
+          const endTime = new Date(end).getTime();
+          const diff = endTime - Date.now();
+
+          if (diff <= 0) {
+            el.innerText = "Expired";
+          } else {
+            el.innerText = formatTime(diff);
+          }
+        });
+      }
+
+      updateCountdowns();
+      setInterval(updateCountdowns, 1000);
+    </script>
     <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
     <script>
       new FinisherHeader({

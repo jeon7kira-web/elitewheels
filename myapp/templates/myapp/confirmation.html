@@ -117,24 +117,29 @@
             <span class="d-label">Vehicle</span>
             <span class="d-value">{{ booking.car.name }}</span>
           </div>
+
           <div class="detail-row">
             <span class="d-label">Category</span>
             <span class="d-value">{{ booking.car.car_type }}</span>
           </div>
+
           <div class="detail-row">
             <span class="d-label">Pick Up Date</span>
             <span class="d-value">{{ booking.pickup_date }}</span>
           </div>
+
           <div class="detail-row">
             <span class="d-label">Return Date</span>
             <span class="d-value">{{ booking.dropoff_date }}</span>
           </div>
+
           <div class="detail-row">
             <span class="d-label">Duration</span>
             <span class="d-value">
               {{ booking.dropoff_date|timeuntil:booking.pickup_date }}
             </span>
           </div>
+
           <div class="detail-row">
             <span class="d-label">Additional Driver</span>
             <span class="d-value">
@@ -142,10 +147,38 @@
             </span>
           </div>
 
+          <!-- 💡 NEW: Pricing Breakdown -->
+          <div class="detail-row">
+            <span class="d-label">Daily Rate</span>
+            <span class="d-value">
+              {% if booking.car.discount_percent > 0 %}
+              <del style="color: #999">
+                {{ booking.car.price_per_day }} MAD
+              </del>
+              <strong style="margin-left: 6px">
+                {{ booking.car.final_price }} MAD
+              </strong>
+              <span class="discount-badge">
+                -{{ booking.car.discount_percent }}%
+              </span>
+              {% else %} {{ booking.car.price_per_day }} MAD {% endif %}
+            </span>
+          </div>
+
           <div class="total-row">
             <span class="d-label">Total Amount</span>
-            <span class="d-value">{{ booking.total_price }} MAD</span>
+            <span class="d-value"> {{ booking.total_price }} MAD </span>
           </div>
+
+          <!-- 💡 NEW: Savings line -->
+          {% if booking.car.is_discount_active %}
+          <div class="detail-row">
+            <span class="d-label">You Saved</span>
+            <span class="d-value" style="color: #2ecc71; font-weight: 600">
+              {{ booking.car.savings_per_day }} MAD
+            </span>
+          </div>
+          {% endif %}
         </div>
 
         <div class="actions">

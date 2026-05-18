@@ -275,7 +275,26 @@
             </div>
             <div class="line-item">
               <span class="label">Daily Rent:</span>
-              <span class="value">{{ car.price_per_day }} MAD</span>
+
+              <span class="value">
+                {% if booking.car.is_discount_active %}
+
+                <del style="color: #999; font-size: 14px">
+                  {{ car.price_per_day }} MAD
+                </del>
+
+                <span
+                  style="margin-left: 6px; font-weight: 600; color: #d4af37"
+                >
+                  {{ car.final_price }} MAD
+                </span>
+
+                <span class="discount-badge">
+                  -{{ car.discount_percent }}%
+                </span>
+
+                {% else %} {{ car.price_per_day }} MAD {% endif %}
+              </span>
             </div>
             <div class="line-item">
               <span class="label">Total Days:</span>

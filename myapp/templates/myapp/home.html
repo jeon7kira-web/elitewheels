@@ -288,7 +288,7 @@
           {% elif type|lower == "sports" %}
           <img src="{% static 'myapp/imgs/sports-style.png' %}" alt="Sports" />
 
-          {% elif type|lower == "supercar" %}
+          {% elif type|lower == "super-car" %}
           <img
             src="{% static 'myapp/imgs/supercar-style.png' %}"
             alt="Supercar"
@@ -298,6 +298,11 @@
           <img
             src="{% static 'myapp/imgs/hypercar-style.png' %}"
             alt="Hypercar"
+          />
+          {% elif type|lower == "muscle car" %}
+          <img
+            src="{% static 'myapp/imgs/musclecar-style.png' %}"
+            alt="musclecar"
           />
 
           {% elif type|lower == "gt" %}
@@ -338,11 +343,50 @@
         <div class="ft-cars-card">
           <!-- 🔥 RANK BADGE -->
           {% if forloop.counter == 1 %}
-          <div class="rank-badge gold">🔥 1st</div>
+          <div class="rank-badge gold">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="#a8872d"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M18.78 7.39a1 1 0 0 0-.83.32c-.77.84-1.82 1.31-2.94 1.31-2.21 0-4.01-1.8-4.01-4.01 0-.27.03-.56.1-.87a.99.99 0 0 0-.39-1.02c-.32-.23-.75-.26-1.09-.06-2.48 1.42-6.63 4.61-6.63 9.95 0 4.96 4.04 9 9 9s9-4.04 9-9c0-1.82-.49-3.55-1.47-5.14a.98.98 0 0 0-.76-.47ZM9.5 17.5c0-1.77 1.71-2.93 2.5-3.38.79.45 2.5 1.61 2.5 3.38a2.5 2.5 0 0 1-5 0m6.9.94c.06-.3.1-.62.1-.94 0-3.62-3.94-5.35-4.11-5.42a1 1 0 0 0-.79 0c-.17.07-4.11 1.8-4.11 5.42 0 .32.04.64.1.94A6.96 6.96 0 0 1 4.99 13c0-3.36 2.12-5.72 4.06-7.18.4 2.93 2.92 5.19 5.95 5.19 1.22 0 2.38-.37 3.37-1.05.41.97.62 1.98.62 3.04a7.02 7.02 0 0 1-2.6 5.44Z"
+              ></path>
+            </svg>
+            1st
+          </div>
           {% elif forloop.counter == 2 %}
-          <div class="rank-badge silver">🔥 2nd</div>
+          <div class="rank-badge silver">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="#a8872d"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M18.78 7.39a1 1 0 0 0-.83.32c-.77.84-1.82 1.31-2.94 1.31-2.21 0-4.01-1.8-4.01-4.01 0-.27.03-.56.1-.87a.99.99 0 0 0-.39-1.02c-.32-.23-.75-.26-1.09-.06-2.48 1.42-6.63 4.61-6.63 9.95 0 4.96 4.04 9 9 9s9-4.04 9-9c0-1.82-.49-3.55-1.47-5.14a.98.98 0 0 0-.76-.47ZM9.5 17.5c0-1.77 1.71-2.93 2.5-3.38.79.45 2.5 1.61 2.5 3.38a2.5 2.5 0 0 1-5 0m6.9.94c.06-.3.1-.62.1-.94 0-3.62-3.94-5.35-4.11-5.42a1 1 0 0 0-.79 0c-.17.07-4.11 1.8-4.11 5.42 0 .32.04.64.1.94A6.96 6.96 0 0 1 4.99 13c0-3.36 2.12-5.72 4.06-7.18.4 2.93 2.92 5.19 5.95 5.19 1.22 0 2.38-.37 3.37-1.05.41.97.62 1.98.62 3.04a7.02 7.02 0 0 1-2.6 5.44Z"
+              ></path>
+            </svg>
+            2nd
+          </div>
           {% elif forloop.counter == 3 %}
-          <div class="rank-badge bronze">🔥 3rd</div>
+          <div class="rank-badge bronze">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="#a8872d"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M18.78 7.39a1 1 0 0 0-.83.32c-.77.84-1.82 1.31-2.94 1.31-2.21 0-4.01-1.8-4.01-4.01 0-.27.03-.56.1-.87a.99.99 0 0 0-.39-1.02c-.32-.23-.75-.26-1.09-.06-2.48 1.42-6.63 4.61-6.63 9.95 0 4.96 4.04 9 9 9s9-4.04 9-9c0-1.82-.49-3.55-1.47-5.14a.98.98 0 0 0-.76-.47ZM9.5 17.5c0-1.77 1.71-2.93 2.5-3.38.79.45 2.5 1.61 2.5 3.38a2.5 2.5 0 0 1-5 0m6.9.94c.06-.3.1-.62.1-.94 0-3.62-3.94-5.35-4.11-5.42a1 1 0 0 0-.79 0c-.17.07-4.11 1.8-4.11 5.42 0 .32.04.64.1.94A6.96 6.96 0 0 1 4.99 13c0-3.36 2.12-5.72 4.06-7.18.4 2.93 2.92 5.19 5.95 5.19 1.22 0 2.38-.37 3.37-1.05.41.97.62 1.98.62 3.04a7.02 7.02 0 0 1-2.6 5.44Z"
+              ></path>
+            </svg>
+            3rd
+          </div>
           {% endif %} {% if car.image %}
           <img src="{{ car.image.url }}" alt="{{ car.name }}" />
           {% endif %}
@@ -519,11 +563,7 @@
                 </h3>
 
                 <div class="reviews__stars">
-                  {% for i in "12345" %}
-                  {% if forloop.counter <= review.rating %} 
-                  ★ 
-                  {% else %}☆{% endif %} 
-                  {% endfor %}
+                  {% for i in "12345" %} {% if forloop.counter <= review.rating %} ★ {% else %}☆{% endif %} {% endfor %}
                 </div>
                 <a
                   href="{% url 'cardetails' review.car.id %}"
@@ -799,5 +839,59 @@
       }
     </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>
+    <div id="toast-container"></div>
+    <script>
+      const notifications = [
+        {
+          title: "🔥 Most Booked",
+          message: "{% if top_car %}{{ top_car.name }}{% else %}No data yet{% endif %} is the most booked car this month."
+        },
+
+        {
+          title: "🚗 Available Cars",
+          message: "{{ available_cars }} cars ready for booking."
+        },
+
+        {% for car in featured_cars %}
+        {
+          title: "🏆 Trending",
+          message: "{{ car.name }} has high demand this week."
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ];
+
+      function showToast(notification) {
+        const container = document.getElementById("toast-container");
+
+        const toast = document.createElement("div");
+        toast.classList.add("toast");
+
+        toast.innerHTML = `
+          <div class="toast-title">${notification.title}</div>
+          <div class="toast-message">${notification.message}</div>
+        `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.remove();
+        }, 5000);
+      }
+
+      // show first instantly
+      if (notifications.length > 0) {
+        showToast(notifications[0]);
+      }
+
+      // rotate
+      setInterval(() => {
+        if (notifications.length === 0) return;
+
+        const random =
+          notifications[Math.floor(Math.random() * notifications.length)];
+
+        showToast(random);
+      }, 10000);
+    </script>
   </body>
 </html>

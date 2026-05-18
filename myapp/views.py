@@ -12,30 +12,50 @@ from datetime import date, timedelta
 from reportlab.pdfgen import canvas
 from django.db.models import Count
 from reportlab.lib.pagesizes import A4
+import io
+import qrcode
 import json
-
 from .models import Profile, Car, Booking, Review, Favorite, Brand
-
+from reportlab.graphics.barcode import qr
+from reportlab.graphics.shapes import Drawing
+from reportlab.graphics import renderPDF
+from django.utils import timezone
 
 
 # STATIC PAGES
 
 def home(request):
     reviews = Review.objects.select_related("user", "car").order_by("-created_at")[:10]
-    favorites_count = Favorite.objects.filter(user=request.user).count()
+
+    favorites_count = 0
+    if request.user.is_authenticated:
+        favorites_count = Favorite.objects.filter(user=request.user).count()
+
     types = Car.objects.values_list("car_type", flat=True).distinct()
+
     featured_cars = Car.objects.annotate(
-    bookings_count=Count(
-        "bookings",
-        filter=Q(bookings__status="confirmed")
-    )
-).order_by("-bookings_count")[:4]
-    return render(request, "myapp/home.html", {
+        bookings_count=Count(
+            "bookings",
+            filter=Q(bookings__status="confirmed")
+        )
+    ).order_by("-bookings_count")[:4]
+
+    top_car = Car.objects.annotate(
+        bookings_count=Count("bookings")
+    ).order_by("-bookings_count").first()
+
+    available_cars = Car.objects.filter(status="available").count()
+
+    context = {
         "reviews": reviews,
         "favorites_count": favorites_count,
-        "types":types,
+        "types": types,
         "featured_cars": featured_cars,
-    })
+        "top_car": top_car,
+        "available_cars": available_cars,
+    }
+
+    return render(request, "myapp/home.html", context)
 def auth_view(request):
     return render(request, 'myapp/auth.html')
 
@@ -465,7 +485,7 @@ def add_review(request, car_id):
 
         messages.success(request, "Review submitted successfully.")
 
-    return redirect("dashboard", car_id=car.id)
+    return redirect("dashboard")
 
 
 # FAVORITE
@@ -480,245 +500,174 @@ def download_receipt(request, booking_id):
         user=request.user
     )
 
+    # -----------------------------
+    # USER DATA
+    # -----------------------------
     customer_name = (
         booking.user.get_full_name()
         if booking.user.get_full_name()
         else booking.user.username
     )
 
-    chauffeur_name = (
-        str(booking.chauffeur)
-        if booking.chauffeur
-        else "No Chauffeur"
-    )
+    chauffeur_name = str(booking.chauffeur) if booking.chauffeur else "No Chauffeur"
 
+    # -----------------------------
+    # RESPONSE
+    # -----------------------------
     response = HttpResponse(content_type='application/pdf')
-
     response['Content-Disposition'] = (
-        f'attachment; filename="EliteWheels_Receipt_{booking.id}.pdf"'
+        f'attachment; filename="EliteWheels_Invoice_{booking.id}.pdf"'
     )
 
-    # =========================================
-    # PDF SETUP
-    # =========================================
     p = canvas.Canvas(response, pagesize=A4)
-
     width, height = A4
 
-    # =========================================
-    # COLORS
-    # =========================================
+    # -----------------------------
+    # COLORS (TESLA / AVIS STYLE)
+    # -----------------------------
+    black = HexColor("#0B0B0B")
+    dark_gray = HexColor("#c9a84c")
+    gray = HexColor("#494949")
     gold = HexColor("#C8A45D")
-    dark = HexColor("#111111")
-    gray = HexColor("#666666")
-    light = HexColor("#F7F7F7")
     white = HexColor("#FFFFFF")
+    light = HexColor("#F5F5F5")
+    red = HexColor("#E53935")
 
-    # =========================================
-    # HEADER
-    # =========================================
-    p.setFillColor(dark)
-    p.rect(0, height - 120, width, 120, fill=1, stroke=0)
+    # -----------------------------
+    # HEADER BAR
+    # -----------------------------
+    p.setFillColor(black)
+    p.rect(0, height - 110, width, 110, fill=1)
 
-    # Logo / Brand
-    p.setFillColor(gold)
-    p.setFont("Helvetica-Bold", 30)
-    p.drawCentredString(width / 2, height - 60, "EliteWheels")
+    p.setFillColor(white)
+    p.setFont("Helvetica-Bold", 26)
+    p.drawCentredString(width / 2, height - 55, "ELITEWHEELS")
 
-    p.setFont("Helvetica", 13)
-    p.drawCentredString(
-        width / 2,
-        height - 85,
-        "Luxury Car Rental Receipt"
-    )
+    p.setFont("Helvetica", 11)
+    p.setFillColor(gray)
+    p.drawCentredString(width / 2, height - 75, "Luxury Mobility Invoice")
 
-    # =========================================
+    # -----------------------------
+    # INVOICE NUMBER (TESLA STYLE)
+    # -----------------------------
+    invoice_number = f"EW-{timezone.now().year}-{booking.id:06d}"
+
+    p.setFillColor(gray)
+    p.setFont("Helvetica", 10)
+    p.drawString(50, height - 140, f"Invoice #: {invoice_number}")
+    p.drawString(50, height - 155, f"Date: {timezone.now().strftime('%d %b %Y')}")
+
+    # -----------------------------
     # WATERMARK
-    # =========================================
+    # -----------------------------
     p.saveState()
-
     p.setFont("Helvetica-Bold", 60)
-    p.setFillColor(HexColor("#F1F1F1"))
-
+    p.setFillColor(light)
     p.translate(width / 2, height / 2)
     p.rotate(45)
-
     p.drawCentredString(0, 0, "ELITEWHEELS")
-
     p.restoreState()
 
-    # =========================================
-    # START POSITION
-    # =========================================
-    y = height - 170
+    y = height - 180
 
-    # =========================================
-    # HELPER FUNCTION
-    # =========================================
-    def draw_section(title, data, y_position):
+    # -----------------------------
+    # HELPER SECTION
+    # -----------------------------
+    def section(title, items, y):
+        p.setFillColor(dark_gray)
+        p.roundRect(40, y - 20, width - 80, 25, 6, fill=1)
 
-        # Section card
-        p.setFillColor(light)
-        p.roundRect(
-            40,
-            y_position - 25,
-            width - 80,
-            35,
-            8,
-            fill=1,
-            stroke=0
-        )
+        p.setFillColor(white)
+        p.setFont("Helvetica-Bold", 12)
+        p.drawString(50, y - 12, title)
 
-        # Section title
-        p.setFillColor(gold)
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(55, y_position - 5, title)
+        y -= 40
+        p.setFont("Helvetica", 10)
 
-        y_position -= 50
-
-        # Section content
-        p.setFont("Helvetica", 12)
-
-        for label, value in data:
-
+        for k, v in items:
             p.setFillColor(gray)
-            p.drawString(60, y_position, str(label))
+            p.drawString(50, y, str(k))
 
-            p.setFillColor(dark)
-            p.drawRightString(
-                width - 60,
-                y_position,
-                str(value)
-            )
+            p.setFillColor(black)
+            p.drawRightString(width - 50, y, str(v))
+            y -= 18
 
-            y_position -= 25
+        return y - 10
 
-        # Divider line
-        p.setStrokeColor(gold)
-        p.setLineWidth(1)
+    # -----------------------------
+    # DISCOUNT LOGIC
+    # -----------------------------
+    discount = booking.car.discount_percent
+    base_price = booking.car.price_per_day
+    final_price = booking.car.final_price
 
-        p.line(
-            50,
-            y_position + 5,
-            width - 50,
-            y_position + 5
-        )
+    discount_line = f"-{discount}%" if discount > 0 else "No Discount"
 
-        return y_position - 25
-
-    # =========================================
-    # RECEIPT INFO
-    # =========================================
-    receipt_info = [
-        ("Receipt #", f"EW-{booking.id}"),
-        ("Booking Status", booking.status_auto.title()),
-        (
-            "Created At",
-            booking.created_at.strftime("%d %B %Y")
-        ),
-        ("Invoice Type", "Luxury Rental"),
-    ]
-
-    y = draw_section(
-        "Receipt Information",
-        receipt_info,
-        y
-    )
-
-    # =========================================
-    # CUSTOMER INFO
-    # =========================================
-    customer_info = [
-        ("Customer", customer_name),
+    # -----------------------------
+    # SECTIONS
+    # -----------------------------
+    y = section("CUSTOMER", [
+        ("Name", customer_name),
         ("Email", booking.user.email),
-    ]
+    ], y)
 
-    y = draw_section(
-        "Customer Details",
-        customer_info,
-        y
-    )
-
-    # =========================================
-    # BOOKING INFO
-    # =========================================
-    booking_info = [
+    y = section("BOOKING", [
         ("Car", booking.car.name),
-        ("Pickup Date", booking.pickup_date),
-        ("Dropoff Date", booking.dropoff_date),
-        ("Duration", f"{booking.duration} day(s)"),
-        (
-            "Pickup Location",
-            booking.pickup_location or "Not specified"
-        ),
-        (
-            "Dropoff Location",
-            booking.dropoff_location or "Not specified"
-        ),
-        (
-            "Driver Included",
-            "Yes" if booking.with_driver else "No"
-        ),
+        ("Pickup", booking.pickup_date),
+        ("Return", booking.dropoff_date),
+        ("Duration", f"{booking.duration} days"),
+        ("Driver", "Yes" if booking.with_driver else "No"),
         ("Chauffeur", chauffeur_name),
-    ]
+    ], y)
 
-    y = draw_section(
-        "Booking Details",
-        booking_info,
-        y
-    )
+    y = section("PRICING", [
+        ("Daily Price", f"{base_price} MAD"),
+        ("Discount", discount_line),
+        ("Final Daily", f"{final_price:.2f} MAD"),
+        ("Total", f"{booking.total_price:.2f} MAD"),
+    ], y)
 
-    # =========================================
-    # TOTAL BOX
-    # =========================================
-    y -= 10
-
-    p.setFillColor(dark)
-
-    p.roundRect(
-        50,
-        y - 55,
-        width - 100,
-        75,
-        12,
-        fill=1,
-        stroke=0
-    )
+    # -----------------------------
+    # TOTAL BOX (TESLA STYLE)
+    # -----------------------------
+    p.setFillColor(black)
+    p.roundRect(40, y - 70, width - 80, 60, 10, fill=1)
 
     p.setFillColor(gold)
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(55, y - 30, "TOTAL PAID")
 
-    p.setFont("Helvetica-Bold", 16)
-    p.drawString(70, y - 10, "TOTAL AMOUNT")
+    p.setFont("Helvetica-Bold", 24)
+    p.setFillColor(white)
+    p.drawRightString(width - 55, y - 30, f"{booking.total_price:.2f} MAD")
 
-    p.setFont("Helvetica-Bold", 28)
+    # -----------------------------
+    # QR CODE (VERY IMPORTANT)
+    # -----------------------------
+    qr_data = f"EliteWheels Booking {booking.id} | {invoice_number}"
+    qr_code = qr.QrCodeWidget(qr_data)
+    bounds = qr_code.getBounds()
 
-    p.drawRightString(
-        width - 70,
-        y - 10,
-        f"${booking.total_price:,.2f}"
-    )
+    size = 80
+    d = Drawing(size, size, transform=[size / (bounds[2] - bounds[0]), 0, 0,
+                                      size / (bounds[3] - bounds[1]), 0, 0])
 
-    # =========================================
-    # FOOTER
-    # =========================================
+    d.add(qr_code)
+
+    renderPDF.draw(d, p, width - 120, 80)
+
     p.setFillColor(gray)
+    p.setFont("Helvetica", 8)
+    p.drawString(width - 140, 70, "Scan to verify")
 
-    p.setFont("Helvetica-Oblique", 11)
-
-    p.drawCentredString(
-        width / 2,
-        70,
-        "Thank you for choosing EliteWheels."
-    )
-
-    p.drawCentredString(
-        width / 2,
-        50,
-        "Experience Luxury. Drive Excellence."
-    )
+    # -----------------------------
+    # FOOTER
+    # -----------------------------
+    p.setFillColor(gray)
+    p.setFont("Helvetica-Oblique", 10)
+    p.drawCentredString(width / 2, 40, "Drive premium. Live premium.")
 
     p.showPage()
     p.save()
 
     return response
-
