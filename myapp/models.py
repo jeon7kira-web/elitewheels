@@ -91,22 +91,19 @@ class Car(models.Model):
     def is_discount_active(self):
         if self.discount_percent <= 0:
             return False
-        if not self.discount_end:
+        if not self.discount_start or not self.discount_end:
             return False
-        return timezone.now() < self.discount_end
+
+        now = timezone.now()
+        return self.discount_start <= now <= self.discount_end
 
     @property
     def final_price(self):
         if self.is_discount_active:
-            return self.price_per_day * Decimal(100 - self.discount_percent) / Decimal(100)
+            return self.price_per_day * (Decimal(1) - Decimal(self.discount_percent) / Decimal(100))
         return self.price_per_day
 
-    @property
-    def savings_per_day(self):
-        if self.is_discount_active:
-            return self.price_per_day - self.final_price
-        return 0
-
+    
     @property
     def average_rating(self):
         return self.reviews.aggregate(avg=Avg("rating"))["avg"] or 0
@@ -159,49 +156,88 @@ class Booking(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name="bookings")
+
     pickup_location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='pickup_bookings'
     )
+
     dropoff_location = models.ForeignKey(
         Location, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='dropoff_bookings'
     )
+
     pickup_date = models.DateField()
     dropoff_date = models.DateField()
+
     with_driver = models.BooleanField(default=False)
+
     chauffeur = models.ForeignKey(
         Chauffeur, on_delete=models.SET_NULL, null=True, blank=True
     )
 
-    # ── PromoCode link (new) ──────────────────────────────────────────────────
     promo_code = models.ForeignKey(
         PromoCode, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='bookings'
     )
-    # ─────────────────────────────────────────────────────────────────────────
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+
+    # 🔴 REAL DB VALUE (DO NOT override with property)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
+    # -----------------------------
+    # DURATION
+    # -----------------------------
     @property
     def duration(self):
         return max(1, (self.dropoff_date - self.pickup_date).days)
 
+    # -----------------------------
+    # PRICE CALC (DISPLAY ONLY)
+    # -----------------------------
+    @property
+    def calculated_total_price(self):
+        car = self.car
+
+        daily_price = car.final_price if car.is_discount_active else car.price_per_day
+
+        total = daily_price * self.duration
+
+        if self.with_driver:
+            total += Decimal(50) * self.duration
+
+        if self.promo_code and self.promo_code.is_valid:
+            total *= (Decimal(100) - self.promo_code.discount_percent) / Decimal(100)
+
+        return total
+
+    # -----------------------------
+    # STATUS AUTO
+    # -----------------------------
     @property
     def status_auto(self):
         today = timezone.now().date()
+
         if self.status == "cancelled":
             return "cancelled"
+
         if today < self.pickup_date:
             return "confirmed"
+
         if self.pickup_date <= today <= self.dropoff_date:
             return "active"
+
         if today > self.dropoff_date:
             return "completed"
+
         return "pending"
 
+    # -----------------------------
+    # VALIDATION
+    # -----------------------------
     def clean(self):
         if self.pickup_date >= self.dropoff_date:
             raise ValidationError("Dropoff date must be after pickup date.")
@@ -213,35 +249,45 @@ class Booking(models.Model):
             Q(pickup_date__lt=self.dropoff_date) &
             Q(dropoff_date__gt=self.pickup_date)
         )
+
         if self.pk:
             overlapping = overlapping.exclude(pk=self.pk)
+
         if overlapping.exists():
             raise ValidationError("This car is already booked for these dates.")
 
-        # Validate promo code if provided
         if self.promo_code and not self.promo_code.is_valid:
             raise ValidationError("This promo code is expired or inactive.")
 
+    # -----------------------------
+    # SAVE LOGIC (SOURCE OF TRUTH)
+    # -----------------------------
     def save(self, *args, **kwargs):
         self.full_clean()
 
-        days = max(1, (self.dropoff_date - self.pickup_date).days)
-        daily_price = self.car.final_price  # includes car discount logic
-        self.total_price = days * daily_price
+        daily_price = self.car.final_price if self.car.is_discount_active else self.car.price_per_day
+
+        total = daily_price * self.duration
 
         if self.with_driver:
-            self.total_price += days * 50
+            total += Decimal(50) * self.duration
 
-        # Apply promo code discount on top
         if self.promo_code and self.promo_code.is_valid:
-            self.total_price *= Decimal(100 - self.promo_code.discount_percent) / Decimal(100)
+            total *= (Decimal(100) - self.promo_code.discount_percent) / Decimal(100)
+
+        self.total_price = total
 
         super().save(*args, **kwargs)
-
+    @property
+    def savings(self):
+        if self.car.is_discount_active:
+            return (self.car.price_per_day - self.car.final_price) * self.duration
+        return 0
+    @property
+    def original_total(self):
+        return self.car.price_per_day * self.duration
     def __str__(self):
         return f"{self.user.username} - {self.car.name}"
-
-
 # FAVORITE
 class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favorites")

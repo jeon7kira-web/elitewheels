@@ -128,10 +128,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ? "flex"
       : "none";
 
-    const driverCost = withDriver ? 50 * totalDays : 0;
+    let total = totalDays * pricePerDay;
+
+    if (withDriver) {
+      total += totalDays * 50;
+    }
 
     document.getElementById("sum-total").textContent =
-      (basePrice + driverCost).toFixed(2) + " MAD";
+      total.toFixed(2) + " MAD";
 
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
@@ -147,6 +151,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 const icon = document.getElementById("calendarIcon");
 const dateInput = document.getElementById("date-range");
+
+if (icon && dateInput) {
+  icon.addEventListener("click", () => {
+    dateInput.showPicker?.();
+    dateInput.focus();
+  });
+}
 
 icon.addEventListener("click", () => {
   dateInput.showPicker();

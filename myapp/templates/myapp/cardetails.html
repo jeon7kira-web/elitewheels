@@ -509,8 +509,11 @@
       total + " MAD";
 
     // show old price too
-    document.getElementById("oldTotal").innerHTML =
-      `<del>${oldTotal} MAD</del>`;
+    if (discount > 0) {
+  document.getElementById("oldTotal").innerHTML = `<del>${oldTotal} MAD</del>`;
+} else {
+  document.getElementById("oldTotal").innerHTML = "";
+}
   }
 }
         });
@@ -568,41 +571,7 @@
         shapes: ["c", "t", "s"],
       });
     </script>
-     <script>
-      function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== "") {
-          const cookies = document.cookie.split(";");
-          for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === name + "=") {
-              cookieValue = decodeURIComponent(
-                cookie.substring(name.length + 1),
-              );
-              break;
-            }
-          }
-        }
-        return cookieValue;
-      }
-      function toggleFavorite(carId, btn) {
-        fetch("{% url 'toggle_favorite' 0 %}".replace("0", carId), {
-          method: "POST",
-          headers: {
-            "X-CSRFToken": getCookie("csrftoken"),
-            "X-Requested-With": "XMLHttpRequest",
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(data);
-
-            if (data.success) {
-              btn.classList.toggle("active", data.liked);
-            }
-          });
-      }
-    </script>
+  
     <script>
       function formatTime(diff) {
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -637,21 +606,7 @@
       setInterval(updateCountdowns, 1000);
     </script>
     <script src="{% static 'myapp/js/finisher-header.es5.min.js' %}"></script>
-    <script>
-      new FinisherHeader({
-        count: 100,
-        size: { min: 1, max: 8, pulse: 0.1 },
-        speed: { x: { min: 0, max: 0.4 }, y: { min: 0, max: 0.6 } },
-        colors: {
-          background: "#0a0a0a",
-          particles: ["#a8872d", "#6366f1", "black"],
-        },
-        blending: "overlay",
-        opacity: { center: 1, edge: 0.05 },
-        skew: 0,
-        shapes: ["c", "t", "s"],
-      });
-    </script>
+
     <script>
       function getCookie(name) {
         let cookieValue = null;

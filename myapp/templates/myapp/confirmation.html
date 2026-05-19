@@ -167,7 +167,16 @@
 
           <div class="total-row">
             <span class="d-label">Total Amount</span>
-            <span class="d-value"> {{ booking.total_price }} MAD </span>
+
+            <span class="d-value">
+              <del style="color: #444444; font-weight: 300">
+                {{ booking.original_total }} MAD
+              </del>
+
+              <strong style="color: #2ecc71; margin-left: 8px">
+                {{ booking.total_price }} MAD
+              </strong>
+            </span>
           </div>
 
           <!-- 💡 NEW: Savings line -->
@@ -175,7 +184,7 @@
           <div class="detail-row">
             <span class="d-label">You Saved</span>
             <span class="d-value" style="color: #2ecc71; font-weight: 600">
-              {{ booking.car.savings_per_day }} MAD
+              {{ booking.savings }} MAD
             </span>
           </div>
           {% endif %}
