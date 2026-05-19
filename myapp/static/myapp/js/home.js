@@ -128,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       ? "flex"
       : "none";
 
+    // ✅ FIX: use pricePerDay (already final from Django)
     let total = totalDays * pricePerDay;
 
     if (withDriver) {
@@ -140,7 +141,6 @@ document.addEventListener("DOMContentLoaded", () => {
     overlay.classList.add("active");
     document.body.style.overflow = "hidden";
   }
-
   if (openBtn) openBtn.addEventListener("click", openModal);
   if (closeBtn) closeBtn.addEventListener("click", closeModal);
   if (closeX) closeX.addEventListener("click", closeModal);
@@ -157,7 +157,7 @@ if (icon && dateInput) {
     dateInput.showPicker?.();
     dateInput.focus();
   });
-}
+} 
 
 icon.addEventListener("click", () => {
   dateInput.showPicker();

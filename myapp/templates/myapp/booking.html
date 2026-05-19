@@ -277,7 +277,7 @@
               <span class="label">Daily Rent:</span>
 
               <span class="value">
-                {% if booking.car.is_discount_active %}
+                {% if car.is_discount_active %}
 
                 <del style="color: #999; font-size: 14px">
                   {{ car.price_per_day }} MAD
@@ -293,7 +293,7 @@
                   -{{ car.discount_percent }}%
                 </span>
 
-                {% else %} {{ car.price_per_day }} MAD {% endif %}
+                {% else %} {{booking.total_price }} MAD {% endif %}
               </span>
             </div>
             <div class="line-item">
@@ -310,9 +310,9 @@
             </div>
             <div class="line-item">
               <span class="label">Total Price:</span>
-              <span class="value" id="sum-total"
-                >{{ total_price|default:"-" }} MAD</span
-              >
+              <span class="value" id="sum-total">
+  0.00 MAD
+</span>
             </div>
 
             <div class="divider"></div>
@@ -366,9 +366,8 @@
       });
     </script>
     <script>
-      const totalDays = {{ total_days|default:0 }};
-      const basePrice = {{ total_price|default:0 }};
-      const pricePerDay = {{ car.price_per_day }};
+          const totalDays = {{ total_days|default:0 }};
+      const pricePerDay = {{ car.final_price|default:car.price_per_day }};
     </script>
     <script src="{% static 'myapp/js/home.js' %}"></script>
   </body>
